@@ -1,0 +1,2189 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Détails Établissement - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style> 
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+        --card-radius: 12px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Establishment Header */
+    .establishment-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .establishment-image {
+        flex: 0 0 200px;
+    }
+
+    .establishment-img {
+        width: 200px;
+        height: 200px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        box-shadow: var(--shadow-light);
+    }
+
+    .establishment-info {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .establishment-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .establishment-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .rating-stars {
+        color: #FFD700;
+        font-size: 1.2rem;
+    }
+
+    .rating-value {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .rating-count {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .establishment-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .establishment-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-icon {
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content Layout */
+    .main-content {
+        display: flex;
+        gap: 2rem;
+        flex-wrap: wrap;
+    }
+
+    /* User Profile Sidebar */
+    .user-sidebar {
+        flex: 0 0 280px;
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        height: fit-content;
+        position: sticky;
+        top: 2rem;
+    }
+
+    .user-profile {
+        text-align: center;
+        padding-bottom: 1.5rem;
+        border-bottom: 2px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .user-img {
+        width: 100px;
+        height: 100px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin-bottom: 1rem;
+        box-shadow: var(--shadow-light);
+    }
+
+    .user-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .user-email {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .user-location {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .edit-profile-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.6rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        width: 100%;
+        justify-content: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .user-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .user-stat {
+        text-align: center;
+        padding: 0.8rem;
+        background: var(--light-color);
+        border-radius: 10px;
+    }
+
+    .stat-number {
+        font-size: 1.3rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-color);
+    }
+
+    /* Establishment Content */
+    .establishment-content {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    /* Navigation Tabs */
+    .nav-tabs {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .nav-tab {
+        padding: 0.8rem 1.5rem;
+        background: white;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .nav-tab:hover {
+        background: var(--accent-color);
+        transform: translateY(-2px);
+    }
+
+    .nav-tab.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Content Sections */
+    .content-section {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .content-section.active {
+        display: block;
+    }
+
+    /* Publications Grid */
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .publication-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 180px;
+        object-fit: cover;
+    }
+
+    .publication-content {
+        padding: 1.5rem;
+    }
+
+    .publication-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .publication-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        box-orient: vertical; 
+        overflow: hidden;
+    }
+
+    .publication-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .publication-date {
+        color: #666;
+        font-size: 0.8rem;
+    }
+
+    .publication-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .share-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .like-btn:hover {
+        background: #ffeaea;
+        color: #ff6b6b;
+    }
+
+    .comment-btn:hover {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    /* Services Section */
+    .services-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-top: 1.5rem;
+    }
+
+    .service-card {
+        background: var(--light-color);
+        border-radius: 10px;
+        padding: 1.5rem;
+        transition: var(--transition);
+        border-left: 4px solid var(--secondary-color);
+    }
+
+    .service-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-light);
+    }
+
+    .service-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .service-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .service-price {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 1.1rem;
+    }
+
+    /* Activities Section */
+    .activities-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .activities-timeline {
+        margin-top: 1.5rem;
+        position: relative;
+        padding-left: 2rem;
+    }
+
+    .activities-timeline::before {
+        content: '';
+        position: absolute;
+        left: 10px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: var(--accent-color);
+    }
+
+    .activity-item {
+        position: relative;
+        padding: 1rem 0 1rem 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .activity-item::before {
+        content: '';
+        position: absolute;
+        left: -6px;
+        top: 1.5rem;
+        width: 14px;
+        height: 14px;
+        border-radius: 50%;
+        background: var(--secondary-color);
+        border: 3px solid white;
+        box-shadow: 0 0 0 2px var(--accent-color);
+    }
+
+    .activity-date {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .activity-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .activity-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    /* Menu Sections */
+    .menu-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .menu-category {
+        margin-bottom: 2rem;
+    }
+
+    .category-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .menu-items {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1rem;
+    }
+
+    .menu-item {
+        background: var(--light-color);
+        border-radius: 10px;
+        padding: 1rem;
+        transition: var(--transition);
+    }
+
+    .menu-item:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-light);
+    }
+
+    .item-name {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .item-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.4;
+        margin-bottom: 0.5rem;
+    }
+
+    .item-price {
+        font-weight: 700;
+        color: var(--secondary-color);
+    }
+
+    /* Contact Section */
+    .contact-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .contact-form {
+        margin-top: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Boutique Section */
+    .boutique-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+        gap: 2rem;
+        margin-top: 1.5rem;
+    }
+
+    .product-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        border: 1px solid #e0e0e0;
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+    }
+
+    .product-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        background: var(--light-color);
+    }
+
+    .product-content {
+        padding: 1.5rem;
+    }
+
+    .product-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .product-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+        margin-bottom: 1rem;
+    }
+
+    .product-details {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .product-price {
+        font-weight: 700;
+        color: var(--secondary-color);
+        font-size: 1.3rem;
+    }
+
+    .product-stock {
+        font-size: 0.9rem;
+        color: #666;
+        padding: 0.3rem 0.8rem;
+        background: var(--light-color);
+        border-radius: 15px;
+    }
+
+    .product-stock.in-stock {
+        color: #2ecc71;
+        background: rgba(46, 204, 113, 0.1);
+    }
+
+    .product-stock.low-stock {
+        color: #f39c12;
+        background: rgba(243, 156, 18, 0.1);
+    }
+
+    .product-stock.out-of-stock {
+        color: #e74c3c;
+        background: rgba(231, 76, 60, 0.1);
+    }
+
+    .product-actions {
+        display: flex;
+        gap: 1rem;
+    }
+
+    .add-to-cart-btn {
+        flex: 1;
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem;
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .add-to-cart-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .view-details-btn {
+        padding: 0.8rem 1.5rem;
+        background: white;
+        border: 2px solid var(--secondary-color);
+        color: var(--secondary-color);
+        border-radius: 8px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .view-details-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    /* Reservation Modal */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Footer */
+    .main-footer {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-top: 4rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+        padding-left: 5px;
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-content {
+            flex-direction: column;
+        }
+        
+        .user-sidebar {
+            position: static;
+            width: 100%;
+        }
+        
+        .establishment-header {
+            flex-direction: column;
+        }
+        
+        .establishment-image {
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            padding: 1rem;
+        }
+        
+        .nav-tabs {
+            justify-content: center;
+        }
+        
+        .publications-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .services-grid,
+        .menu-items,
+        .products-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .establishment-title {
+            font-size: 1.5rem;
+        }
+        
+        .user-stats {
+            grid-template-columns: 1fr;
+        }
+        
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .product-actions {
+            flex-direction: column;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* No Content Message */
+    .no-content {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .no-content-icon {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    /* Back Button */
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        margin-bottom: 1.5rem;
+    }
+
+    .back-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Back Button -->
+        <a href="{% url 'Cateus' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Retour aux établissements
+        </a>
+
+        <!-- Establishment Header -->
+        <section class="establishment-header">
+            <div class="establishment-image">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="establishment-img">
+            </div>
+            
+            <div class="establishment-info">
+                <h1 class="establishment-title">BNK Boutique</h1>
+                
+                <div class="establishment-rating">
+                    <span class="rating-stars">★★★★★</span>
+                    <span class="rating-value">4.8</span>
+                    <span class="rating-count">(124 avis)</span>
+                </div>
+                
+                <p class="establishment-description">
+                    BNK Boutique est un établissement de vente de robe béninoise de qualité à un prix de gros 
+                    pour vous permettre de lancer votre entreprise. Nous proposons des produits authentiques 
+                    et durables, avec un service personnalisé pour chaque client.
+                </p>
+                
+                <div class="establishment-details">
+                    <div class="detail-item">
+                        <i class="fas fa-utensils detail-icon"></i>
+                        <span>Boutique de vêtements</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-map-marker-alt detail-icon"></i>
+                        <span>Lukula 10 Q/Joli Parc C/Ngaliema</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-envelope detail-icon"></i>
+                        <span>BNKBoutique20@gmail.com</span>
+                    </div>
+                    <div class="detail-item">
+                        <i class="fas fa-phone detail-icon"></i>
+                        <span>+243 81 234 5678</span>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                    </a>
+                    <a href="#" class="social-link" aria-label="WhatsApp">
+                        <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                    </a>
+                    <a href="#" class="social-link" aria-label="Email">
+                        <img src="{% static 'img/mail.png' %}" alt="Email">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- User Sidebar -->
+            <aside class="user-sidebar">
+                <div class="user-profile">
+                    <img src="{% static 'img/coiffure.jpg' %}" alt="Esmeralda AZ" class="user-img">
+                    <h3 class="user-name">Esmeralda AZ</h3>
+                    <p class="user-email">EsmeraldaAZ@gmail.com</p>
+                    <p class="user-location">Lubumbashi, RDC</p>
+                    
+                    <button class="edit-profile-btn" onclick="openEditProfileModal()">
+                        <i class="fas fa-edit"></i> Modifier mon profil
+                    </button>
+                </div>
+                
+                <div class="user-stats">
+                    <div class="user-stat">
+                        <div class="stat-number">24</div>
+                        <div class="stat-label">Favoris</div>
+                    </div>
+                    <div class="user-stat">
+                        <div class="stat-number">12</div>
+                        <div class="stat-label">Visites</div>
+                    </div>
+                    <div class="user-stat">
+                        <div class="stat-number">8</div>
+                        <div class="stat-label">Commentaires</div>
+                    </div>
+                    <div class="user-stat">
+                        <div class="stat-number">5</div>
+                        <div class="stat-label">Réservations</div>
+                    </div>
+                </div>
+                
+                <div class="contact-section">
+                    <h3>Contacter l'établissement</h3>
+                    <div class="contact-form">
+                        <div class="form-group">
+                            <label class="form-label">Sujet</label>
+                            <input type="text" class="form-control" placeholder="Ex: Demande d'information">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Message</label>
+                            <textarea class="form-control textarea" placeholder="Votre message..."></textarea>
+                        </div>
+                        <button class="submit-btn" onclick="sendMessage()">
+                            <i class="fas fa-paper-plane"></i> Envoyer le message
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- Establishment Content -->
+            <main class="establishment-content">
+                <!-- Navigation Tabs -->
+                <nav class="nav-tabs">
+                    <button class="nav-tab active" data-tab="publications">
+                        <i class="fas fa-newspaper"></i> Publications
+                    </button>
+                    <button class="nav-tab" data-tab="services">
+                        <i class="fas fa-concierge-bell"></i> Services
+                    </button>
+                    <button class="nav-tab" data-tab="activities">
+                        <i class="fas fa-calendar-alt"></i> Activités
+                    </button>
+                    <button class="nav-tab" data-tab="buffet">
+                        <i class="fas fa-utensils"></i> Menu Buffet
+                    </button>
+                    <button class="nav-tab" data-tab="drinks">
+                        <i class="fas fa-glass-cheers"></i> Menu Boissons
+                    </button>
+                    <button class="nav-tab" data-tab="boutique">
+                        <i class="fas fa-store"></i> Boutique
+                    </button>
+                </nav>
+
+                <!-- Publications Section -->
+                <section id="publications" class="content-section active">
+                    <div class="publications-grid">
+                        <!-- Publication 1 -->
+                        <article class="publication-card">
+                            <img src="{% static 'img/coiffure.jpg' %}" alt="Promotion robes" class="publication-image">
+                            <div class="publication-content">
+                                <h4 class="publication-title">Promotion exceptionnelle</h4>
+                                <p class="publication-description">
+                                    Profitez de -20% sur toute notre collection de robes béninoises cet été. 
+                                    Des modèles uniques et authentiques à prix réduits pour une durée limitée.
+                                </p>
+                                <div class="publication-meta">
+                                    <span class="publication-date">01/01/2025</span>
+                                    <div class="publication-actions">
+                                        <button class="action-btn share-btn" onclick="sharePublication(1)">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                        <button class="action-btn like-btn" onclick="toggleLike(1)">
+                                            <i class="fas fa-heart"></i> 24
+                                        </button>
+                                        <button class="action-btn comment-btn" onclick="showComments(1)">
+                                            <i class="fas fa-comment"></i> 8
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Publication 2 -->
+                        <article class="publication-card">
+                            <img src="{% static 'img/restaurant.jpg' %}" alt="Nouvelle collection" class="publication-image">
+                            <div class="publication-content">
+                                <h4 class="publication-title">Nouvelle collection printemps</h4>
+                                <p class="publication-description">
+                                    Découvrez notre nouvelle collection printemps-été 2025. 
+                                    Des tissus légers, des couleurs vibrantes et des designs modernes inspirés de la tradition.
+                                </p>
+                                <div class="publication-meta">
+                                    <span class="publication-date">15/12/2024</span>
+                                    <div class="publication-actions">
+                                        <button class="action-btn share-btn" onclick="sharePublication(2)">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                        <button class="action-btn like-btn" onclick="toggleLike(2)">
+                                            <i class="fas fa-heart"></i> 42
+                                        </button>
+                                        <button class="action-btn comment-btn" onclick="showComments(2)">
+                                            <i class="fas fa-comment"></i> 15
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+
+                        <!-- Publication 3 -->
+                        <article class="publication-card">
+                            <img src="{% static 'img/hotel.jpg' %}" alt="Atelier couture" class="publication-image">
+                            <div class="publication-content">
+                                <h4 class="publication-title">Atelier de couture</h4>
+                                <p class="publication-description">
+                                    Participez à notre atelier de couture traditionnelle le 20 janvier. 
+                                    Apprenez les techniques ancestrales de confection de vêtements béninois.
+                                </p>
+                                <div class="publication-meta">
+                                    <span class="publication-date">10/12/2024</span>
+                                    <div class="publication-actions">
+                                        <button class="action-btn share-btn" onclick="sharePublication(3)">
+                                            <i class="fas fa-share-alt"></i>
+                                        </button>
+                                        <button class="action-btn like-btn" onclick="toggleLike(3)">
+                                            <i class="fas fa-heart"></i> 18
+                                        </button>
+                                        <button class="action-btn comment-btn" onclick="showComments(3)">
+                                            <i class="fas fa-comment"></i> 5
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                </section>
+
+                <!-- Services Section -->
+                <section id="services" class="content-section">
+                    <div class="services-section">
+                        <h3>Nos Services</h3>
+                        <div class="services-grid">
+                            <!-- Service 1 -->
+                            <div class="service-card">
+                                <h4 class="service-title">Conseil en stylisme</h4>
+                                <p class="service-description">
+                                    Consultation personnalisée pour choisir les tenues qui vous correspondent.
+                                </p>
+                                <div class="service-price">Gratuit</div>
+                            </div>
+
+                            <!-- Service 2 -->
+                            <div class="service-card">
+                                <h4 class="service-title">Retouches sur mesure</h4>
+                                <p class="service-description">
+                                    Adaptation de vos vêtements à vos mesures exactes.
+                                </p>
+                                <div class="service-price">À partir de 10,000 FCFA</div>
+                            </div>
+
+                            <!-- Service 3 -->
+                            <div class="service-card">
+                                <h4 class="service-title">Livraison express</h4>
+                                <p class="service-description">
+                                    Livraison dans les 24h dans toute la ville.
+                                </p>
+                                <div class="service-price">5,000 FCFA</div>
+                            </div>
+
+                            <!-- Service 4 -->
+                            <div class="service-card">
+                                <h4 class="service-title">Création sur mesure</h4>
+                                <p class="service-description">
+                                    Conception et réalisation de vêtements selon vos souhaits.
+                                </p>
+                                <div class="service-price">À partir de 50,000 FCFA</div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Activities Section -->
+                <section id="activities" class="content-section">
+                    <div class="activities-section">
+                        <h3>Nos Activités à Venir</h3>
+                        <div class="activities-timeline">
+                            <!-- Activity 1 -->
+                            <div class="activity-item">
+                                <div class="activity-date">20 Janvier 2025 - 14h00</div>
+                                <h4 class="activity-title">Atelier de couture traditionnelle</h4>
+                                <p class="activity-description">
+                                    Apprenez les techniques de base de la couture béninoise avec nos experts.
+                                </p>
+                            </div>
+
+                            <!-- Activity 2 -->
+                            <div class="activity-item">
+                                <div class="activity-date">25 Janvier 2025 - 18h00</div>
+                                <h4 class="activity-title">Défilé de mode printemps-été</h4>
+                                <p class="activity-description">
+                                    Présentation de notre nouvelle collection avec cocktail dînatoire.
+                                </p>
+                            </div>
+
+                            <!-- Activity 3 -->
+                            <div class="activity-item">
+                                <div class="activity-date">15 Février 2025 - 10h00</div>
+                                <h4 class="activity-title">Journée portes ouvertes</h4>
+                                <p class="activity-description">
+                                    Visite de notre atelier et démonstrations de techniques de tissage.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Buffet Menu Section -->
+                <section id="buffet" class="content-section">
+                    <div class="menu-section">
+                        <h3>Menu Buffet</h3>
+                        
+                        <div class="menu-category">
+                            <h4 class="category-title">Plats Principaux</h4>
+                            <div class="menu-items">
+                                <!-- Item 1 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Poulet DG</h5>
+                                    <p class="item-description">Poulet sauté aux légumes et plantains</p>
+                                    <div class="item-price">8,000 FCFA</div>
+                                </div>
+
+                                <!-- Item 2 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Riz au gras</h5>
+                                    <p class="item-description">Riz parfumé à la viande et aux légumes</p>
+                                    <div class="item-price">5,000 FCFA</div>
+                                </div>
+
+                                <!-- Item 3 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Pondu aux champignons</h5>
+                                    <p class="item-description">Feuilles de manioc aux champignons sauvages</p>
+                                    <div class="item-price">6,000 FCFA</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="menu-category">
+                            <h4 class="category-title">Accompagnements</h4>
+                            <div class="menu-items">
+                                <!-- Item 1 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Plantains frits</h5>
+                                    <div class="item-price">2,000 FCFA</div>
+                                </div>
+
+                                <!-- Item 2 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Fufu de maïs</h5>
+                                    <div class="item-price">1,500 FCFA</div>
+                                </div>
+
+                                <!-- Item 3 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Salade verte</h5>
+                                    <div class="item-price">1,500 FCFA</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Drinks Menu Section -->
+                <section id="drinks" class="content-section">
+                    <div class="menu-section">
+                        <h3>Menu Boissons</h3>
+                        
+                        <div class="menu-category">
+                            <h4 class="category-title">Boissons Chaudes</h4>
+                            <div class="menu-items">
+                                <!-- Item 1 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Café arabica</h5>
+                                    <p class="item-description">Café local torréfié artisanalement</p>
+                                    <div class="item-price">1,500 FCFA</div>
+                                </div>
+
+                                <!-- Item 2 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Thé à la menthe</h5>
+                                    <p class="item-description">Thé vert infusé avec de la menthe fraîche</p>
+                                    <div class="item-price">1,200 FCFA</div>
+                                </div>
+
+                                <!-- Item 3 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Chocolat chaud</h5>
+                                    <p class="item-description">Chocolat noir local en poudre</p>
+                                    <div class="item-price">1,800 FCFA</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="menu-category">
+                            <h4 class="category-title">Jus Naturels</h4>
+                            <div class="menu-items">
+                                <!-- Item 1 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Jus de bissap</h5>
+                                    <p class="item-description">Fleurs d'hibiscus fraîches</p>
+                                    <div class="item-price">1,500 FCFA</div>
+                                </div>
+
+                                <!-- Item 2 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Jus de gingembre</h5>
+                                    <p class="item-description">Gingembre frais pressé</p>
+                                    <div class="item-price">1,800 FCFA</div>
+                                </div>
+
+                                <!-- Item 3 -->
+                                <div class="menu-item">
+                                    <h5 class="item-name">Jus d'ananas</h5>
+                                    <p class="item-description">Ananas frais pressé</p>
+                                    <div class="item-price">1,500 FCFA</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Boutique Section -->
+                <section id="boutique" class="content-section">
+                    <div class="boutique-section">
+                        <h3>🛒 Notre Boutique</h3>
+                        <p style="color: #666; margin-bottom: 2rem;">
+                            Découvrez notre collection exclusive de robes béninoises. 
+                            Des produits authentiques, confectionnés avec soin et disponibles à des prix de gros.
+                        </p>
+                        
+                        <div class="products-grid">
+                            <!-- Produit 1 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/coiffure.jpg' %}" alt="Robe béninoise traditionnelle" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Robe béninoise traditionnelle</h4>
+                                    <p class="product-description">
+                                        Robe en wax authentique, tissu de haute qualité. Design traditionnel avec motifs géométriques.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">15,000 FCFA</span>
+                                        <span class="product-stock in-stock">En stock</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" onclick="addToCart(1)">
+                                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(1)">
+                                            Détails
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produit 2 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/restaurant.jpg' %}" alt="Robe de soirée moderne" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Robe de soirée moderne</h4>
+                                    <p class="product-description">
+                                        Design contemporain inspiré des traditions. Parfaite pour les occasions spéciales.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">25,000 FCFA</span>
+                                        <span class="product-stock in-stock">En stock</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" onclick="addToCart(2)">
+                                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(2)">
+                                            Détails
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produit 3 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/hotel.jpg' %}" alt="Tunique africaine" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Tunique africaine légère</h4>
+                                    <p class="product-description">
+                                        Tunique en coton léger, idéale pour l'été. Confortable et élégante pour toutes occasions.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">12,000 FCFA</span>
+                                        <span class="product-stock low-stock">Stock limité</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" onclick="addToCart(3)">
+                                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(3)">
+                                            Détails
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produit 4 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/coiffure.jpg' %}" alt="Boubou africain" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Boubou africain pour homme</h4>
+                                    <p class="product-description">
+                                        Boubou traditionnel en tissu de qualité premium. Élégant et confortable pour les hommes.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">18,000 FCFA</span>
+                                        <span class="product-stock in-stock">En stock</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" onclick="addToCart(4)">
+                                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(4)">
+                                            Détails
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produit 5 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/restaurant.jpg' %}" alt="Accessoires assortis" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Kit accessoires assortis</h4>
+                                    <p class="product-description">
+                                        Ensemble de 3 pagnes assortis, idéal pour créer différentes tenues.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">30,000 FCFA</span>
+                                        <span class="product-stock in-stock">En stock</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" onclick="addToCart(5)">
+                                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(5)">
+                                            Détails
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Produit 6 -->
+                            <div class="product-card">
+                                <img src="{% static 'img/hotel.jpg' %}" alt="Tissus au mètre" class="product-image">
+                                <div class="product-content">
+                                    <h4 class="product-title">Tissus wax au mètre</h4>
+                                    <p class="product-description">
+                                        Tissus authentiques vendus au mètre. Large choix de motifs et couleurs.
+                                    </p>
+                                    <div class="product-details">
+                                        <span class="product-price">8,000 FCFA/m</span>
+                                        <span class="product-stock out-of-stock">Rupture de stock</span>
+                                    </div>
+                                    <div class="product-actions">
+                                        <button class="add-to-cart-btn" disabled onclick="addToCart(6)">
+                                            <i class="fas fa-shopping-cart"></i> Indisponible
+                                        </button>
+                                        <button class="view-details-btn" onclick="viewProductDetails(6)">
+                                            Précommander
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Informations de livraison -->
+                        <div style="margin-top: 3rem; padding: 1.5rem; background: var(--light-color); border-radius: 10px;">
+                            <h4 style="margin-bottom: 1rem; color: var(--text-color);">
+                                <i class="fas fa-truck"></i> Informations de livraison
+                            </h4>
+                            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
+                                <div>
+                                    <strong>Livraison gratuite</strong>
+                                    <p style="font-size: 0.9rem; color: #666;">À partir de 50,000 FCFA d'achat</p>
+                                </div>
+                                <div>
+                                    <strong>Retour gratuit</strong>
+                                    <p style="font-size: 0.9rem; color: #666;">Sous 14 jours</p>
+                                </div>
+                                <div>
+                                    <strong>Paiement sécurisé</strong>
+                                    <p style="font-size: 0.9rem; color: #666;">Mobile Money, Carte bancaire</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </main>
+        </div>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>À Propos</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Notre mission</a></li>
+                        <li><a href="#">Équipe</a></li>
+                        <li><a href="#">Carrières</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Aide & FAQ</a></li>
+                        <li><a href="#">Contact</a></li>
+                        <li><a href="#">Confidentialité</a></li>
+                        <li><a href="#">Conditions</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'auth_view' %}">Accueil</a></li>
+                        <li><a href="{% url 'Cateus' %}">Établissements</a></li>
+                        <li><a href="{% url 'homUs' %}">Publications</a></li>
+                        <li><a href="#">Catégories</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 Aryo-Tour. Détails établissement - BNK Boutique</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Modals -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Modifier mon profil</h3>
+                <button class="close-modal" onclick="closeModal('editProfileModal')">×</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Photo de profil</label>
+                    <input type="file" class="form-control" accept="image/*">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" class="form-control" value="Esmeralda AZ" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" value="EsmeraldaAZ@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <input type="text" class="form-control" value="Lubumbashi" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="submit-btn">Enregistrer</button>
+                    <button type="button" class="close-modal" onclick="closeModal('editProfileModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div id="reservationModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📅 Effectuer une réservation</h3>
+                <button class="close-modal" onclick="closeModal('reservationModal')">×</button>
+            </div>
+            <form id="reservationForm">
+                <div class="form-group">
+                    <label class="form-label">Date</label>
+                    <input type="date" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Heure</label>
+                    <input type="time" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nombre de personnes</label>
+                    <input type="number" class="form-control" min="1" max="20" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Notes supplémentaires</label>
+                    <textarea class="form-control textarea" placeholder="Demandes spéciales, allergies..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="submit-btn">Réserver</button>
+                    <button type="button" class="close-modal" onclick="closeModal('reservationModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal pour les détails du produit -->
+    <div id="productModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="productModalTitle">Détails du produit</h3>
+                <button class="close-modal" onclick="closeModal('productModal')">×</button>
+            </div>
+            <div id="productModalContent" style="max-height: 60vh; overflow-y: auto;">
+                <!-- Le contenu sera injecté dynamiquement -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal du panier -->
+    <div id="cartModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">🛒 Mon panier</h3>
+                <button class="close-modal" onclick="closeModal('cartModal')">×</button>
+            </div>
+            <div id="cartContent" style="max-height: 50vh; overflow-y: auto; margin-bottom: 1.5rem;">
+                <!-- Les articles du panier seront injectés ici -->
+                <div id="emptyCart" style="text-align: center; padding: 2rem; color: #666;">
+                    <i class="fas fa-shopping-cart" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                    <p>Votre panier est vide</p>
+                </div>
+            </div>
+            <div style="border-top: 2px solid var(--accent-color); padding-top: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 1rem; font-weight: 600;">
+                    <span>Total:</span>
+                    <span id="cartTotal">0 FCFA</span>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="submit-btn" onclick="checkout()">
+                        <i class="fas fa-credit-card"></i> Commander
+                    </button>
+                    <button type="button" class="close-modal" onclick="closeModal('cartModal')">
+                        Continuer mes achats
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let cart = [];
+        let currentTab = 'publications';
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+            loadCart();
+            updateCartDisplay();
+        });
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Navigation tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.getAttribute('data-tab');
+                    switchTab(tabId);
+                });
+            });
+
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+
+            // Form submissions
+            document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Profil mis à jour avec succès !');
+                closeModal('editProfileModal');
+            });
+
+            document.getElementById('reservationForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('Réservation effectuée avec succès !');
+                closeModal('reservationModal');
+            });
+        }
+
+        // Charger le panier depuis le localStorage
+        function loadCart() {
+            const savedCart = localStorage.getItem('boutiqueCart');
+            if (savedCart) {
+                cart = JSON.parse(savedCart);
+            }
+        }
+
+        // Sauvegarder le panier dans le localStorage
+        function saveCart() {
+            localStorage.setItem('boutiqueCart', JSON.stringify(cart));
+        }
+
+        // Changer d'onglet
+        function switchTab(tabId) {
+            // Mettre à jour les onglets actifs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+
+            // Afficher la section correspondante
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+            
+            currentTab = tabId;
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Fonctions d'ouverture de modal
+        function openEditProfileModal() {
+            openModal('editProfileModal');
+        }
+
+        function openReservationModal() {
+            openModal('reservationModal');
+        }
+
+        // Fonctions d'interaction
+        function sendMessage() {
+            const message = document.querySelector('.contact-form textarea').value;
+            if (message.trim()) {
+                alert('Message envoyé avec succès !');
+                document.querySelector('.contact-form textarea').value = '';
+            } else {
+                alert('Veuillez entrer un message.');
+            }
+        }
+
+        function sharePublication(id) {
+            const text = encodeURIComponent('Découvrez cette publication intéressante sur Aryo-Tour !');
+            const url = encodeURIComponent(window.location.href);
+            
+            // Exemple pour WhatsApp
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+        }
+
+        function toggleLike(id) {
+            const likeBtn = event.currentTarget;
+            const likeCount = likeBtn.querySelector('i').nextSibling;
+            
+            if (likeBtn.classList.contains('liked')) {
+                likeBtn.classList.remove('liked');
+                likeCount.textContent = parseInt(likeCount.textContent) - 1;
+                likeBtn.querySelector('i').style.color = '';
+            } else {
+                likeBtn.classList.add('liked');
+                likeCount.textContent = parseInt(likeCount.textContent) + 1;
+                likeBtn.querySelector('i').style.color = '#ff6b6b';
+            }
+        }
+
+        function showComments(id) {
+            alert(`Commentaires de la publication ${id} - Fonctionnalité en développement`);
+        }
+
+        // Fonctions pour la boutique
+        function addToCart(productId) {
+            // Désactiver le bouton pendant l'ajout
+            const button = event.currentTarget;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Ajouté !';
+            button.disabled = true;
+            
+            // Récupérer les informations du produit
+            const productCard = button.closest('.product-card');
+            const productName = productCard.querySelector('.product-title').textContent;
+            const productPrice = parseInt(productCard.querySelector('.product-price').textContent.replace(/\D/g, ''));
+            
+            // Vérifier si le produit est déjà dans le panier
+            const existingItem = cart.find(item => item.id === productId);
+            
+            if (existingItem) {
+                existingItem.quantity += 1;
+            } else {
+                cart.push({
+                    id: productId,
+                    name: productName,
+                    price: productPrice,
+                    quantity: 1
+                });
+            }
+            
+            // Sauvegarder et mettre à jour l'affichage
+            saveCart();
+            updateCartDisplay();
+            
+            // Afficher une notification
+            showNotification(`"${productName}" ajouté au panier !`);
+            
+            // Réactiver le bouton après 1.5 secondes
+            setTimeout(() => {
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }, 1500);
+        }
+
+        function viewProductDetails(productId) {
+            // Simuler des données de produit
+            const products = {
+                1: {
+                    name: "Robe béninoise traditionnelle",
+                    price: "15,000 FCFA",
+                    description: "Robe en wax authentique de haute qualité. Tissu importé du Bénin, motifs géométriques traditionnels. Lavable à la main, ne rétrécit pas. Disponible en tailles S, M, L, XL.",
+                    details: "• 100% coton wax\n• Lavage à la main recommandé\n• Fabrication artisanale\n• Coupe ajustée\n• Disponible en 5 couleurs différentes",
+                    inStock: true
+                },
+                2: {
+                    name: "Robe de soirée moderne",
+                    price: "25,000 FCFA",
+                    description: "Design contemporain inspiré des traditions africaines. Parfaite pour les mariages, soirées et événements spéciaux. Coupe élégante qui met en valeur la silhouette.",
+                    details: "• Tissu de luxe\n• Broderies manuelles\n• Fermeture éclair invisible\n• Doublure en satin\n• Entretien professionnel recommandé",
+                    inStock: true
+                },
+                3: {
+                    name: "Tunique africaine légère",
+                    price: "12,000 FCFA",
+                    description: "Tunique en coton léger parfaite pour l'été. Confortable et élégante pour le quotidien ou les occasions spéciales. Large choix de motifs colorés.",
+                    details: "• 100% coton\n• Lavable en machine\n• Coupe ample et confortable\n• Manches courtes\n• Disponible en 8 motifs différents",
+                    inStock: false
+                }
+            };
+
+            const product = products[productId] || {
+                name: "Produit",
+                price: "0 FCFA",
+                description: "Détails non disponibles",
+                details: "",
+                inStock: false
+            };
+
+            // Mettre à jour le contenu du modal
+            document.getElementById('productModalTitle').textContent = product.name;
+            document.getElementById('productModalContent').innerHTML = `
+                <div style="margin-bottom: 1.5rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 1rem;">
+                        <h4 style="color: var(--text-color); margin: 0;">${product.name}</h4>
+                        <span style="font-weight: 700; color: var(--secondary-color); font-size: 1.3rem;">${product.price}</span>
+                    </div>
+                    <p style="color: #666; margin-bottom: 1rem;">${product.description}</p>
+                    <div style="background: var(--light-color); padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+                        <h5 style="color: var(--text-color); margin-bottom: 0.5rem;">Caractéristiques :</h5>
+                        <p style="color: #666; white-space: pre-line;">${product.details}</p>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1rem;">
+                        <span style="padding: 0.3rem 0.8rem; background: ${product.inStock ? 'rgba(46, 204, 113, 0.1)' : 'rgba(231, 76, 60, 0.1)'}; color: ${product.inStock ? '#2ecc71' : '#e74c3c'}; border-radius: 15px; font-size: 0.9rem;">
+                            ${product.inStock ? '✓ En stock' : '✗ Rupture de stock'}
+                        </span>
+                        ${product.inStock ? '<span style="font-size: 0.9rem; color: #666;">Livraison sous 3-5 jours ouvrés</span>' : ''}
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    ${product.inStock ? 
+                        `<button class="submit-btn" onclick="addToCart(${productId}); closeModal('productModal')">
+                            <i class="fas fa-shopping-cart"></i> Ajouter au panier
+                        </button>` 
+                        : 
+                        `<button class="submit-btn" style="background: #666;" onclick="alert('Précommande enregistrée ! Nous vous contacterons dès que le produit sera disponible.'); closeModal('productModal')">
+                            <i class="fas fa-bell"></i> Être notifié
+                        </button>`
+                    }
+                    <button type="button" class="close-modal" onclick="closeModal('productModal')">Fermer</button>
+                </div>
+            `;
+
+            openModal('productModal');
+        }
+
+        function updateCartDisplay() {
+            const cartContent = document.getElementById('cartContent');
+            const cartTotal = document.getElementById('cartTotal');
+            const emptyCart = document.getElementById('emptyCart');
+            
+            if (cart.length === 0) {
+                emptyCart.style.display = 'block';
+                cartContent.innerHTML = '<div id="emptyCart" style="text-align: center; padding: 2rem; color: #666;"><i class="fas fa-shopping-cart" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i><p>Votre panier est vide</p></div>';
+                cartTotal.textContent = '0 FCFA';
+                return;
+            }
+            
+            emptyCart.style.display = 'none';
+            
+            let html = '';
+            let total = 0;
+            
+            cart.forEach((item, index) => {
+                const itemTotal = item.price * item.quantity;
+                total += itemTotal;
+                
+                html += `
+                    <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem; border-bottom: 1px solid #e0e0e0;">
+                        <div>
+                            <div style="font-weight: 500; color: var(--text-color);">${item.name}</div>
+                            <div style="display: flex; align-items: center; gap: 1rem; margin-top: 0.5rem;">
+                                <button onclick="updateQuantity(${index}, ${item.quantity - 1})" style="background: none; border: 1px solid #ddd; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;">-</button>
+                                <span>${item.quantity}</span>
+                                <button onclick="updateQuantity(${index}, ${item.quantity + 1})" style="background: none; border: 1px solid #ddd; width: 25px; height: 25px; border-radius: 50%; cursor: pointer;">+</button>
+                                <span style="margin-left: 1rem; color: var(--secondary-color); font-weight: 600;">${(itemTotal).toLocaleString()} FCFA</span>
+                            </div>
+                        </div>
+                        <button onclick="removeFromCart(${index})" style="background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.2rem;">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                    </div>
+                `;
+            });
+            
+            cartContent.innerHTML = html;
+            cartTotal.textContent = total.toLocaleString() + ' FCFA';
+        }
+
+        function updateQuantity(index, newQuantity) {
+            if (newQuantity < 1) {
+                removeFromCart(index);
+                return;
+            }
+            
+            cart[index].quantity = newQuantity;
+            saveCart();
+            updateCartDisplay();
+        }
+
+        function removeFromCart(index) {
+            const removedItem = cart[index];
+            cart.splice(index, 1);
+            saveCart();
+            updateCartDisplay();
+            
+            showNotification(`"${removedItem.name}" retiré du panier`);
+        }
+
+        function openCartModal() {
+            updateCartDisplay();
+            openModal('cartModal');
+        }
+
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Votre panier est vide !');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+            
+            if (confirm(`Confirmer la commande de ${cart.length} article(s) pour un total de ${total.toLocaleString()} FCFA ?`)) {
+                alert('Commande validée ! Vous allez être redirigé vers la page de paiement.');
+                cart = [];
+                saveCart();
+                updateCartDisplay();
+                closeModal('cartModal');
+            }
+        }
+
+        function showNotification(message) {
+            // Créer une notification temporaire
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: var(--secondary-color);
+                color: white;
+                padding: 1rem 1.5rem;
+                border-radius: 8px;
+                box-shadow: var(--shadow);
+                z-index: 9999;
+                animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s;
+                animation-fill-mode: forwards;
+                max-width: 300px;
+            `;
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            // Supprimer après 3 secondes
+            setTimeout(() => {
+                if (notification.parentNode) {
+                    notification.parentNode.removeChild(notification);
+                }
+            }, 3000);
+        }
+
+        // Ajouter ces styles d'animation pour les notifications
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from {
+                    transform: translateX(100%);
+                    opacity: 0;
+                }
+                to {
+                    transform: translateX(0);
+                    opacity: 1;
+                }
+            }
+            
+            @keyframes fadeOut {
+                from {
+                    opacity: 1;
+                }
+                to {
+                    opacity: 0;
+                }
+            }
+        `;
+        document.head.appendChild(style);
+
+        // Ajouter au panier depuis la boutique
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (!this.disabled) {
+                    const productId = parseInt(this.getAttribute('onclick').match(/\d+/)[0]);
+                    addToCart(productId);
+                }
+            });
+        });
+
+        // Modifier la fonction addToCart pour accepter le productId en paramètre
+        window.addToCart = function(productId) {
+            // Même logique que précédemment, mais sans dépendre de event.currentTarget
+            // Vous devrez peut-être adapter cette fonction selon votre structure exacte
+        };
+
+        // Ajouter un indicateur de panier dans la navigation
+        function updateCartIndicator() {
+            // Cette fonction pourrait ajouter un badge au bouton boutique
+            const boutiqueTab = document.querySelector('[data-tab="boutique"]');
+            if (boutiqueTab && cart.length > 0) {
+                let badge = boutiqueTab.querySelector('.cart-badge');
+                if (!badge) {
+                    badge = document.createElement('span');
+                    badge.className = 'cart-badge';
+                    badge.style.cssText = `
+                        background: var(--secondary-color);
+                        color: white;
+                        border-radius: 50%;
+                        width: 20px;
+                        height: 20px;
+                        display: inline-flex;
+                        align-items: center;
+                        justify-content: center;
+                        font-size: 0.7rem;
+                        margin-left: 5px;
+                    `;
+                    boutiqueTab.appendChild(badge);
+                }
+                badge.textContent = cart.length;
+            } else if (boutiqueTab) {
+                const badge = boutiqueTab.querySelector('.cart-badge');
+                if (badge) badge.remove();
+            }
+        }
+
+        // Appeler updateCartIndicator à chaque mise à jour du panier
+        const originalUpdateCartDisplay = window.updateCartDisplay;
+        window.updateCartDisplay = function() {
+            originalUpdateCartDisplay();
+            updateCartIndicator();
+        };
+    </script>
+</body> 
+</html>
+{% endblock %}

@@ -1,0 +1,743 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Lucie Visit - Votre guide touristique en RDC{% endblock %}</title>
+    <!-- Police Google Fonts pour un look plus professionnel -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head> 
+
+<style>
+    /* Variables CSS pour une meilleure maintenabilité */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --transition: all 0.3s ease;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background-color: #f8f9fa;
+        overflow-x: hidden;
+    }
+
+    .container {
+        width: 100%;
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 20px;
+    }
+
+    /* Header amélioré */
+    .main-header {
+        background-color: var(--primary-color);
+        padding: 1rem 0;
+        box-shadow: var(--shadow);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+
+    .header-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .logo {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo h1 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: white;
+        margin: 0;
+    }
+
+    .logo span {
+        color: var(--accent-color);
+    }
+
+    .main-nav {
+        display: flex;
+        gap: 2rem;
+        align-items: center;
+    }
+
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        font-weight: 500;
+        font-size: 1rem;
+        transition: var(--transition);
+        position: relative;
+        padding: 0.5rem 0;
+    }
+
+    .nav-link:hover {
+        color: var(--accent-color);
+    }
+
+    .nav-link::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 0;
+        height: 2px;
+        background-color: var(--accent-color);
+        transition: var(--transition);
+    }
+
+    .nav-link:hover::after {
+        width: 100%;
+    }
+
+    .user-actions {
+        display: flex;
+        gap: 1.5rem;
+        align-items: center;
+    }
+
+    .icon-btn {
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 0.5rem;
+        border-radius: 50%;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .icon-btn:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+        transform: translateY(-2px);
+    }
+
+    .icon-btn img {
+        width: 24px;
+        height: 24px;
+        filter: brightness(0) invert(1);
+    }
+
+    /* Hero Section */
+    .hero-banner {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 4rem 2rem;
+        text-align: center;
+        border-radius: 0 0 30px 30px;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "img/pattern.png" %}') repeat;
+        opacity: 0.1;
+    }
+
+    .hero-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        font-weight: 300;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        position: relative;
+        z-index: 1;
+        line-height: 1.8;
+    }
+
+    /* Section des services */
+    .services-section {
+        padding: 4rem 0;
+    }
+
+    .section-title {
+        text-align: center;
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 3rem;
+        position: relative;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80px;
+        height: 4px;
+        background: linear-gradient(to right, var(--secondary-color), var(--accent-color));
+        border-radius: 2px;
+    }
+
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 4rem;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: 15px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: var(--transition);
+        height: 100%;
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+    }
+
+    .service-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+    }
+
+    .service-content {
+        padding: 1.5rem;
+    }
+
+    .service-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .service-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .service-btn {
+        display: inline-block;
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+    }
+
+    .service-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Section témoignages */
+    .testimonials-section {
+        background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+        padding: 4rem 0;
+        border-radius: 30px;
+        margin: 2rem 0;
+    }
+
+    .testimonial-slider {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .testimonial-card {
+        background: white;
+        padding: 2rem;
+        border-radius: 15px;
+        box-shadow: var(--shadow);
+        text-align: center;
+    }
+
+    .testimonial-text {
+        font-style: italic;
+        font-size: 1.1rem;
+        color: #555;
+        margin-bottom: 1.5rem;
+        line-height: 1.8;
+    }
+
+    .testimonial-author {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    /* Section statistiques */
+    .stats-section {
+        padding: 4rem 0;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        text-align: center;
+    }
+
+    .stat-item {
+        padding: 2rem;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    /* Footer amélioré */
+    .main-footer {
+        background-color: var(--primary-color);
+        color: white;
+        padding: 4rem 0 2rem;
+        margin-top: 4rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: rgba(255, 255, 255, 0.8);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--accent-color);
+        padding-left: 5px;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link:hover {
+        background: var(--accent-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link img {
+        width: 20px;
+        height: 20px;
+        filter: brightness(0) invert(1);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 992px) {
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .services-grid {
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .header-content {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .main-nav {
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+        
+        .hero-banner {
+            padding: 3rem 1rem;
+        }
+        
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .container {
+            padding: 0 15px;
+        }
+        
+        .service-card {
+            margin: 0 auto;
+            max-width: 100%;
+        }
+        
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Animation pour les éléments */
+    @keyframes fadeInUp {
+        from {
+            opacity: 0;
+            transform: translateY(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .fade-in {
+        animation: fadeInUp 0.6s ease-out forwards;
+    }
+
+    /* Effet de flottement pour les cartes */
+    .floating {
+        animation: floating 3s ease-in-out infinite;
+    }
+
+    @keyframes floating {
+        0%, 100% {
+            transform: translateY(0);
+        }
+        50% {
+            transform: translateY(-10px);
+        }
+    }
+</style>
+
+<body>
+    <!-- Header Principal -->
+    <header class="main-header">
+        <div class="container header-content">
+            <div class="logo">
+                <h1>Lucie<span>Visit</span></h1> 
+            </div>
+            
+            <nav class="main-nav">
+                <a href="#" class="nav-link active">Accueil</a> 
+                <a href="{% url 'Catevis' %}" class="nav-link">Établissements</a>
+                <a href="{% url 'visitep' %}" class="nav-link">Publications</a> 
+                <a href="#" class="nav-link">Contact</a> 
+            </nav>
+            
+            <div class="user-actions">
+                <a href="{% url 'auth_view' %}" class="icon-btn" aria-label="Accueil">
+                    <img src="{% static 'img/Home.png' %}" alt="Accueil"> 
+                </a>
+                <a href="{% url 'auth_user' %}" class="icon-btn" aria-label="Mon compte"> 
+                    <img src="{% static 'img/user.png' %}" alt="Mon compte"> 
+                </a>
+            </div>
+        </div> 
+    </header>
+
+    <!-- Hero Banner -->
+    <section class="hero-banner">
+        <div class="container">
+            <h1 class="hero-title fade-in">Explorez le Congo comme jamais auparavant</h1>
+            <p class="hero-subtitle fade-in">
+                Découvrez les meilleurs établissements de votre région avec Aryo-Tour. 
+                Restaurants, hôtels, parcs naturels et bien plus encore. Votre aventure commence ici.
+            </p>
+            <div class="verse fade-in">
+                <p><em>"Et dès ce jour, le nom de la ville sera: l'Eternel est ici." - Ezéchiel 48:35</em></p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Services Section -->
+    <section class="services-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Nos Catégories Populaires</h2>
+            
+            <div class="services-grid">
+                <!-- Restaurant -->
+                <div class="service-card fade-in floating" style="animation-delay: 0.1s">
+                    <img src="{% static 'img/kin_noche.jpg' %}" alt="Restaurant" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Restaurants</h3>
+                        <p class="service-description">
+                            Découvrez les saveurs authentiques du Congo dans nos restaurants sélectionnés. 
+                            Cuisine locale et internationale pour tous les goûts.
+                        </p>
+                        <a href="#" class="service-btn">Explorer</a>
+                    </div>
+                </div>
+
+                <!-- Hôtels -->
+                <div class="service-card fade-in floating" style="animation-delay: 0.2s">
+                    <img src="{% static 'img/ville.jpg' %}" alt="Hôtel" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Hôtels & Lodges</h3>
+                        <p class="service-description">
+                            Trouvez l'hébergement parfait pour votre séjour. Du confort urbain aux lodges nature, 
+                            nous avons ce qu'il vous faut.
+                        </p>
+                        <a href="#" class="service-btn">Découvrir</a>
+                    </div>
+                </div>
+
+                <!-- Parcs -->
+                <div class="service-card fade-in floating" style="animation-delay: 0.3s">
+                    <img src="{% static 'img/Parc.jpg' %}" alt="Parc" class="service-image">
+                    <div class="service-content">
+                        <h3 class="service-title">Parcs Naturels</h3>
+                        <p class="service-description">
+                            Explorez la biodiversité unique du Congo. Parcs nationaux, réserves naturelles 
+                            et jardins botaniques vous attendent.
+                        </p>
+                        <a href="#" class="service-btn">Visiter</a> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistiques -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item fade-in">
+                    <div class="stat-number">150+</div>
+                    <div class="stat-label">Établissements</div>
+                </div>
+                <div class="stat-item fade-in" style="animation-delay: 0.1s">
+                    <div class="stat-number">25+</div>
+                    <div class="stat-label">Catégories</div>
+                </div>
+                <div class="stat-item fade-in" style="animation-delay: 0.2s">
+                    <div class="stat-number">10K+</div>
+                    <div class="stat-label">Visiteurs</div>
+                </div>
+                <div class="stat-item fade-in" style="animation-delay: 0.3s">
+                    <div class="stat-number">4.8★</div>
+                    <div class="stat-label">Note moyenne</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Témoignages -->
+    <section class="testimonials-section">
+        <div class="container">
+            <h2 class="section-title fade-in">Ce que disent nos utilisateurs</h2>
+            
+            <div class="testimonial-slider fade-in">
+                <div class="testimonial-card">
+                    <p class="testimonial-text">
+                        "Grâce à Aryo-Tour, j'ai découvert des endroits magnifiques que je ne connaissais pas 
+                        dans ma propre ville. Une plateforme indispensable pour les explorateurs !"
+                    </p>
+                    <p class="testimonial-author">- Marie K.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="container">
+            <div class="footer-content">
+                <!-- À propos -->
+                <div class="footer-section">
+                    <h3>À propos de nous</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">Notre mission</a></li>
+                        <li><a href="#">Équipe</a></li>
+                        <li><a href="#">Carrières</a></li>
+                        <li><a href="#">Blog</a></li>
+                    </ul>
+                </div>
+
+                <!-- Liens rapides -->
+                <div class="footer-section">
+                    <h3>Liens rapides</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'Catevis' %}">Établissements</a></li>
+                        <li><a href="{% url 'visitep' %}">Publications</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+
+                <!-- Support -->
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Centre d'aide</a></li>
+                        <li><a href="#">Politique de confidentialité</a></li>
+                        <li><a href="#">Conditions d'utilisation</a></li>
+                    </ul>
+                </div>
+
+                <!-- Social -->
+                <div class="footer-section">
+                    <h3>Suivez-nous</h3> 
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook">
+                            <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                        </a>
+                        <a href="#" class="social-link" aria-label="WhatsApp">
+                            <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                        </a>
+                        <a href="#" class="social-link" aria-label="Twitter">
+                            <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                        </a>
+                        <a href="#" class="social-link" aria-label="Email">
+                            <img src="{% static 'img/mail.png' %}" alt="Email">
+                    </a>
+                    </div>
+                </div>
+            </div>
+
+            <div class="copyright">
+                <p>&copy; 2024 Aryo-Tour. Tous droits réservés. | "L'Eternel est ici" - Ezéchiel 48:35</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts --> 
+    <script>
+        // Animation au défilement
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('fade-in');
+                }
+            });
+        }, observerOptions);
+
+        // Observer tous les éléments avec la classe .animate-on-scroll
+        document.querySelectorAll('.service-card, .section-title, .stat-item').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Navigation active
+        const currentPage = window.location.pathname;
+        const navLinks = document.querySelectorAll('.nav-link');
+        
+        navLinks.forEach(link => {
+            if (link.getAttribute('href') === currentPage) {
+                link.classList.add('active');
+            }
+            
+            link.addEventListener('click', function(e) {
+                if (this.getAttribute('href') === '#') {
+                    e.preventDefault();
+                }
+                navLinks.forEach(l => l.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // Effet de flottement au survol
+        const serviceCards = document.querySelectorAll('.service-card');
+        serviceCards.forEach(card => {
+            card.addEventListener('mouseenter', () => {
+                card.classList.add('floating');
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                card.classList.remove('floating');
+            });
+        });
+    </script> 
+    
+</body>
+</html>
+{% endblock %}
+

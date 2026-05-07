@@ -1,0 +1,937 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Connexion Utilisateur - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head> 
+
+<style>
+    /* Variables CSS - Correspondant au design de la page utilisateur */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(119, 85, 85, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease; 
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    /* Conteneur principal */
+    .auth-container {
+        display: flex;
+        width: 100%;
+        max-width: 1100px;
+        min-height: 650px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+        position: relative;
+    }
+
+    /* Section côté gauche (illustration utilisateur) */
+    .auth-side {
+        flex: 1;
+        background: linear-gradient(135deg, rgba(61, 132, 167, 0.95), rgba(70, 205, 207, 0.95));
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-side::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "img/user_blue.png" %}') center/contain no-repeat;
+        opacity: 0.1;
+    }
+
+    .auth-logo {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .auth-logo img {
+        width: 140px;
+        height: 140px;
+        margin-bottom: 1.5rem;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.3);
+        background: white;
+        padding: 10px;
+    }
+
+    .auth-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .auth-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 400px;
+        line-height: 1.6;
+    }
+
+    .user-benefits {
+        position: relative;
+        z-index: 2;
+        margin-top: 3rem;
+        width: 100%;
+    }
+
+    .benefit-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        padding: 1rem;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+        backdrop-filter: blur(10px);
+        transition: var(--transition);
+    }
+
+    .benefit-item:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateX(10px);
+    }
+
+    .benefit-icon {
+        font-size: 1.8rem;
+        background: rgba(255, 255, 255, 0.2);
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+    }
+
+    .benefit-text {
+        flex: 1;
+    }
+
+    .benefit-title {
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+    }
+
+    .benefit-desc {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        line-height: 1.5;
+    }
+
+    /* Section formulaire */
+    .auth-form-section {
+        flex: 1;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        background: var(--light-color);
+    }
+
+    /* Onglets de navigation */
+    .auth-tabs {
+        display: flex;
+        background: white;
+        border-radius: 15px;
+        padding: 0.5rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-light);
+        overflow: hidden;
+    }
+
+    .auth-tab {
+        flex: 1;
+        background: none;
+        border: none;
+        padding: 1rem 1.5rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: var(--transition);
+        border-radius: 10px;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-tab.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        box-shadow: var(--shadow-light);
+    }
+
+    .auth-tab::before {
+        content: '';
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        width: 0;
+        height: 0;
+        background: rgba(255, 255, 255, 0.2);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+        transition: width 0.6s, height 0.6s;
+    }
+
+    .auth-tab:hover::before {
+        width: 300px;
+        height: 300px;
+    }
+
+    /* Formulaires */
+    .auth-form {
+        display: none;
+        animation: slideIn 0.5s ease;
+        background: white;
+        padding: 2rem;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-light);
+    }
+
+    .auth-form.active {
+        display: block;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: #666;
+        font-size: 0.95rem;
+        max-width: 400px;
+        margin: 0 auto;
+        line-height: 1.5;
+    }
+
+    /* Messages d'alerte */
+    .alert-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 500;
+        animation: slideDown 0.3s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        color: white;
+        border-left: 4px solid #e74c3c;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #1dd1a1, #10ac84);
+        color: white;
+        border-left: 4px solid #27ae60;
+    }
+
+    /* Groupes de formulaire */
+    .form-group {
+        margin-bottom: 1.5rem;
+        position: relative;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        transition: var(--transition);
+        background: white;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+        transform: translateY(-1px);
+    }
+
+    .form-icon {
+        position: absolute;
+        right: 1rem;
+        top: 2.5rem;
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+    }
+
+    /* Upload d'image */
+    .image-upload-container {
+        margin-bottom: 1.5rem;
+        text-align: center;
+    }
+
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin: 0 auto 1.5rem;
+        display: block;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .image-preview:hover {
+        transform: scale(1.05);
+    }
+
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .file-upload-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.9rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        border: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .file-upload-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .file-upload input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Boutons d'action */
+    .form-actions {
+        margin-top: 2.5rem;
+        text-align: center;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 1rem 2.5rem;
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+        max-width: 300px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        box-shadow: 0 4px 15px rgba(61, 132, 167, 0.3);
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 20px rgba(61, 132, 167, 0.4);
+    }
+
+    .submit-btn:active {
+        transform: translateY(-1px);
+    }
+
+    /* Lien de bascule */
+    .auth-switch {
+        text-align: center;
+        margin-top: 1.5rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+    }
+
+    .auth-link {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: none;
+        transition: var(--transition);
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        padding: 0.5rem;
+        border-radius: 5px;
+    }
+
+    .auth-link:hover {
+        color: var(--secondary-color);
+        background: rgba(70, 205, 207, 0.1);
+    }
+
+    /* Footer de l'authentification */
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .auth-footer a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .auth-footer a:hover {
+        color: var(--secondary-color);
+        text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes slideIn {
+        from {
+            opacity: 0;
+            transform: translateX(30px);
+        }
+        to {
+            opacity: 1;
+            transform: translateX(0);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .auth-container {
+            flex-direction: column;
+            max-width: 600px;
+            min-height: auto;
+        }
+
+        .auth-side {
+            padding: 2rem;
+            min-height: 300px;
+        }
+
+        .auth-form-section {
+            padding: 2rem;
+        }
+
+        .auth-logo img {
+            width: 100px;
+            height: 100px;
+        }
+
+        .auth-title {
+            font-size: 1.8rem;
+        }
+
+        .benefit-item {
+            padding: 0.8rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        body {
+            padding: 0.5rem;
+        }
+
+        .auth-tabs {
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .auth-tab {
+            width: 100%;
+        }
+
+        .auth-form {
+            padding: 1.5rem;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+        }
+
+        .submit-btn {
+            max-width: 100%;
+        }
+
+        .benefit-icon {
+            width: 50px;
+            height: 50px;
+            font-size: 1.5rem;
+        }
+    }
+
+    @media (max-width: 400px) {
+        .auth-side,
+        .auth-form-section {
+            padding: 1.5rem;
+        }
+
+        .auth-title {
+            font-size: 1.5rem;
+        }
+
+        .form-title {
+            font-size: 1.5rem;
+        }
+    }
+</style>
+
+<body>
+    <div class="auth-container">
+        <!-- Section côté gauche (illustration) -->
+        <div class="auth-side">
+            <div class="auth-logo">
+                <img src="{% static 'img/user_blue.png' %}" alt="Utilisateur Aryo-Tour">
+                <h1 class="auth-title">Mon Espace Aryo-Tour</h1>
+                <p class="auth-subtitle">Découvrez, réservez et partagez vos expériences touristiques préférées</p>
+            </div>
+
+            <div class="user-benefits">
+                <div class="benefit-item">
+                    <div class="benefit-icon">🔍</div>
+                    <div class="benefit-text">
+                        <h4 class="benefit-title">Découvrez localement</h4>
+                        <p class="benefit-desc">Explorez les meilleurs établissements de votre région</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">❤️</div>
+                    <div class="benefit-text">
+                        <h4 class="benefit-title">Gérez vos favoris</h4>
+                        <p class="benefit-desc">Sauvegardez vos lieux préférés pour y retourner facilement</p>
+                    </div>
+                </div>
+
+                <div class="benefit-item">
+                    <div class="benefit-icon">💬</div>
+                    <div class="benefit-text">
+                        <h4 class="benefit-title">Partagez vos avis</h4>
+                        <p class="benefit-desc">Commentez et notez vos expériences pour aider la communauté</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section formulaire -->
+        <div class="auth-form-section">
+            <!-- Onglets -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showForm('login')">Connexion</button>
+                <button class="auth-tab" onclick="showForm('register')">Inscription</button>
+            </div>
+
+            <!-- Messages d'alerte -->
+            <div class="alert-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">
+                            <span>⚠️</span> {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Formulaire de Connexion -->
+            <form id="login-form" class="auth-form active" action="{% url 'auth_user' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-header">
+                    <h2 class="form-title">Bienvenue de retour !</h2>
+                    <p class="form-subtitle">Connectez-vous à votre espace personnel pour retrouver vos favoris</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                    {{ login_form.username }}
+                    <span class="form-icon">👤</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd" class="form-label">Mot de passe</label>
+                    {{ login_form.pwd }}
+                    <span class="form-icon">🔒</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn" name="login_Us">
+                        <span>🔑</span> Se connecter
+                    </button>
+                </div>
+
+                <div class="auth-switch">
+                    <p>Pas encore de compte ? 
+                        <button type="button" class="auth-link" onclick="showForm('register')">Créer un compte</button>
+                    </p>
+                </div>
+            </form>
+
+            <!-- Formulaire d'Inscription -->
+            <form id="register-form" class="auth-form" action="{% url 'auth_user' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-header">
+                    <h2 class="form-title">Rejoignez-nous !</h2>
+                    <p class="form-subtitle">Créez votre compte en quelques clics pour commencer votre aventure</p>
+                </div>
+
+                <div class="image-upload-container">
+                    <img id="image-preview" class="image-preview" src="" alt="Aperçu photo" style="display: none;">
+                    <div class="file-upload">
+                        <button type="button" class="file-upload-btn">
+                            <span>📷</span> Choisir une photo de profil
+                        </button>
+                        {{ reg_form.image }}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                    {{ reg_form.username }}
+                    <span class="form-icon">👤</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email" class="form-label">Adresse email</label>
+                    {{ reg_form.email }}
+                    <span class="form-icon">✉️</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_city" class="form-label">Ville</label>
+                    {{ reg_form.city }}
+                    <span class="form-icon">📍</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd" class="form-label">Mot de passe</label>
+                    {{ reg_form.pwd }}
+                    <span class="form-icon">🔒</span>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd_conf" class="form-label">Confirmer le mot de passe</label>
+                    {{ reg_form.pwd_conf }}
+                    <span class="form-icon">✓</span>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn" name="register_Us">
+                        <span>✍️</span> Créer mon compte
+                    </button>
+                </div>
+
+                <div class="auth-switch">
+                    <p>Déjà inscrit ? 
+                        <button type="button" class="auth-link" onclick="showForm('login')">Se connecter</button>
+                    </p>
+                </div>
+            </form>
+
+            <div class="auth-footer">
+                <p>En créant un compte, vous acceptez nos 
+                    <a href="#">Conditions d'utilisation</a> et notre 
+                    <a href="#">Politique de confidentialité</a>.
+                </p>
+                <p>© 2024 Aryo-Tour. Votre aventure commence ici.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des onglets
+        function showForm(formType) {
+            // Mettre à jour les onglets actifs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Trouver et activer l'onglet correspondant
+            const tabs = document.querySelectorAll('.auth-tab');
+            tabs.forEach(tab => {
+                if (tab.textContent.includes(formType === 'login' ? 'Connexion' : 'Inscription')) {
+                    tab.classList.add('active');
+                }
+            });
+
+            // Afficher le formulaire correspondant
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.getElementById(`${formType}-form`).classList.add('active');
+            
+            // Animation pour les formulaires
+            const form = document.getElementById(`${formType}-form`);
+            form.style.animation = 'none';
+            setTimeout(() => {
+                form.style.animation = 'slideIn 0.5s ease';
+            }, 10);
+        }
+
+        // Prévisualisation de l'image
+        function setupImagePreview() {
+            const imageInput = document.querySelector('#register-form input[type="file"]');
+            const imagePreview = document.getElementById('image-preview');
+            
+            if (imageInput) {
+                imageInput.addEventListener('change', function() {
+                    const file = this.files[0];
+                    if (file) {
+                        // Vérifier le type de fichier
+                        const validTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+                        if (!validTypes.includes(file.type)) {
+                            alert('Veuillez sélectionner une image (JPEG, PNG, GIF ou WebP)');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        // Vérifier la taille du fichier (max 5MB)
+                        if (file.size > 5 * 1024 * 1024) {
+                            alert('L\'image est trop volumineuse (max 5MB)');
+                            this.value = '';
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            imagePreview.src = event.target.result;
+                            imagePreview.style.display = 'block';
+                            imagePreview.style.animation = 'fadeIn 0.5s ease';
+                        }
+                        reader.readAsDataURL(file);
+                    }
+                });
+            }
+        }
+
+        // Style des champs de formulaire Django
+        function styleDjangoFormFields() {
+            // Ajouter des classes aux champs de formulaire Django
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                if (!element.classList.contains('form-control') && 
+                    element.type !== 'checkbox' && 
+                    element.type !== 'radio') {
+                    element.classList.add('form-control');
+                }
+            });
+
+            // Ajouter des placeholders si manquants
+            const fields = {
+                'id_username': 'Votre nom d\'utilisateur',
+                'id_pwd': 'Votre mot de passe',
+                'id_email': 'votre@email.com',
+                'id_city': 'Votre ville',
+                'id_pwd_conf': 'Confirmez votre mot de passe'
+            };
+
+            Object.keys(fields).forEach(id => {
+                const field = document.getElementById(id);
+                if (field && !field.getAttribute('placeholder')) {
+                    field.setAttribute('placeholder', fields[id]);
+                }
+            });
+        }
+
+        // Validation des mots de passe
+        function setupPasswordValidation() {
+            const passwordField = document.querySelector('#register-form input[name="pwd"]');
+            const confirmField = document.querySelector('#register-form input[name="pwd_conf"]');
+            
+            if (passwordField && confirmField) {
+                confirmField.addEventListener('input', function() {
+                    if (passwordField.value !== confirmField.value) {
+                        confirmField.style.borderColor = '#ff6b6b';
+                        confirmField.style.boxShadow = '0 0 0 3px rgba(255, 107, 107, 0.2)';
+                    } else {
+                        confirmField.style.borderColor = '#1dd1a1';
+                        confirmField.style.boxShadow = '0 0 0 3px rgba(29, 209, 161, 0.2)';
+                    }
+                });
+            }
+        }
+
+        // Gestion des messages d'alerte
+        function setupAlerts() {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    alert.style.transition = 'all 0.3s ease';
+                    setTimeout(() => {
+                        if (alert.parentNode) {
+                            alert.remove();
+                        }
+                    }, 300);
+                }, 5000);
+            });
+        }
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            styleDjangoFormFields();
+            setupImagePreview();
+            setupPasswordValidation();
+            setupAlerts();
+            
+            // Animation d'entrée
+            document.querySelector('.auth-container').style.animation = 'slideIn 0.8s ease';
+            
+            // Gestion des erreurs de formulaire
+            const forms = document.querySelectorAll('form');
+            forms.forEach(form => {
+                form.addEventListener('submit', function(e) {
+                    const requiredFields = this.querySelectorAll('[required]');
+                    let hasError = false;
+                    
+                    requiredFields.forEach(field => {
+                        if (!field.value.trim()) {
+                            field.style.borderColor = '#ff6b6b';
+                            field.style.boxShadow = '0 0 0 3px rgba(255, 107, 107, 0.2)';
+                            hasError = true;
+                            
+                            // Animation de secousse
+                            field.style.animation = 'none';
+                            setTimeout(() => {
+                                field.style.animation = 'shake 0.5s ease';
+                            }, 10);
+                        }
+                    });
+                    
+                    if (hasError) {
+                        e.preventDefault();
+                        alert('Veuillez remplir tous les champs obligatoires');
+                    }
+                });
+            });
+        });
+
+        // Animation de secousse
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes shake {
+                0%, 100% { transform: translateX(0); }
+                10%, 30%, 50%, 70%, 90% { transform: translateX(-5px); }
+                20%, 40%, 60%, 80% { transform: translateX(5px); }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
+{% endblock %}
+

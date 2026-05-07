@@ -1,0 +1,1500 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Établissement - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar - Profil */
+    .sidebar {
+        width: 300px;
+        background: white;
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .profile-section {
+        text-align: center;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        margin-bottom: 2rem;
+    }
+
+    .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+    }
+
+    .establishment-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .establishment-location {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .establishment-description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .sidebar-links {
+        list-style: none;
+        margin-top: 2rem;
+    }
+
+    .sidebar-links li {
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-links a {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: var(--transition);
+        cursor: pointer;
+    }
+
+    .sidebar-links a:hover,
+    .sidebar-links a.active {
+        background-color: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .sidebar-links img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    /* Header */
+    .content-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .publish-btn,
+    .logout-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .publish-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .logout-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .publish-btn:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Hero Banner */
+    .establishment-hero {
+        background: linear-gradient(rgba(61, 132, 167, 0.9), rgba(70, 205, 207, 0.9)),
+                    url('{% static "img/plage.JPG" %}');
+        background-size: cover;
+        background-position: center;
+        border-radius: var(--border-radius);
+        padding: 4rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+        box-shadow: var(--shadow);
+    }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Services Grid */
+    .services-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .service-card {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .service-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 5px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .service-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .service-icon {
+        font-size: 2.5rem;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+
+    .service-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .service-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+    }
+
+    .service-actions {
+        display: flex;
+        gap: 1rem;
+        justify-content: space-between;
+    }
+
+    .view-btn,
+    .add-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        flex: 1;
+    }
+
+    .view-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .add-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+    }
+
+    .view-btn:hover,
+    .add-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(61, 132, 167, 0.3);
+    }
+
+    /* Styles pour le panneau latéral */
+.content-panel {
+    position: fixed;
+    top: 0;
+    right: -500px;
+    width: 450px;
+    height: 100vh;
+    background: white;
+    box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+    transition: right 0.3s ease-in-out;
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+}
+
+.content-panel.active {
+    right: 0;
+}
+
+.panel-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px;
+    background: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.panel-title {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #333;
+}
+
+.close-panel {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+    color: #666;
+    line-height: 1;
+    padding: 0;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-panel:hover {
+    color: #333;
+}
+
+.panel-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+/* Masquer les modes par défaut */
+.view-mode, .add-mode, .profile-mode, .stats-mode, .reviews-mode {
+    display: none;
+}
+
+.view-mode.active, .add-mode.active, .profile-mode.active, .stats-mode.active, .reviews-mode.active {
+    display: block;
+}
+
+/* Styles pour la liste d'éléments */
+.item-list {
+    margin-bottom: 20px;
+}
+
+.list-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    background: white;
+    transition: transform 0.2s;
+}
+
+.list-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+.item-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.edit-item-btn, .delete-item-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1.2rem;
+    padding: 5px;
+    border-radius: 4px;
+}
+
+.edit-item-btn:hover {
+    background: #e3f2fd;
+}
+
+.delete-item-btn:hover {
+    background: #ffebee;
+}
+
+/* Styles pour le formulaire de profil */
+.profile-form {
+    padding: 20px 0;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 500;
+    color: #333;
+}
+
+.form-control {
+    width: 100%;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+}
+
+/* Styles pour les statistiques */
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+    margin: 20px 0;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    border: 1px solid #e9ecef;
+}
+
+.stat-number {
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    font-size: 0.9rem;
+    color: #666;
+}
+
+/* Styles pour les avis */
+.review-item {
+    background: white;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 15px;
+    border: 1px solid #e9ecef;
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.review-client {
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.review-subject {
+    font-size: 1.1rem;
+    font-weight: 500;
+    color: var(--primary-color);
+    margin-bottom: 10px;
+}
+
+.review-message {
+    color: #666;
+    line-height: 1.5;
+    font-size: 0.95rem;
+}
+
+/* Overlay pour le fond */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+    animation: fadeIn 0.3s;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .content-panel {
+        width: 100%;
+        right: -100%;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+}
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+        }
+        
+        .profile-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 1rem;
+        }
+        
+        .content-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-bar {
+            max-width: 100%;
+        }
+        
+        .header-actions {
+            justify-content: center;
+        }
+        
+        .services-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .service-actions {
+            flex-direction: column;
+        }
+        
+        .modal-actions {
+            flex-direction: column;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Footer */
+    .main-footer {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-color);
+        font-size: 0.9rem;
+        border-top: 2px solid var(--accent-color);
+        margin-top: 3rem;
+    }
+
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .footer-links a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+    }
+</style>
+
+
+
+<body>
+    <div class="main-container">
+        <!-- Sidebar - Profil de l'établissement -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="profile-img">
+                <h2 class="establishment-name">BNK Boutique</h2>
+                <div class="establishment-location">
+                    <span>📍</span>
+                    <span>Lukula 10 Q/ Lubudi C/ Bandalungwa</span>
+                </div>
+                <p class="establishment-description">
+                    Vente de robe béninoise de qualité à prix de gros pour lancer votre propre entreprise. 
+                    Commandez de partout et bénéficiez de produits authentiques.
+                </p>
+                <button class="edit-btn" id="editProfileBtn">
+                    <span>✏️</span> Modifier le profil
+                </button>
+            </div>
+
+            <nav>
+                <ul class="sidebar-links">
+                    <li><a href="{% url 'auth_view' %}" class="active">
+                        <img src="{% static 'img/home_bre.png' %}" alt=""> Accueil
+                    </a></li>
+                    <li><a class="nav-link" data-type="profile"> 
+                        <img src="{% static 'img/user_bres.png' %}" alt=""> Mon Profil
+                    </a></li>
+                    <li><a class="nav-link" data-type="stats">
+                        📊 Statistiques
+                    </a></li>
+                    <li><a href="#">
+                        📋 Réservations
+                    </a></li>
+                    <li><a class="nav-link" data-type="reviews">
+                        ⭐ Avis clients
+                    </a></li>
+                    <li><a href="#">
+                        ⚙️ Paramètres
+                    </a></li>
+                </ul>
+            </nav>
+
+            <div class="main-footer">
+                <div class="footer-links">
+                    <a href="#">À propos</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Confidentialité</a>
+                    <a href="#">Conditions</a>
+                </div>
+                <p>© 2024 BNK Boutique. Tous droits réservés.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header avec recherche et actions -->
+            <header class="content-header">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Rechercher un service, une activité...">
+                    <button class="search-btn">🔍 Rechercher</button>
+                </div>
+                
+                <div class="header-actions">
+                    <a href="{% url 'PublicEt' %}"> 
+                        <button class="publish-btn" href=""> 
+                            <span>📤</span> Publier
+                        </button>
+                    </a> 
+                    <a href="{% url 'accueil' %}">
+                        <button class="logout-btn" href="">  
+                            <span>🚪</span> Déconnexion
+                        </button>
+                    </a>
+                    
+                </div>
+            </header>
+
+            <!-- Hero Banner -->
+            <section class="establishment-hero">
+                <h1 class="hero-title">Tableau de Bord Établissement</h1>
+                <p class="hero-subtitle">Gérez vos services, activités et menus en toute simplicité</p>
+            </section>
+
+            <!-- Services Grid -->
+            <div class="services-grid">
+                <!-- Services Card -->
+                <div class="service-card">
+                    <div class="service-icon">🛠️</div>
+                    <h3 class="service-title">Mes Services</h3>
+                    <p class="service-description">
+                        Gérez tous vos services proposés aux clients. Ajoutez, modifiez ou supprimez des services facilement.
+                    </p>
+                    <div class="service-actions">
+                        <button class="view-btn" data-type="services" >Voir les services</button>
+                        <button class="add-btn" data-type="services">Ajouter un service</button>
+                    </div>
+                </div>
+
+                <!-- Activités Card -->
+                <div class="service-card">
+                    <div class="service-icon">🎯</div>
+                    <h3 class="service-title">Mes Activités</h3>
+                    <p class="service-description">
+                        Organisez et planifiez vos différentes activités. Gardez vos clients informés de votre programmation.
+                    </p>
+                    <div class="service-actions">
+                        <button class="view-btn" data-type="activities">Voir les activités</button>
+                        <button class="add-btn" data-type="activities">Ajouter une activité</button>
+                    </div>
+                </div>
+
+                <!-- Menu Buffet Card -->
+                <div class="service-card">
+                    <div class="service-icon">🍽️</div>
+                    <h3 class="service-title"> Menu Buffet et Boissons </h3> 
+                    <p class="service-description">
+                        Présentez votre sélection de plats. Mettez en avant vos spécialités et menus du jour.
+                    </p>
+                    <div class="service-actions">
+                        <button class="view-btn" data-type="buffet">Voir le menu</button>
+                        <button class="add-btn" data-type="buffet">Ajouter un plat</button>
+                    </div>
+                </div>
+
+                <!-- Menu Boissons Card -->
+                <div class="service-card">
+                    <div class="service-icon">🍹</div>
+                    <h3 class="service-title">Menu Boissons</h3>
+                    <p class="service-description">
+                        Gérez votre carte des boissons. Vins, cocktails, soft drinks... Tout en un seul endroit.
+                    </p>
+                    <div class="service-actions">
+                        <button class="view-btn" data-type="drinks">Voir la carte</button>
+                        <button class="add-btn" data-type="drinks">Ajouter une boisson</button>
+                    </div>
+                </div>
+
+                <!-- Boutique Card -->
+                <div class="service-card">
+                    <div class="service-icon" style="font-size: 3rem;">🛒</div> 
+                    <h3 class="service-title">Boutique</h3> 
+                    <p class="service-description">
+                        Gérez votre inventaire de produits. Articles, accessoires, marchandises... Tout en un seul endroit.
+                    </p>
+                    <div class="service-actions">
+                        <button class="view-btn" data-type="boutique">Voir les produits</button>
+                        <button class="add-btn" data-type="boutique">Ajouter un produit</button>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Section des panneaux d'affichage (remplace tous les modals) -->
+    <div id="contentPanel" class="content-panel">
+        <div class="panel-header">
+            <h3 class="panel-title" id="panelTitle">Titre du panneau</h3>
+            <button class="close-panel" id="closePanelBtn">×</button>
+        </div>
+        
+        <div class="panel-content">
+            <!-- Contenu pour "Voir" -->
+            <div class="view-mode" id="viewMode">
+                <div class="item-list" id="dynamicList">
+                    <!-- Les éléments seront injectés ici -->
+                </div>
+                <div class="panel-actions">
+                    <button class="cancel-btn" id="closeViewBtn">Fermer</button>
+                </div>
+            </div>
+            
+            <!-- Contenu pour "Ajouter" -->
+            <div class="add-mode" id="addMode">
+                <form id="dynamicForm">
+                    <!-- Le formulaire sera injecté ici -->
+                </form>
+            </div>
+            
+            <!-- Contenu pour "Profil" -->
+            <div class="profile-mode" id="profileMode">
+                <form id="profileForm" class="profile-form">
+                    <div class="form-group">
+                        <label class="form-label" for="name">Nom de l'établissement</label>
+                        <input type="text" class="form-control" id="name" value="BNK Boutique" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="email">Email</label>
+                        <input type="email" class="form-control" id="email" value="contact@bnk-boutique.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="phone">Téléphone</label>
+                        <input type="tel" class="form-control" id="phone" value="+243 81 234 5678" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="address">Adresse</label>
+                        <input type="text" class="form-control" id="address" value="Lukula 10 Q/ Lubudi C/ Bandalungwa" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="description">Description</label>
+                        <textarea class="form-control" id="description" rows="4" required>Vente de robe béninoise de qualité à prix de gros pour lancer votre propre entreprise. Commandez de partout et bénéficiez de produits authentiques.</textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label" for="category">Catégorie</label>
+                        <select class="form-control" id="category" required>
+                            <option value="boutique" selected>Boutique</option>
+                            <option value="restaurant">Restaurant</option>
+                            <option value="hotel">Hôtel</option>
+                            <option value="service">Service</option>
+                        </select>
+                    </div>
+                    
+                    <div class="modal-actions">
+                        <button type="submit" class="submit-btn">Enregistrer les modifications</button>
+                        <button type="button" class="cancel-btn">Annuler</button>
+                    </div>
+                </form>
+            </div>
+            
+            <!-- Contenu pour "Statistiques" -->
+            <div class="stats-mode" id="statsMode">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="servicesCount">12</div>
+                        <div class="stat-label">Services</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="publicationsCount">8</div>
+                        <div class="stat-label">Publications</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="dishesCount">25</div>
+                        <div class="stat-label">Plats</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="drinksCount">18</div>
+                        <div class="stat-label">Boissons</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="productsCount">156</div>
+                        <div class="stat-label">Produits boutique</div>
+                    </div>
+                    
+                    <div class="stat-card">
+                        <div class="stat-number" id="clientsCount">248</div>
+                        <div class="stat-label">Clients</div>
+                    </div>
+                </div>
+                
+                <div class="panel-actions" style="margin-top: 20px;">
+                    <button class="cancel-btn">Fermer</button>
+                </div>
+            </div>
+            
+            <!-- Contenu pour "Avis clients" -->
+            <div class="reviews-mode" id="reviewsMode">
+                <div class="item-list" id="reviewsList">
+                    <!-- Les avis seront injectés ici -->
+                </div>
+                <div class="panel-actions">
+                    <button class="cancel-btn">Fermer</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Données de test
+    const sampleData = {
+        services: [
+            { id: 1, name: "Coiffure Afro", price: "5000 FCFA", duration: "1h" },
+            { id: 2, name: "Tissage de cheveux", price: "15000 FCFA", duration: "3h" }
+        ],
+        activities: [
+            { id: 1, name: "Soirée dansante", date: "15 Déc 2024, 20:00", price: "10000 FCFA" }
+        ],
+        buffet: [
+            { id: 1, name: "Poulet DG", price: "8000 FCFA", category: "Plat principal" }
+        ],
+        drinks: [
+            { id: 1, name: "Cocktail Tropical", price: "4000 FCFA", category: "Cocktail" }
+        ],
+        boutique: [
+            { id: 1, name: "Robe béninoise", price: "15000 FCFA", stock: "50 pièces" }
+        ]
+    };
+
+    // Données de test pour les avis clients
+    const sampleReviews = [
+        {
+            id: 1,
+            clientId: "CLT-001",
+            subject: "Excellent service",
+            message: "J'ai adoré les robes béninoises, la qualité est exceptionnelle et le service était impeccable. Je recommande vivement !",
+            date: "2024-01-15"
+        },
+        {
+            id: 2,
+            clientId: "CLT-002",
+            subject: "Livraison rapide",
+            message: "Commande reçue en 2 jours seulement ! Les produits correspondent parfaitement aux photos. Je reviendrai.",
+            date: "2024-01-10"
+        },
+        {
+            id: 3,
+            clientId: "CLT-003",
+            subject: "Produits de qualité",
+            message: "Les tissus sont magnifiques et les finitions soignées. Parfait pour mon entreprise de vente.",
+            date: "2024-01-05"
+        },
+        {
+            id: 4,
+            clientId: "CLT-004",
+            subject: "Service client réactif",
+            message: "J'avais une question sur la taille, le service client m'a répondu en moins d'une heure. Très satisfaite.",
+            date: "2024-01-03"
+        }
+    ];
+
+    // Éléments du DOM
+    const contentPanel = document.getElementById('contentPanel');
+    const panelTitle = document.getElementById('panelTitle');
+    const viewMode = document.getElementById('viewMode');
+    const addMode = document.getElementById('addMode');
+    const profileMode = document.getElementById('profileMode');
+    const statsMode = document.getElementById('statsMode');
+    const reviewsMode = document.getElementById('reviewsMode');
+    const dynamicList = document.getElementById('dynamicList');
+    const dynamicForm = document.getElementById('dynamicForm');
+    const reviewsList = document.getElementById('reviewsList');
+    const profileForm = document.getElementById('profileForm');
+    
+    // Créer l'overlay
+    const overlay = document.createElement('div');
+    overlay.className = 'overlay';
+    document.body.appendChild(overlay);
+
+    // Configuration des formulaires par type
+    const formConfigs = {
+        services: {
+            title: "Ajouter un Service",
+            fields: [
+                { type: "text", name: "name", label: "Nom du service", placeholder: "Ex: Coiffure Afro", required: true },
+                { type: "number", name: "price", label: "Prix (FCFA)", placeholder: "Ex: 5000", required: true },
+                { type: "text", name: "duration", label: "Durée", placeholder: "Ex: 1h", required: true }
+            ]
+        },
+        activities: {
+            title: "Ajouter une Activité",
+            fields: [
+                { type: "text", name: "name", label: "Nom de l'activité", placeholder: "Ex: Soirée dansante", required: true },
+                { type: "datetime-local", name: "date", label: "Date et heure", required: true },
+                { type: "number", name: "price", label: "Prix (FCFA)", placeholder: "Ex: 10000", required: true }
+            ]
+        },
+        buffet: {
+            title: "Ajouter un Plat",
+            fields: [
+                { type: "text", name: "name", label: "Nom du plat", placeholder: "Ex: Poulet DG", required: true },
+                { type: "textarea", name: "description", label: "Description", placeholder: "Décrivez le plat...", required: true },
+                { type: "number", name: "price", label: "Prix (FCFA)", placeholder: "Ex: 8000", required: true },
+                { 
+                    type: "select", 
+                    name: "category", 
+                    label: "Catégorie", 
+                    options: ["Plat principal", "Accompagnement", "Dessert", "Entrée"] 
+                }
+            ]
+        },
+        drinks: {
+            title: "Ajouter une Boisson",
+            fields: [
+                { type: "text", name: "name", label: "Nom de la boisson", placeholder: "Ex: Cocktail Tropical", required: true },
+                { 
+                    type: "select", 
+                    name: "category", 
+                    label: "Catégorie", 
+                    options: ["Cocktail", "Vin", "Bière", "Jus local", "Soft drink"] 
+                },
+                { type: "number", name: "price", label: "Prix (FCFA)", placeholder: "Ex: 4000", required: true }
+            ]
+        },
+        boutique: {
+            title: "Ajouter un Produit",
+            fields: [
+                { type: "text", name: "name", label: "Nom du produit", placeholder: "Ex: Robe béninoise", required: true },
+                { type: "textarea", name: "description", label: "Description", placeholder: "Décrivez le produit...", required: true },
+                { type: "number", name: "price", label: "Prix (FCFA)", placeholder: "Ex: 15000", required: true },
+                { type: "number", name: "stock", label: "Quantité en stock", placeholder: "Ex: 50", required: true }
+            ]
+        }
+    };
+
+    // Titres pour chaque mode
+    const panelTitles = {
+        view: {
+            services: "📋 Mes Services",
+            activities: "🎯 Mes Activités",
+            buffet: "🍽️ Menu Buffet",
+            drinks: "🍹 Menu Boissons",
+            boutique: "🛒 Boutique"
+        },
+        add: {
+            services: "➕ Ajouter un Service",
+            activities: "➕ Ajouter une Activité",
+            buffet: "➕ Ajouter un Plat",
+            drinks: "➕ Ajouter une Boisson",
+            boutique: "➕ Ajouter un Produit"
+        },
+        profile: "👤 Mon Profil",
+        stats: "📊 Statistiques",
+        reviews: "⭐ Avis Clients"
+    };
+
+    // Ouvrir le panneau
+    function openPanel(type, action) {
+        console.log("Ouverture panneau:", type, action);
+        
+        // Cacher tous les modes
+        hideAllModes();
+        
+        // Déterminer le titre
+        let title;
+        if (action === 'view') {
+            title = panelTitles.view[type];
+            panelTitle.textContent = title;
+            showViewMode(type);
+        } else if (action === 'add') {
+            const config = formConfigs[type];
+            if (config) {
+                title = panelTitles.add[type];
+                panelTitle.textContent = title;
+                showAddMode(type);
+            } else {
+                console.error("Configuration non trouvée pour:", type);
+                alert("Erreur: type non reconnu");
+                return;
+            }
+        } else if (type === 'profile') {
+            title = panelTitles.profile;
+            panelTitle.textContent = title;
+            showProfileMode();
+        } else if (type === 'stats') {
+            title = panelTitles.stats;
+            panelTitle.textContent = title;
+            showStatsMode();
+        } else if (type === 'reviews') {
+            title = panelTitles.reviews;
+            panelTitle.textContent = title;
+            showReviewsMode();
+        }
+        
+        // Afficher le panneau et l'overlay
+        contentPanel.classList.add('active');
+        overlay.classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+
+    // Cacher tous les modes
+    function hideAllModes() {
+        viewMode.classList.remove('active');
+        addMode.classList.remove('active');
+        profileMode.classList.remove('active');
+        statsMode.classList.remove('active');
+        reviewsMode.classList.remove('active');
+    }
+
+    // Fermer le panneau
+    function closePanel() {
+        contentPanel.classList.remove('active');
+        overlay.classList.remove('active');
+        document.body.style.overflow = 'auto';
+        dynamicForm.reset();
+    }
+
+    // Afficher le mode "Voir"
+    function showViewMode(type) {
+        viewMode.classList.add('active');
+        
+        // Remplir la liste
+        dynamicList.innerHTML = '';
+        
+        if (sampleData[type] && sampleData[type].length > 0) {
+            sampleData[type].forEach(item => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'list-item';
+                
+                let details = `<div>${item.price}`;
+                if (item.duration) details += ` • ${item.duration}`;
+                if (item.date) details += ` • ${item.date}`;
+                if (item.category) details += ` • ${item.category}`;
+                if (item.stock) details += ` • ${item.stock}`;
+                details += '</div>';
+                
+                itemDiv.innerHTML = `
+                    <div>
+                        <strong>${item.name}</strong>
+                        ${details}
+                    </div>
+                    <div class="item-actions">
+                        <button class="edit-item-btn">✏️</button>
+                        <button class="delete-item-btn">🗑️</button>
+                    </div>
+                `;
+                dynamicList.appendChild(itemDiv);
+            });
+        } else {
+            dynamicList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Aucun élément à afficher</p>';
+        }
+    }
+
+    // Afficher le mode "Ajouter"
+    function showAddMode(type) {
+        addMode.classList.add('active');
+        
+        // Vérifier que la configuration existe
+        const config = formConfigs[type];
+        if (!config) {
+            console.error("Configuration manquante pour:", type);
+            dynamicForm.innerHTML = '<p style="color: red; text-align: center;">Configuration non trouvée</p>';
+            return;
+        }
+        
+        // Générer le formulaire
+        dynamicForm.innerHTML = '';
+        
+        if (config.fields && Array.isArray(config.fields)) {
+            config.fields.forEach(field => {
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.className = 'form-label';
+                label.textContent = field.label;
+                label.setAttribute('for', field.name);
+                
+                let input;
+                
+                if (field.type === 'textarea') {
+                    input = document.createElement('textarea');
+                    input.className = 'form-control textarea';
+                    input.placeholder = field.placeholder || '';
+                } else if (field.type === 'select') {
+                    input = document.createElement('select');
+                    input.className = 'form-control';
+                    
+                    if (field.options && Array.isArray(field.options)) {
+                        field.options.forEach(option => {
+                            const optionEl = document.createElement('option');
+                            optionEl.value = option;
+                            optionEl.textContent = option;
+                            input.appendChild(optionEl);
+                        });
+                    }
+                } else {
+                    input = document.createElement('input');
+                    input.type = field.type;
+                    input.className = 'form-control';
+                    input.placeholder = field.placeholder || '';
+                }
+                
+                if (field.name) {
+                    input.name = field.name;
+                    input.id = field.name;
+                }
+                
+                if (field.required) input.required = true;
+                
+                formGroup.appendChild(label);
+                formGroup.appendChild(input);
+                dynamicForm.appendChild(formGroup);
+            });
+        } else {
+            console.error("Champs manquants dans la configuration pour:", type);
+        }
+        
+        // Boutons du formulaire
+        const actionsDiv = document.createElement('div');
+        actionsDiv.className = 'modal-actions';
+        actionsDiv.innerHTML = `
+            <button type="submit" class="submit-btn">${config.title.replace('Ajouter ', '')}</button>
+            <button type="button" class="cancel-btn">Annuler</button>
+        `;
+        dynamicForm.appendChild(actionsDiv);
+    }
+
+    // Afficher le mode "Profil"
+    function showProfileMode() {
+        profileMode.classList.add('active');
+    }
+
+    // Afficher le mode "Statistiques"
+    function showStatsMode() {
+        statsMode.classList.add('active');
+        
+        // Ici, normalement, vous récupéreriez les vraies statistiques depuis votre API
+        // Pour l'exemple, on utilise des valeurs statiques
+        document.getElementById('servicesCount').textContent = sampleData.services.length;
+        document.getElementById('publicationsCount').textContent = '8'; // Valeur exemple
+        document.getElementById('dishesCount').textContent = sampleData.buffet.length;
+        document.getElementById('drinksCount').textContent = sampleData.drinks.length;
+        document.getElementById('productsCount').textContent = sampleData.boutique.length;
+        document.getElementById('clientsCount').textContent = '248'; // Valeur exemple
+    }
+
+    // Afficher le mode "Avis clients"
+    function showReviewsMode() {
+        reviewsMode.classList.add('active');
+        
+        // Remplir la liste des avis
+        reviewsList.innerHTML = '';
+        
+        if (sampleReviews.length > 0) {
+            sampleReviews.forEach(review => {
+                const reviewItem = document.createElement('div');
+                reviewItem.className = 'review-item';
+                
+                reviewItem.innerHTML = `
+                    <div class="review-header">
+                        <span class="review-client">Client ID: ${review.clientId}</span>
+                        <span style="color: #666; font-size: 0.9rem;">${review.date}</span>
+                    </div>
+                    <div class="review-subject">${review.subject}</div>
+                    <div class="review-message">${review.message}</div>
+                `;
+                
+                reviewsList.appendChild(reviewItem);
+            });
+        } else {
+            reviewsList.innerHTML = '<p style="text-align: center; color: #666; padding: 20px;">Aucun avis à afficher</p>';
+        }
+    }
+
+    // Événements
+    overlay.addEventListener('click', closePanel);
+    
+    document.getElementById('closePanelBtn').addEventListener('click', closePanel);
+    document.getElementById('closeViewBtn').addEventListener('click', closePanel);
+
+    // Gestion des boutons Annuler
+    document.querySelectorAll('.cancel-btn').forEach(btn => {
+        btn.addEventListener('click', closePanel);
+    });
+
+    // Gestion du formulaire d'ajout
+    dynamicForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const formData = new FormData(this);
+        const data = Object.fromEntries(formData.entries());
+        
+        // Ici, vous enverriez les données au serveur
+        console.log('Données à envoyer:', data);
+        alert('Élément ajouté avec succès !');
+        closePanel();
+        this.reset();
+    });
+
+    // Gestion du formulaire de profil
+    profileForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Récupérer les données du formulaire
+        const formData = {
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+            phone: document.getElementById('phone').value,
+            address: document.getElementById('address').value,
+            description: document.getElementById('description').value,
+            category: document.getElementById('category').value
+        };
+        
+        // Ici, vous enverriez les données au serveur
+        console.log('Données profil à envoyer:', formData);
+        alert('Profil mis à jour avec succès !');
+        
+        // Mettre à jour les informations dans la sidebar
+        document.querySelector('.establishment-name').textContent = formData.name;
+        document.querySelector('.establishment-location span:last-child').textContent = formData.address;
+        document.querySelector('.establishment-description').textContent = formData.description;
+        
+        closePanel();
+    });
+
+    // Gérer les boutons de navigation
+    document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const type = this.getAttribute('data-type');
+            if (type) {
+                openPanel(type);
+            }
+        });
+    });
+
+    // Gérer le bouton "Modifier le profil"
+    document.getElementById('editProfileBtn').addEventListener('click', function(e) {
+        e.preventDefault();
+        openPanel('profile');
+    });
+
+    // Gérer TOUS les boutons des cartes
+    document.querySelectorAll('.service-actions button').forEach(button => {
+        button.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Récupérer le type depuis l'attribut data-type
+            const type = this.getAttribute('data-type');
+            const action = this.classList.contains('view-btn') ? 'view' : 'add';
+            
+            console.log("Bouton cliqué:", type, action);
+            
+            if (type && (action === 'view' || action === 'add')) {
+                openPanel(type, action);
+            } else {
+                console.error("Type ou action non défini:", type, action);
+            }
+        });
+    });
+
+    // Gérer les boutons d'action dans les listes
+    dynamicList.addEventListener('click', function(e) {
+        if (e.target.classList.contains('edit-item-btn')) {
+            alert('Fonction d\'édition à implémenter');
+        } else if (e.target.classList.contains('delete-item-btn')) {
+            if (confirm('Supprimer cet élément ?')) {
+                e.target.closest('.list-item').remove();
+            }
+        }
+    });
+    
+    // Supprimer les anciens onclick s'ils existent encore
+    document.querySelectorAll('[onclick*="openViewModal"], [onclick*="openAddModal"]').forEach(button => {
+        button.removeAttribute('onclick');
+    });
+});
+
+// Si vous avez besoin de garder les anciennes fonctions pour compatibilité
+window.openViewModal = function(type) {
+    console.log("openViewModal appelé avec:", type);
+    const panel = document.getElementById('contentPanel');
+    if (panel) {
+        const title = document.getElementById('panelTitle');
+        title.textContent = type === 'buffet' ? '🍽️ Menu Buffet' : 
+                           type === 'drinks' ? '🍹 Menu Boissons' : 
+                           type === 'activities' ? '🎯 Mes Activités' : 
+                           type === 'boutique' ? '🛒 Boutique' : '📋 Mes Services';
+        
+        document.querySelector('.content-panel').classList.add('active');
+        document.querySelector('.overlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+};
+
+window.openAddModal = function(type) {
+    console.log("openAddModal appelé avec:", type);
+    const panel = document.getElementById('contentPanel');
+    if (panel) {
+        const title = document.getElementById('panelTitle');
+        title.textContent = type === 'buffet' ? '➕ Ajouter un Plat' : 
+                           type === 'drinks' ? '➕ Ajouter une Boisson' : 
+                           type === 'activities' ? '➕ Ajouter une Activité' : 
+                           type === 'boutique' ? '➕ Ajouter un Produit' : '➕ Ajouter un Service';
+        
+        document.querySelector('.content-panel').classList.add('active');
+        document.querySelector('.overlay').classList.add('active');
+        document.body.style.overflow = 'hidden';
+    }
+};
+</script>
+{% endblock %}
+
+
+</body>
+
+</html>
+{% endblock %}
+

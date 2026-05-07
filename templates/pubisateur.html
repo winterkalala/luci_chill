@@ -1,0 +1,2057 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Publications des Établissements - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style>
+    /* Variables CSS - Même design que la page utilisateur */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+        --card-radius: 12px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar - Profil Utilisateur */
+    .sidebar {
+        width: 320px;
+        background: white;
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .profile-section {
+        text-align: center;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        margin-bottom: 2rem;
+    }
+
+    .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .profile-img:hover {
+        transform: scale(1.05);
+    }
+
+    .user-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .user-email {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .user-location {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .edit-profile-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Publications Stats */
+    .publications-stats {
+        margin-top: 2rem;
+    }
+
+    .stats-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--light-color);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-light);
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    /* Categories Sidebar */
+    .categories-sidebar {
+        margin-top: 2rem;
+    }
+
+    .categories-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .category-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .category-tag {
+        background: var(--light-color);
+        color: var(--text-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 1px solid var(--accent-color);
+    }
+
+    .category-tag:hover,
+    .category-tag.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Social Links */
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    /* Header */
+    .content-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .establishments-btn,
+    .logout-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .establishments-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .logout-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .establishments-btn:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Hero Banner */
+    .publications-hero {
+        background: linear-gradient(135deg, rgba(61, 132, 167, 0.9), rgba(70, 205, 207, 0.9));
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .publications-hero::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "img/plage.JPG" %}') center/cover;
+        opacity: 0.1;
+        z-index: 1;
+    }
+
+    .hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Section Filtres */
+    .filters-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filters-left {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filters-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .filters-grid {
+        display: flex;
+        gap: 0.8rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        background: var(--light-color);
+        border: 2px solid var(--accent-color);
+        border-radius: 20px;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    .sort-select {
+        padding: 0.6rem 1.2rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 20px;
+        background: white;
+        color: var(--text-color);
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .sort-select:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    /* Publications Grid */
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .publication-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .publication-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .publication-image-container {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .publication-card:hover .publication-image {
+        transform: scale(1.05);
+    }
+
+    .publication-content {
+        padding: 1.5rem;
+    }
+
+    .publication-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .publication-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .publication-date {
+        color: #666;
+        font-size: 0.85rem;
+        background: var(--light-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        white-space: nowrap;
+    }
+
+    .establishment-info {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1rem;
+    }
+
+    .establishment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent-color);
+    }
+
+    .establishment-details {
+        flex: 1;
+    }
+
+    .establishment-name {
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+
+    .establishment-category {
+        font-size: 0.8rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .publication-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        box-orient: vertical;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .publication-stats {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .stats-left {
+        display: flex;
+        gap: 1rem;
+        color: #666;
+        font-size: 0.85rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .engagement-rate {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .publication-actions {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.6rem;
+        border-radius: 8px;
+        border: none;
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .like-btn:hover {
+        background: #ffeaea;
+        color: #ff6b6b;
+    }
+
+    .comment-btn:hover {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    .share-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .like-btn.active {
+        background: #ffeaea;
+        color: #ff6b6b;
+    }
+
+    /* No Publications Message */
+    .no-publications {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+        grid-column: 1 / -1;
+    }
+
+    .no-publications i {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    /* Pagination */
+    .pagination-section {
+        display: flex;
+        justify-content: center;
+        margin-top: 3rem;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .page-btn {
+        min-width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+    }
+
+    .page-btn:hover,
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    .page-btn.prev,
+    .page-btn.next {
+        padding: 0 1.5rem;
+        border-radius: 25px;
+        min-width: auto;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Publication Detail Modal */
+    .publication-detail {
+        margin-bottom: 2rem;
+    }
+
+    .detail-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .detail-establishment {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .detail-establishment-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent-color);
+    }
+
+    .establishment-text h4 {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .establishment-text p {
+        color: #666;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .detail-date {
+        color: #666;
+        font-size: 0.9rem;
+        background: var(--light-color);
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+    }
+
+    .detail-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .detail-description {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+    }
+
+    .detail-stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: var(--light-color);
+        border-radius: 10px;
+    }
+
+    .detail-stat {
+        text-align: center;
+        flex: 1;
+    }
+
+    .detail-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .detail-stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .share-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .share-title {
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .share-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        flex: 1;
+        min-width: 150px;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .share-whatsapp {
+        background: #25D366;
+    }
+
+    .share-facebook {
+        background: #1877F2;
+    }
+
+    .share-twitter {
+        background: #1DA1F2;
+    }
+
+    .share-email {
+        background: var(--primary-color);
+    }
+
+    .share-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Footer */
+    .main-footer {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-top: 3rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+        padding-left: 5px;
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            gap: 2rem;
+        }
+        
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 0;
+        }
+        
+        .publications-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 1rem;
+        }
+        
+        .content-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-bar {
+            max-width: 100%;
+        }
+        
+        .header-actions {
+            justify-content: center;
+        }
+        
+        .filters-section {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .filters-left {
+            justify-content: center;
+        }
+        
+        .publications-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .modal {
+            margin: 1rem;
+        }
+        
+        .share-buttons {
+            flex-direction: column;
+        }
+        
+        .share-btn {
+            min-width: 100%;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .sidebar {
+            padding: 1.5rem;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+        
+        .filters-grid {
+            justify-content: center;
+        }
+        
+        .publication-actions {
+            flex-direction: column;
+        }
+        
+        .action-btn {
+            width: 100%;
+        }
+        
+        .detail-meta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Sidebar - Profil Utilisateur -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="Esmeralda AZ" class="profile-img" id="userProfileImg">
+                <div>
+                    <h2 class="user-name" id="userName">Esmeralda AZ</h2>
+                    <div class="user-email">
+                        <span>✉️</span>
+                        <span id="userEmail">EsmeraldaAZ@gmail.com</span>
+                    </div>
+                    <div class="user-location">
+                        <span>📍</span>
+                        <span id="userLocation">Lubumbashi, RDC</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="edit-profile-btn" onclick="openEditProfileModal()">
+                <span>✏️</span> Modifier mon profil
+            </button>
+
+            <!-- Publications Statistics -->
+            <div class="publications-stats">
+                <h3 class="stats-title">Mes Statistiques</h3>
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="likedPublications">24</div>
+                        <div class="stat-label">Publications aimées</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="commentedPublications">12</div>
+                        <div class="stat-label">Commentaires</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="sharedPublications">8</div>
+                        <div class="stat-label">Publications partagées</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="followedEstablishments">5</div>
+                        <div class="stat-label">Établissements suivis</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Sidebar -->
+            <div class="categories-sidebar">
+                <h3 class="categories-title">Filtrer par catégorie</h3>
+                <div class="category-tags">
+                    <span class="category-tag active">Toutes</span>
+                    <span class="category-tag">Restaurants</span>
+                    <span class="category-tag">Hôtels</span>
+                    <span class="category-tag">Boutiques</span>
+                    <span class="category-tag">Spas</span>
+                    <span class="category-tag">Événements</span>
+                    <span class="category-tag">Promotions</span>
+                    <span class="category-tag">Actualités</span>
+                </div>
+            </div>
+
+            <div class="social-links">
+                <a href="#" class="social-link" aria-label="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="WhatsApp">
+                    <i class="fab fa-whatsapp"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <i class="fab fa-twitter"></i>
+                </a>
+                <a href="#" class="social-link" aria-label="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+            </div> 
+
+            <div class="main-footer">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Navigation</h3>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'accueil' %}">Accueil</a></li>
+                            <li><a href="{% url 'Cateus' %}">Établissements</a></li>
+                            <li><a href="#">Mes favoris</a></li>
+                            <li><a href="#">Historique</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Aide & FAQ</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Confidentialité</a></li>
+                            <li><a href="#">Conditions</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>© 2024 Aryo-Tour. Découvrez les dernières publications</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header avec recherche et actions -->
+            <header class="content-header">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Rechercher une publication...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+                
+                <div class="header-actions">
+                    <a href="{% url 'Cateus' %}" style="text-decoration: none;">
+                        <button class="establishments-btn">
+                            <i class="fas fa-building"></i> Établissements
+                        </button>
+                    </a>
+                    <a href="{% url 'accueil' %}" style="text-decoration: none;">
+                        <button class="logout-btn">
+                            <i class="fas fa-sign-out-alt"></i> Déconnexion
+                        </button>
+                    </a>
+                </div>
+            </header>
+
+            <!-- Hero Banner -->
+            <section class="publications-hero">
+                <div class="hero-content">
+                    <h1 class="hero-title">Publications des Établissements</h1>
+                    <p class="hero-subtitle">
+                        Découvrez les dernières promotions, actualités et événements 
+                        des meilleurs établissements de votre région
+                    </p>
+                </div>
+            </section>
+
+            <!-- Section Filtres et Tri -->
+            <section class="filters-section">
+                <div class="filters-left">
+                    <h3 class="filters-title">Filtrer par :</h3>
+                    <div class="filters-grid">
+                        <button class="filter-btn active" data-filter="all">
+                            <i class="fas fa-layer-group"></i> Toutes
+                        </button>
+                        <button class="filter-btn" data-filter="promotion">
+                            <i class="fas fa-percentage"></i> Promotions
+                        </button>
+                        <button class="filter-btn" data-filter="news">
+                            <i class="fas fa-newspaper"></i> Actualités
+                        </button>
+                        <button class="filter-btn" data-filter="event">
+                            <i class="fas fa-calendar"></i> Événements
+                        </button>
+                        <button class="filter-btn" data-filter="popular">
+                            <i class="fas fa-fire"></i> Populaires
+                        </button>
+                    </div>
+                </div>
+                
+                <select class="sort-select" id="sortSelect">
+                    <option value="recent">Plus récentes</option>
+                    <option value="popular">Plus populaires</option>
+                    <option value="likes">Plus aimées</option>
+                    <option value="comments">Plus commentées</option>
+                </select>
+            </section>
+
+            <!-- Publications Grid -->
+            <section class="publications-grid" id="publicationsGrid">
+                <!-- Les publications seront injectées ici par JavaScript -->
+            </section>
+
+            <!-- Pagination -->
+            <div class="pagination-section">
+                <div class="pagination">
+                    <button class="page-btn prev" onclick="changePage(-1)">
+                        <i class="fas fa-chevron-left"></i> Précédent
+                    </button>
+                    <button class="page-btn active">1</button>
+                    <button class="page-btn">2</button>
+                    <button class="page-btn">3</button>
+                    <button class="page-btn">4</button>
+                    <button class="page-btn">5</button>
+                    <button class="page-btn next" onclick="changePage(1)">
+                        Suivant <i class="fas fa-chevron-right"></i>
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Publication Detail Modal -->
+    <div id="publicationDetailModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Détails de la publication</h3>
+                <button class="close-modal" onclick="closeModal('publicationDetailModal')">×</button>
+            </div>
+            <div class="publication-detail">
+                <img src="" alt="" class="detail-image" id="detailImage">
+                
+                <div class="detail-meta">
+                    <div class="detail-establishment">
+                        <img src="" alt="" class="detail-establishment-img" id="detailEstablishmentImg">
+                        <div class="establishment-text">
+                            <h4 id="detailEstablishmentName"></h4>
+                            <p id="detailEstablishmentCategory">
+                                <i class="fas fa-tag"></i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-date" id="detailDate"></div>
+                </div>
+
+                <div class="detail-content">
+                    <h2 id="detailTitle"></h2>
+                    <p class="detail-description" id="detailDescription"></p>
+                </div>
+
+                <div class="detail-stats">
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailViews">0</div>
+                        <div class="detail-stat-label">Vues</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailLikes">0</div>
+                        <div class="detail-stat-label">J'aime</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailComments">0</div>
+                        <div class="detail-stat-label">Commentaires</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailShares">0</div>
+                        <div class="detail-stat-label">Partages</div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <h4 class="share-title">Partager cette publication :</h4>
+                    <div class="share-buttons">
+                        <a href="#" class="share-btn share-whatsapp" onclick="shareOnWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="#" class="share-btn share-facebook" onclick="shareOnFacebook()">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </a>
+                        <a href="#" class="share-btn share-twitter" onclick="shareOnTwitter()">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="share-btn share-email" onclick="shareByEmail()">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Profile Modal -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Modifier mon profil</h3>
+                <button class="close-modal" onclick="closeModal('editProfileModal')">×</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Photo de profil</label>
+                    <div class="file-upload">
+                        <button type="button" class="file-upload-btn">
+                            <i class="fas fa-camera"></i> Changer la photo
+                        </button>
+                        <input type="file" accept="image/*" id="profileImageInput">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" class="form-control" id="editUserName" value="Esmeralda AZ" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editUserEmail" value="EsmeraldaAZ@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <input type="text" class="form-control" id="editUserLocation" value="Lubumbashi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Préférences de publication</label>
+                    <div class="category-tags">
+                        <span class="category-tag active">Promotions</span>
+                        <span class="category-tag">Événements</span>
+                        <span class="category-tag">Actualités</span>
+                        <span class="category-tag">Restaurants</span>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="submit-btn">Enregistrer</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('editProfileModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Données de démonstration
+        const publications = [
+            {
+                id: 1,
+                title: "Promotion exceptionnelle -20% sur toute la collection",
+                description: "Profitez de -20% sur toute notre collection de robes béninoises cet été. Des modèles uniques et authentiques à prix réduits pour une durée limitée. Offre valable jusqu'au 31 décembre. Venez découvrir nos nouvelles créations inspirées des traditions africaines.",
+                type: "promotion",
+                images: ["{% static 'img/coiffure.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    category: "Boutique",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa"
+                },
+                date: "2024-12-01T10:30:00",
+                stats: {
+                    views: 1245,
+                    likes: 342,
+                    comments: 28,
+                    shares: 45
+                },
+                liked: true,
+                commented: false
+            },
+            {
+                id: 2,
+                title: "Nouvelle collection printemps-été 2025",
+                description: "Découvrez notre nouvelle collection printemps-été 2025. Des tissus légers, des couleurs vibrantes et des designs modernes inspirés de la tradition africaine. Une sélection unique pour toutes les occasions.",
+                type: "news",
+                images: ["{% static 'img/restaurant.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    category: "Boutique",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa"
+                },
+                date: "2024-11-28T14:00:00",
+                stats: {
+                    views: 892,
+                    likes: 156,
+                    comments: 15,
+                    shares: 22
+                },
+                liked: false,
+                commented: true
+            },
+            {
+                id: 3,
+                title: "Atelier de couture traditionnelle",
+                description: "Participez à notre atelier de couture traditionnelle le 20 janvier. Apprenez les techniques ancestrales de confection de vêtements béninois avec nos artisans expérimentés.",
+                type: "event",
+                images: ["{% static 'img/hotel.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    category: "Boutique",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa"
+                },
+                date: "2024-12-20T09:00:00",
+                stats: {
+                    views: 456,
+                    likes: 78,
+                    comments: 12,
+                    shares: 15
+                },
+                liked: true,
+                commented: true
+            },
+            {
+                id: 4,
+                title: "Menu d'hiver - Saveurs authentiques",
+                description: "Découvrez notre nouveau menu d'hiver avec des spécialités locales réinventées. Des plats chauds et réconfortants pour la saison froide.",
+                type: "news",
+                images: ["{% static 'img/spa.jpg' %}"],
+                establishment: {
+                    name: "Le Gourmet Royal",
+                    avatar: "{% static 'img/restaurant.jpg' %}",
+                    category: "Restaurant",
+                    location: "Avenue Lumumba 123"
+                },
+                date: "2024-11-20T11:00:00",
+                stats: {
+                    views: 987,
+                    likes: 234,
+                    comments: 18,
+                    shares: 29
+                },
+                liked: false,
+                commented: false
+            },
+            {
+                id: 5,
+                title: "Soirée défilé de mode exclusive",
+                description: "Venez assister à notre soirée défilé de mode exclusive le 15 décembre. Présentation de notre collection capsule en collaboration avec des designers locaux.",
+                type: "event",
+                images: ["{% static 'img/plage.JPG' %}"],
+                establishment: {
+                    name: "Le Gourmet Royal",
+                    avatar: "{% static 'img/restaurant.jpg' %}",
+                    category: "Restaurant",
+                    location: "Avenue Lumumba 123"
+                },
+                date: "2024-12-15T19:00:00",
+                stats: {
+                    views: 1234,
+                    likes: 289,
+                    comments: 42,
+                    shares: 67
+                },
+                liked: true,
+                commented: false
+            },
+            {
+                id: 6,
+                title: "Offre spéciale pour les entrepreneurs",
+                description: "Pack spécial pour les entrepreneurs souhaitant lancer leur boutique en ligne. Inclut conseils personnalisés et tarifs préférentiels pour les commandes en gros.",
+                type: "promotion",
+                images: ["{% static 'img/park.jpg' %}"],
+                establishment: {
+                    name: "Hôtel Paradise",
+                    avatar: "{% static 'img/hotel.jpg' %}",
+                    category: "Hôtel",
+                    location: "Boulevard du 30 Juin"
+                },
+                date: "2024-11-25T16:45:00",
+                stats: {
+                    views: 678,
+                    likes: 124,
+                    comments: 5,
+                    shares: 18
+                },
+                liked: false,
+                commented: false
+            }
+        ];
+
+        // Variables globales
+        let currentFilter = 'all';
+        let currentPage = 1;
+        let currentSort = 'recent';
+        const publicationsPerPage = 6;
+        let searchQuery = '';
+        let userLikedPublications = new Set([1, 3, 5]);
+        let userCommentedPublications = new Set([2, 3]);
+        let userSharedPublications = new Set([1, 4]);
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserStats();
+            loadPublications();
+            setupEventListeners();
+        });
+
+        // Mettre à jour les statistiques utilisateur
+        function updateUserStats() {
+            document.getElementById('likedPublications').textContent = userLikedPublications.size;
+            document.getElementById('commentedPublications').textContent = userCommentedPublications.size;
+            document.getElementById('sharedPublications').textContent = userSharedPublications.size;
+            document.getElementById('followedEstablishments').textContent = 5;
+        }
+
+        // Charger les publications
+        function loadPublications() {
+            const grid = document.getElementById('publicationsGrid');
+            
+            // Filtrer et trier les publications
+            let filteredPublications = filterAndSortPublications();
+            
+            // Pagination
+            const startIndex = (currentPage - 1) * publicationsPerPage;
+            const endIndex = startIndex + publicationsPerPage;
+            const paginatedPublications = filteredPublications.slice(startIndex, endIndex);
+            
+            if (paginatedPublications.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-publications">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>Aucune publication trouvée</h3>
+                        <p>Essayez de modifier vos filtres ou votre recherche.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            paginatedPublications.forEach(pub => {
+                const card = document.createElement('div');
+                card.className = 'publication-card';
+                card.innerHTML = `
+                    <span class="publication-badge">
+                        ${getTypeIcon(pub.type)} ${getTypeLabel(pub.type)}
+                    </span>
+                    <div class="publication-image-container">
+                        <img src="${pub.images[0]}" alt="${pub.title}" class="publication-image">
+                    </div>
+                    
+                    <div class="publication-content">
+                        <div class="publication-header">
+                            <h3 class="publication-title">${pub.title}</h3>
+                            <span class="publication-date">${formatDate(pub.date)}</span>
+                        </div>
+                        
+                        <div class="establishment-info">
+                            <img src="${pub.establishment.avatar}" alt="${pub.establishment.name}" class="establishment-avatar">
+                            <div class="establishment-details">
+                                <div class="establishment-name">${pub.establishment.name}</div>
+                                <div class="establishment-category">
+                                    <i class="fas fa-tag"></i> ${pub.establishment.category}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="publication-description">${pub.description}</p>
+                        
+                        <div class="publication-stats">
+                            <div class="stats-left">
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i> ${formatNumber(pub.stats.views)}
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i> ${formatNumber(pub.stats.likes)}
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i> ${formatNumber(pub.stats.comments)}
+                                </div>
+                            </div>
+                            <div class="engagement-rate">
+                                ${calculateEngagementRate(pub.stats)}% d'engagement
+                            </div>
+                        </div>
+                        
+                        <div class="publication-actions">
+                            <button class="action-btn like-btn ${userLikedPublications.has(pub.id) ? 'active' : ''}" 
+                                    onclick="toggleLike(${pub.id})">
+                                <i class="fas fa-heart"></i> J'aime
+                            </button>
+                            <button class="action-btn comment-btn" onclick="openComments(${pub.id})">
+                                <i class="fas fa-comment"></i> Commenter
+                            </button>
+                            <button class="action-btn share-btn" onclick="sharePublication(${pub.id})">
+                                <i class="fas fa-share-alt"></i> Partager
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            updatePagination(filteredPublications.length);
+        }
+
+        // Filtrer et trier les publications
+        function filterAndSortPublications() {
+            let filtered = [...publications];
+            
+            // Filtre par type
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'popular') {
+                    filtered.sort((a, b) => b.stats.views - a.stats.views);
+                } else {
+                    filtered = filtered.filter(p => p.type === currentFilter);
+                }
+            }
+            
+            // Recherche par texte
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(p => 
+                    p.title.toLowerCase().includes(query) ||
+                    p.description.toLowerCase().includes(query) ||
+                    p.establishment.name.toLowerCase().includes(query)
+                );
+            }
+            
+            // Tri
+            if (currentSort === 'recent') {
+                filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            } else if (currentSort === 'popular') {
+                filtered.sort((a, b) => b.stats.views - a.stats.views);
+            } else if (currentSort === 'likes') {
+                filtered.sort((a, b) => b.stats.likes - a.stats.likes);
+            } else if (currentSort === 'comments') {
+                filtered.sort((a, b) => b.stats.comments - a.stats.comments);
+            }
+            
+            return filtered;
+        }
+
+        // Obtenir l'icône du type
+        function getTypeIcon(type) {
+            const icons = {
+                'promotion': '<i class="fas fa-percentage"></i>',
+                'news': '<i class="fas fa-newspaper"></i>',
+                'event': '<i class="fas fa-calendar"></i>'
+            };
+            return icons[type] || '<i class="fas fa-file-alt"></i>';
+        }
+
+        // Obtenir le label du type
+        function getTypeLabel(type) {
+            const labels = {
+                'promotion': 'Promotion',
+                'news': 'Actualité',
+                'event': 'Événement'
+            };
+            return labels[type] || type;
+        }
+
+        // Formater la date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) {
+                const hours = Math.floor(diff / (1000 * 60 * 60));
+                if (hours === 0) {
+                    const minutes = Math.floor(diff / (1000 * 60));
+                    return `Il y a ${minutes} min`;
+                }
+                return `Il y a ${hours} h`;
+            } else if (days === 1) {
+                return "Hier";
+            } else if (days < 7) {
+                return `Il y a ${days} jours`;
+            } else {
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit'
+                });
+            }
+        }
+
+        // Formater les nombres
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Calculer le taux d'engagement
+        function calculateEngagementRate(stats) {
+            const engagement = (stats.likes + stats.comments) / stats.views;
+            return (engagement * 100).toFixed(1);
+        }
+
+        // Mettre à jour la pagination
+        function updatePagination(totalPublications) {
+            const totalPages = Math.ceil(totalPublications / publicationsPerPage);
+            const pagination = document.querySelector('.pagination');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            
+            // Garder seulement les boutons prev/next
+            const prevBtn = pagination.querySelector('.prev');
+            const nextBtn = pagination.querySelector('.next');
+            pagination.innerHTML = '';
+            
+            // Ajouter le bouton précédent
+            pagination.appendChild(prevBtn);
+            
+            // Ajouter les numéros de page
+            const maxPagesToShow = 5;
+            let startPage = Math.max(1, currentPage - Math.floor(maxPagesToShow / 2));
+            let endPage = Math.min(totalPages, startPage + maxPagesToShow - 1);
+            
+            if (endPage - startPage + 1 < maxPagesToShow) {
+                startPage = Math.max(1, endPage - maxPagesToShow + 1);
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    loadPublications();
+                    window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 100, behavior: 'smooth' });
+                };
+                pagination.appendChild(pageBtn);
+            }
+            
+            // Ajouter le bouton suivant
+            pagination.appendChild(nextBtn);
+            
+            // Désactiver les boutons si nécessaire
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        // Changer de page
+        function changePage(direction) {
+            const totalPublications = filterAndSortPublications().length;
+            const totalPages = Math.ceil(totalPublications / publicationsPerPage);
+            
+            currentPage += direction;
+            
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            
+            loadPublications();
+            window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // Voir les détails d'une publication
+        function viewPublicationDetail(id) {
+            const pub = publications.find(p => p.id === id);
+            if (pub) {
+                // Mettre à jour les données du modal
+                document.getElementById('detailImage').src = pub.images[0];
+                document.getElementById('detailEstablishmentImg').src = pub.establishment.avatar;
+                document.getElementById('detailEstablishmentName').textContent = pub.establishment.name;
+                document.getElementById('detailEstablishmentCategory').innerHTML = 
+                    `<i class="fas fa-tag"></i> ${pub.establishment.category}`;
+                document.getElementById('detailDate').textContent = new Date(pub.date).toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: 'long',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                document.getElementById('detailTitle').textContent = pub.title;
+                document.getElementById('detailDescription').textContent = pub.description;
+                document.getElementById('detailViews').textContent = formatNumber(pub.stats.views);
+                document.getElementById('detailLikes').textContent = formatNumber(pub.stats.likes);
+                document.getElementById('detailComments').textContent = formatNumber(pub.stats.comments);
+                document.getElementById('detailShares').textContent = formatNumber(pub.stats.shares);
+                
+                // Ouvrir le modal
+                openModal('publicationDetailModal');
+                
+                // Incrémenter les vues (simulation)
+                pub.stats.views++;
+            }
+        }
+
+        // Basculer le like
+        function toggleLike(publicationId) {
+            const pub = publications.find(p => p.id === publicationId);
+            if (pub) {
+                if (userLikedPublications.has(publicationId)) {
+                    userLikedPublications.delete(publicationId);
+                    pub.stats.likes--;
+                    pub.liked = false;
+                } else {
+                    userLikedPublications.add(publicationId);
+                    pub.stats.likes++;
+                    pub.liked = true;
+                }
+                updateUserStats();
+                loadPublications();
+            }
+        }
+
+        // Ouvrir les commentaires
+        function openComments(publicationId) {
+            const pub = publications.find(p => p.id === publicationId);
+            if (pub) {
+                viewPublicationDetail(publicationId);
+                // Ici, vous pourriez ajouter un système de commentaires
+                alert(`Commentaires de la publication "${pub.title}" - Système en développement`);
+            }
+        }
+
+        // Partager une publication
+        function sharePublication(publicationId) {
+            const pub = publications.find(p => p.id === publicationId);
+            if (pub) {
+                userSharedPublications.add(publicationId);
+                updateUserStats();
+                pub.stats.shares++;
+                viewPublicationDetail(publicationId);
+            }
+        }
+
+        // Partager sur WhatsApp
+        function shareOnWhatsApp() {
+            const pub = getCurrentPublication();
+            const text = encodeURIComponent(`Découvrez "${pub.title}" sur Aryo-Tour !`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        // Partager sur Facebook
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        // Partager sur Twitter
+        function shareOnTwitter() {
+            const pub = getCurrentPublication();
+            const text = encodeURIComponent(`Découvrez "${pub.title}" sur Aryo-Tour`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        // Partager par email
+        function shareByEmail() {
+            const pub = getCurrentPublication();
+            const subject = encodeURIComponent(`Publication intéressante : ${pub.title}`);
+            const body = encodeURIComponent(`Je voulais partager cette publication avec toi !\n\n${pub.title}\n\n${pub.description.substring(0, 200)}...\n\nVoir plus sur Aryo-Tour`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // Obtenir la publication actuellement affichée
+        function getCurrentPublication() {
+            const title = document.getElementById('detailTitle').textContent;
+            return publications.find(p => p.title === title) || publications[0];
+        }
+
+        // Rechercher des publications
+        function searchPublications() {
+            searchQuery = document.querySelector('.search-input').value.trim();
+            currentPage = 1;
+            loadPublications();
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Ouvrir le modal d'édition du profil
+        function openEditProfileModal() {
+            openModal('editProfileModal');
+        }
+
+        // Gestion du formulaire d'édition du profil
+        document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newName = document.getElementById('editUserName').value;
+            const newEmail = document.getElementById('editUserEmail').value;
+            const newLocation = document.getElementById('editUserLocation').value;
+            
+            document.getElementById('userName').textContent = newName;
+            document.getElementById('userEmail').textContent = newEmail;
+            document.getElementById('userLocation').textContent = newLocation;
+            
+            // Gestion de l'image
+            const fileInput = document.getElementById('profileImageInput');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('userProfileImg').src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            
+            alert('Profil mis à jour avec succès !');
+            closeModal('editProfileModal');
+        });
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Filtres
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    currentPage = 1;
+                    loadPublications();
+                });
+            });
+
+            // Catégories
+            document.querySelectorAll('.category-tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    if (!this.classList.contains('active')) {
+                        document.querySelectorAll('.category-tag').forEach(t => t.classList.remove('active'));
+                        this.classList.add('active');
+                        // Ici, vous filtreriez par catégorie d'établissement
+                        loadPublications();
+                    }
+                });
+            });
+
+            // Tri
+            document.getElementById('sortSelect').addEventListener('change', function() {
+                currentSort = this.value;
+                currentPage = 1;
+                loadPublications();
+            });
+
+            // Recherche avec Entrée
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchPublications();
+                }
+            });
+
+            // Recherche avec bouton
+            document.querySelector('.search-btn').addEventListener('click', searchPublications);
+
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
+

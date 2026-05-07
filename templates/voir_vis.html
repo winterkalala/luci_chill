@@ -1,0 +1,1507 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %} 
+<!DOCTYPE html> 
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Détails Établissement - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+        --card-radius: 12px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Back Button */
+    .back-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 25px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        margin-bottom: 2rem;
+    }
+
+    .back-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Establishment Header */
+    .establishment-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        gap: 2.5rem;
+        flex-wrap: wrap;
+        align-items: flex-start;
+    }
+
+    .establishment-image {
+        flex: 0 0 200px;
+        text-align: center;
+    }
+
+    .establishment-img {
+        width: 200px;
+        height: 200px;
+        border-radius: 15px;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .establishment-img:hover {
+        transform: scale(1.05);
+    }
+
+    .establishment-info {
+        flex: 1;
+        min-width: 300px;
+    }
+
+    .establishment-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.2rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.8rem;
+        position: relative;
+        display: inline-block;
+    }
+
+    .establishment-title::after {
+        content: '';
+        position: absolute;
+        bottom: -5px;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .establishment-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+        margin-bottom: 1.2rem;
+        flex-wrap: wrap;
+    }
+
+    .rating-stars {
+        color: #FFD700;
+        font-size: 1.4rem;
+    }
+
+    .rating-value {
+        font-weight: 700;
+        color: var(--text-color);
+        font-size: 1.2rem;
+    }
+
+    .rating-count {
+        color: #666;
+        font-size: 0.95rem;
+        background: var(--light-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+    }
+
+    .establishment-description {
+        color: #666;
+        line-height: 1.8;
+        margin-bottom: 1.8rem;
+        font-size: 1.05rem;
+        padding-right: 1rem;
+    }
+
+    .establishment-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.2rem;
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem;
+        background: var(--light-color);
+        border-radius: 10px;
+        transition: var(--transition);
+    }
+
+    .detail-item:hover {
+        background: white;
+        box-shadow: var(--shadow-light);
+        transform: translateY(-2px);
+    }
+
+    .detail-icon {
+        color: var(--secondary-color);
+        font-size: 1.4rem;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(70, 205, 207, 0.1);
+        border-radius: 50%;
+    }
+
+    .detail-content {
+        flex: 1;
+    }
+
+    .detail-label {
+        font-weight: 600;
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+
+    .detail-value {
+        color: #666;
+        font-size: 0.9rem;
+        margin-top: 0.2rem;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+        flex-wrap: wrap;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .social-link:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px) scale(1.1);
+    }
+
+    .social-link::after {
+        content: attr(aria-label);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark-color);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: var(--transition);
+        white-space: nowrap;
+    }
+
+    .social-link:hover::after {
+        opacity: 1;
+        bottom: -35px;
+    }
+
+    .social-link img {
+        width: 22px;
+        height: 22px;
+    }
+
+    /* Login Prompt */
+    .login-prompt {
+        background: linear-gradient(135deg, #fff8e1 0%, #fff3cd 100%);
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        margin-bottom: 2.5rem;
+        box-shadow: var(--shadow-light);
+        border-left: 6px solid var(--secondary-color);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .login-prompt::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 100px;
+        height: 100px;
+        background: url('{% static "img/pattern.png" %}') repeat;
+        opacity: 0.1;
+    }
+
+    .prompt-header {
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .prompt-icon {
+        font-size: 3rem;
+        color: var(--secondary-color);
+    }
+
+    .prompt-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .prompt-message {
+        color: #666;
+        line-height: 1.7;
+        font-size: 1.05rem;
+        margin-bottom: 2rem;
+        max-width: 800px;
+    }
+
+    .prompt-benefits {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+        gap: 1.5rem;
+        margin-bottom: 2.5rem;
+    }
+
+    .benefit-card {
+        background: white;
+        border-radius: 10px;
+        padding: 1.5rem;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        display: flex;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .benefit-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+    }
+
+    .benefit-icon {
+        color: var(--secondary-color);
+        font-size: 1.8rem;
+        flex-shrink: 0;
+    }
+
+    .benefit-content h4 {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .benefit-content p {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.5;
+    }
+
+    .prompt-actions {
+        display: flex;
+        gap: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .login-btn,
+    .register-btn {
+        padding: 0.9rem 2rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1rem;
+    }
+
+    .login-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+    }
+
+    .register-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .login-btn:hover,
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    /* Publications Section */
+    .publications-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .view-all-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.7rem 1.5rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .view-all-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 2rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .publication-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .publication-badge {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .publication-card:hover .publication-image {
+        transform: scale(1.05);
+    }
+
+    .publication-content {
+        padding: 1.8rem;
+    }
+
+    .publication-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .publication-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .publication-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+    }
+
+    .publication-date {
+        color: #666;
+        font-size: 0.85rem;
+        background: var(--light-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+    }
+
+    .publication-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.8rem;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        padding: 0.6rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+    }
+
+    .action-btn::after {
+        content: attr(aria-label);
+        position: absolute;
+        bottom: -30px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: var(--dark-color);
+        color: white;
+        padding: 0.3rem 0.6rem;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        opacity: 0;
+        transition: var(--transition);
+        white-space: nowrap;
+    }
+
+    .action-btn:hover::after {
+        opacity: 1;
+        bottom: -35px;
+    }
+
+    .share-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .like-btn:hover {
+        background: #ffeaea;
+        color: #ff6b6b;
+    }
+
+    .comment-btn:hover {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    .login-prompt-small {
+        color: #666;
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 12px;
+        background: var(--light-color);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    /* Contact Section */
+    .contact-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 3rem;
+    }
+
+    .contact-form {
+        margin-top: 1.5rem;
+    }
+
+    .form-group {
+        margin-bottom: 1.8rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.8rem;
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 1.05rem;
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 1rem 1.2rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 12px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .textarea {
+        min-height: 140px;
+        resize: vertical;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 1rem 2.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.8rem;
+        font-size: 1.05rem;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Map Section */
+    .map-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 3rem;
+    }
+
+    .map-placeholder {
+        height: 300px;
+        background: linear-gradient(135deg, var(--light-color), #e8f4f8);
+        border-radius: 12px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .map-icon {
+        font-size: 3rem;
+        color: var(--secondary-color);
+    }
+
+    /* Footer */
+    .main-footer {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem 2.5rem;
+        box-shadow: var(--shadow-light);
+        margin-top: 4rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 3rem;
+    }
+
+    .footer-section h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.4rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 1rem;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.8rem;
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+        padding-left: 8px;
+    }
+
+    .social-links-footer {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-link-footer {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 45px;
+        height: 45px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link-footer:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link-footer img {
+        width: 22px;
+        height: 22px;
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2.5rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2.5rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.6rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.8rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .establishment-header {
+            flex-direction: column;
+            text-align: center;
+        }
+        
+        .establishment-image {
+            margin: 0 auto;
+        }
+        
+        .establishment-title::after {
+            left: 50%;
+            transform: translateX(-50%);
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            padding: 1.5rem;
+        }
+        
+        .prompt-benefits {
+            grid-template-columns: 1fr;
+        }
+        
+        .publications-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .prompt-actions {
+            flex-direction: column;
+        }
+        
+        .login-btn,
+        .register-btn {
+            width: 100%;
+            justify-content: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .establishment-header {
+            padding: 1.5rem;
+        }
+        
+        .establishment-title {
+            font-size: 1.8rem;
+        }
+        
+        .detail-item {
+            flex-direction: column;
+            text-align: center;
+            gap: 0.5rem;
+        }
+        
+        .detail-icon {
+            margin: 0 auto;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Loading States */
+    .loading {
+        opacity: 0.7;
+        pointer-events: none;
+    }
+
+    /* Success Messages */
+    .success-message {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: slideUp 0.3s ease;
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Back Button -->
+        <a href="{% url 'Catevis' %}" class="back-btn">
+            <i class="fas fa-arrow-left"></i> Retour aux établissements
+        </a>
+
+        <!-- Establishment Header -->
+        <section class="establishment-header">
+            <div class="establishment-image">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="establishment-img">
+            </div>
+            
+            <div class="establishment-info">
+                <h1 class="establishment-title">BNK Boutique</h1>
+                
+                <div class="establishment-rating">
+                    <span class="rating-stars">★★★★★</span>
+                    <span class="rating-value">4.8</span>
+                    <span class="rating-count">124 avis</span>
+                </div>
+                
+                <p class="establishment-description">
+                    BNK Boutique est un établissement de vente de robe béninoise de qualité à un prix de gros 
+                    pour vous permettre de lancer votre entreprise. Nous proposons des produits authentiques 
+                    et durables, avec un service personnalisé pour chaque client. Notre mission est de rendre 
+                    accessible la mode africaine de qualité tout en soutenant les entrepreneurs locaux.
+                </p>
+                
+                <div class="establishment-details">
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Type d'établissement</div>
+                            <div class="detail-value">Boutique de vêtements</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-map-marker-alt"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Adresse</div>
+                            <div class="detail-value">Lukula 10 Q/Joli Parc C/Ngaliema, Lubumbashi</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">BNKBoutique20@gmail.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="detail-item">
+                        <div class="detail-icon">
+                            <i class="fas fa-phone"></i>
+                        </div>
+                        <div class="detail-content">
+                            <div class="detail-label">Téléphone</div>
+                            <div class="detail-value">+243 81 234 5678</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Facebook" onclick="shareOnFacebook()">
+                        <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                    </a>
+                    <a href="#" class="social-link" aria-label="WhatsApp" onclick="shareOnWhatsApp()">
+                        <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter" onclick="shareOnTwitter()">
+                        <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                    </a>
+                    <a href="mailto:BNKBoutique20@gmail.com" class="social-link" aria-label="Email">
+                        <img src="{% static 'img/mail.png' %}" alt="Email">
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Login Prompt -->
+        <section class="login-prompt">
+            <div class="prompt-header">
+                <div class="prompt-icon">
+                    <i class="fas fa-lock"></i>
+                </div>
+                <h2 class="prompt-title">Contenu réservé aux membres</h2>
+            </div>
+            
+            <p class="prompt-message">
+                Pour accéder aux services détaillés, activités, menus et autres fonctionnalités exclusives de cet établissement, 
+                vous devez créer un compte ou vous connecter. Rejoignez notre communauté pour profiter de toutes les fonctionnalités !
+            </p>
+            
+            <div class="prompt-benefits">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-concierge-bell"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Services détaillés</h4>
+                        <p>Accédez à la liste complète des services, prix et disponibilités</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Activités exclusives</h4>
+                        <p>Découvrez les événements à venir et réservez votre place</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-utensils"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Menus complets</h4>
+                        <p>Consultez tous les plats, boissons et leurs descriptions</p>
+                    </div>
+                </div>
+                
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="benefit-content">
+                        <h4>Fonctionnalités avancées</h4>
+                        <p>Réservations, favoris, avis et notifications personnalisées</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="prompt-actions">
+                <button class="login-btn" onclick="redirectToLogin()">
+                    <i class="fas fa-sign-in-alt"></i> Se connecter
+                </button>
+                <button class="register-btn" onclick="redirectToRegister()">
+                    <i class="fas fa-user-plus"></i> Créer un compte
+                </button>
+            </div>
+        </section>
+
+        <!-- Publications Section -->
+        <section class="publications-section">
+            <div class="section-header">
+                <h2 class="section-title">Publications récentes</h2>
+                <button class="view-all-btn" onclick="viewAllPublications()">
+                    <i class="fas fa-list"></i> Voir toutes les publications
+                </button>
+            </div>
+            
+            <div class="publications-grid">
+                <!-- Publication 1 -->
+                <article class="publication-card">
+                    <span class="publication-badge">Promotion</span>
+                    <img src="{% static 'img/coiffure.jpg' %}" alt="Promotion robes" class="publication-image">
+                    <div class="publication-content">
+                        <h3 class="publication-title">Promotion exceptionnelle sur nos robes</h3>
+                        <p class="publication-description">
+                            Profitez de -20% sur toute notre collection de robes béninoises cet été. 
+                            Des modèles uniques et authentiques à prix réduits pour une durée limitée.
+                        </p>
+                        <div class="publication-meta">
+                            <span class="publication-date">01/01/2025</span>
+                        </div>
+                        <div class="publication-actions">
+                            <div class="action-buttons">
+                                <button class="action-btn share-btn" aria-label="Partager" onclick="sharePublication(1)">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="action-btn like-btn" aria-label="J'aime" onclick="promptLoginForLike()">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="action-btn comment-btn" aria-label="Commenter" onclick="promptLoginForComment()">
+                                    <i class="far fa-comment"></i>
+                                </button>
+                            </div>
+                            <div class="login-prompt-small">
+                                <i class="fas fa-info-circle"></i> Connectez-vous pour interagir
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Publication 2 -->
+                <article class="publication-card">
+                    <span class="publication-badge">Nouveauté</span>
+                    <img src="{% static 'img/restaurant.jpg' %}" alt="Nouvelle collection" class="publication-image">
+                    <div class="publication-content">
+                        <h3 class="publication-title">Nouvelle collection printemps-été 2025</h3>
+                        <p class="publication-description">
+                            Découvrez notre nouvelle collection printemps-été 2025. 
+                            Des tissus légers, des couleurs vibrantes et des designs modernes inspirés de la tradition.
+                        </p>
+                        <div class="publication-meta">
+                            <span class="publication-date">15/12/2024</span>
+                        </div>
+                        <div class="publication-actions">
+                            <div class="action-buttons">
+                                <button class="action-btn share-btn" aria-label="Partager" onclick="sharePublication(2)">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="action-btn like-btn" aria-label="J'aime" onclick="promptLoginForLike()">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="action-btn comment-btn" aria-label="Commenter" onclick="promptLoginForComment()">
+                                    <i class="far fa-comment"></i>
+                                </button>
+                            </div>
+                            <div class="login-prompt-small">
+                                <i class="fas fa-info-circle"></i> Connectez-vous pour interagir
+                            </div>
+                        </div>
+                    </div>
+                </article>
+                
+                <!-- Publication 3 -->
+                <article class="publication-card">
+                    <span class="publication-badge">Événement</span>
+                    <img src="{% static 'img/hotel.jpg' %}" alt="Atelier couture" class="publication-image">
+                    <div class="publication-content">
+                        <h3 class="publication-title">Atelier de couture traditionnelle</h3>
+                        <p class="publication-description">
+                            Participez à notre atelier de couture traditionnelle le 20 janvier. 
+                            Apprenez les techniques ancestrales de confection de vêtements béninois.
+                        </p>
+                        <div class="publication-meta">
+                            <span class="publication-date">10/12/2024</span>
+                        </div>
+                        <div class="publication-actions">
+                            <div class="action-buttons">
+                                <button class="action-btn share-btn" aria-label="Partager" onclick="sharePublication(3)">
+                                    <i class="fas fa-share-alt"></i>
+                                </button>
+                                <button class="action-btn like-btn" aria-label="J'aime" onclick="promptLoginForLike()">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="action-btn comment-btn" aria-label="Commenter" onclick="promptLoginForComment()">
+                                    <i class="far fa-comment"></i>
+                                </button>
+                            </div>
+                            <div class="login-prompt-small">
+                                <i class="fas fa-info-circle"></i> Connectez-vous pour interagir
+                            </div>
+                        </div>
+                    </div>
+                </article>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section class="contact-section">
+            <h2 class="section-title">Contactez cet établissement</h2>
+            <p style="color: #666; margin-bottom: 1.5rem;">
+                Vous avez une question ou souhaitez plus d'informations ? Envoyez un message directement à l'établissement.
+            </p>
+            
+            <form class="contact-form" id="contactForm">
+                <div class="form-group">
+                    <label class="form-label">Votre nom</label>
+                    <input type="text" class="form-control" placeholder="Entrez votre nom" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Votre email</label>
+                    <input type="email" class="form-control" placeholder="Entrez votre email" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Sujet</label>
+                    <input type="text" class="form-control" placeholder="Objet de votre message" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Votre message</label>
+                    <textarea class="form-control textarea" placeholder="Décrivez votre demande..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">
+                    <i class="fas fa-paper-plane"></i> Envoyer le message
+                </button>
+            </form>
+        </section>
+
+        <!-- Map Section -->
+        <section class="map-section">
+            <h2 class="section-title">Localisation</h2>
+            <div class="map-placeholder">
+                <div class="map-icon">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+                <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Lukula 10 Q/Joli Parc C/Ngaliema</h3>
+                <p style="color: #666; text-align: center;">Lubumbashi, République Démocratique du Congo</p>
+                <button class="submit-btn" style="margin-top: 1rem;" onclick="getDirections()">
+                    <i class="fas fa-directions"></i> Voir l'itinéraire
+                </button>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>Navigation</h3>
+                    <ul class="footer-links">
+                        <li><a href="{% url 'auth_view' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                        <li><a href="{% url 'Catevis' %}"><i class="fas fa-building"></i> Établissements</a></li>
+                        <li><a href="#"><i class="fas fa-newspaper"></i> Publications</a></li>
+                        <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Support</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-question-circle"></i> Aide & FAQ</a></li>
+                        <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                        <li><a href="#"><i class="fas fa-shield-alt"></i> Confidentialité</a></li>
+                        <li><a href="#"><i class="fas fa-file-contract"></i> Conditions</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-section">
+                    <h3>Suivez-nous</h3>
+                    <div class="social-links-footer">
+                        <a href="#" class="social-link-footer" aria-label="Facebook">
+                            <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                        </a>
+                        <a href="#" class="social-link-footer" aria-label="WhatsApp">
+                            <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                        </a>
+                        <a href="#" class="social-link-footer" aria-label="Twitter">
+                            <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                        </a>
+                        <a href="#" class="social-link-footer" aria-label="Email">
+                            <img src="{% static 'img/mail.png' %}" alt="Email">
+                        </a>
+                    </div>
+                    
+                    <div style="margin-top: 1.5rem; padding: 1rem; background: var(--light-color); border-radius: 10px;">
+                        <p style="color: #666; font-size: 0.9rem; line-height: 1.5;">
+                            <i class="fas fa-info-circle" style="color: var(--secondary-color);"></i>
+                            Pour accéder à toutes les fonctionnalités, 
+                            <a href="{% url 'auth_user' %}" style="color: var(--primary-color); font-weight: 500;">créez un compte gratuit</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>© 2024 Aryo-Tour. Détails établissement - BNK Boutique</p>
+                <p style="margin-top: 0.5rem; font-style: italic;">"L'Eternel est ici" - Ezéchiel 48:35</p>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Login Prompt Modal -->
+    <div id="loginPromptModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Connexion requise</h3>
+                <button class="close-modal" onclick="closeModal('loginPromptModal')">×</button>
+            </div>
+            <div style="padding: 1.5rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="font-size: 4rem; color: var(--secondary-color); margin-bottom: 1rem;">
+                        <i class="fas fa-lock"></i>
+                    </div>
+                    <h4 style="font-size: 1.3rem; color: var(--text-color); margin-bottom: 0.5rem;">
+                        Cette fonctionnalité nécessite un compte
+                    </h4>
+                    <p style="color: #666; line-height: 1.6;">
+                        Pour {{ actionRequired }}, vous devez être connecté à votre compte.
+                    </p>
+                </div>
+                
+                <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                    <button class="login-btn" style="flex: 1;" onclick="redirectToLogin()">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </button>
+                    <button class="register-btn" style="flex: 1;" onclick="redirectToRegister()">
+                        <i class="fas fa-user-plus"></i> S'inscrire
+                    </button>
+                </div>
+                
+                <div style="margin-top: 2rem; padding-top: 1.5rem; border-top: 1px solid #e0e0e0;">
+                    <p style="color: #666; font-size: 0.9rem; text-align: center;">
+                        La création de compte est gratuite et prend moins d'une minute.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Variables globales
+        let actionRequired = "cette action";
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            setupEventListeners();
+        });
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Formulaire de contact
+            document.getElementById('contactForm')?.addEventListener('submit', function(e) {
+                e.preventDefault();
+                sendContactMessage();
+            });
+
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Redirection vers les pages d'authentification
+        function redirectToLogin() {
+            window.location.href = "{% url 'auth_user' %}";
+        }
+
+        function redirectToRegister() {
+            window.location.href = "{% url 'auth_user' %}?register=true";
+        }
+
+        // Fonctions de partage
+        function sharePublication(id) {
+            const publicationTitle = document.querySelectorAll('.publication-title')[id-1].textContent;
+            const text = encodeURIComponent(`Découvrez "${publicationTitle}" sur Aryo-Tour !`);
+            const url = encodeURIComponent(window.location.href);
+            
+            window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareOnWhatsApp() {
+            const text = encodeURIComponent(`Découvrez BNK Boutique sur Aryo-Tour ! ${window.location.href}`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function shareOnTwitter() {
+            const text = encodeURIComponent('Découvrez BNK Boutique sur Aryo-Tour !');
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        // Fonctions d'interaction nécessitant une connexion
+        function promptLoginForLike() {
+            actionRequired = "aimer cette publication";
+            openModal('loginPromptModal');
+        }
+
+        function promptLoginForComment() {
+            actionRequired = "commenter cette publication";
+            openModal('loginPromptModal');
+        }
+
+        // Envoyer un message de contact
+        function sendContactMessage() {
+            const form = document.getElementById('contactForm');
+            const formData = new FormData(form);
+            
+            // Simulation d'envoi
+            form.classList.add('loading');
+            
+            setTimeout(() => {
+                form.classList.remove('loading');
+                
+                // Message de succès
+                const successMessage = document.createElement('div');
+                successMessage.className = 'success-message';
+                successMessage.innerHTML = `
+                    <i class="fas fa-check-circle" style="color: #28a745;"></i>
+                    <div>
+                        <strong>Message envoyé avec succès !</strong>
+                        <p style="margin-top: 0.3rem; font-size: 0.9rem;">
+                            Votre message a été envoyé à BNK Boutique. Vous recevrez une réponse dans les plus brefs délais.
+                        </p>
+                    </div>
+                `;
+                
+                form.parentNode.insertBefore(successMessage, form);
+                form.reset();
+                
+                // Supprimer le message après 5 secondes
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 5000);
+            }, 1500);
+        }
+
+        // Obtenir l'itinéraire
+        function getDirections() {
+            const address = "Lukula 10 Q/Joli Parc C/Ngaliema, Lubumbashi";
+            const encodedAddress = encodeURIComponent(address);
+            window.open(`https://www.google.com/maps/search/?api=1&query=${encodedAddress}`, '_blank');
+        }
+
+        // Voir toutes les publications
+        function viewAllPublications() {
+            alert('Cette fonctionnalité afficherait toutes les publications. Pour y accéder, créez un compte gratuitement !');
+            redirectToRegister();
+        }
+
+        // Afficher les services (pour démonstration)
+        function showServices() {
+            actionRequired = "voir les services détaillés";
+            openModal('loginPromptModal');
+        }
+
+        // Afficher les activités (pour démonstration)
+        function showActivities() {
+            actionRequired = "voir les activités à venir";
+            openModal('loginPromptModal');
+        } 
+
+        // Afficher les menus (pour démonstration)
+        function showMenus() {
+            actionRequired = "consulter les menus complets";
+            openModal('loginPromptModal');
+        }
+    </script> 
+</body>
+</html>
+{% endblock %}
