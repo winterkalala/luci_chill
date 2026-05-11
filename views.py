@@ -1,7 +1,8 @@
 from django.shortcuts import render, redirect
 #from django.conf import settings
 from django.contrib.auth import authenticate, login
-from .forms import registrationForm_Et, loginForm_Et, registrationForm_Us, loginForm_Us
+from .forms import registrationForm_Et, loginForm_Et, registrationForm_Us, loginForm_Us, ContactForm
+from django.contrib import messages
 
 # Create your views here.
 def accueil(request):
@@ -70,6 +71,33 @@ def auth_view(request):
         login_form = loginForm_Et()
     
     return render(request, 'ConnEt.html', {'reg_form': reg_form, 'login_form': login_form})
+
+
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST) 
+        if form.is_valid():
+            # Traitement du formulaire (envoi d'email, sauvegarde en BDD, etc.)
+            full_name = form.cleaned_data['full_name']
+            email = form.cleaned_data['email']
+            subject = form.cleaned_data['subject']
+            message = form.cleaned_data['message']
+            
+            # Exemple: sauvegarde en base de données
+            # Contact.objects.create(
+            #     full_name=full_name,
+            #     email=email,
+            #     subject=subject,
+            #     message=message
+            # )
+            
+            messages.success(request, 'Votre message a été envoyé avec succès ! Nous vous répondrons dans les plus brefs délais.')
+            return redirect('contact')
+    else:
+        form = ContactForm()
+    
+    return render(request, 'contact.html', {'contact_form': form})
 
 
 # Accueil Etablissement 

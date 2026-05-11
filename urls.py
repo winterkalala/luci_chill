@@ -16,6 +16,7 @@ urlpatterns=[
     path("result_8",views.Voisateur,name="Voisateur"),
     path("result_9",views.PublicEt,name="PublicEt"), 
     path("result_10",views.visitep,name="visitep"), 
-    path("result_11",views.utilip,name="utilip"), 
-]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    path("result_11",views.utilip,name="utilip"),
+    path('contact', views.contact_view, name='contact'), 
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT) 
 

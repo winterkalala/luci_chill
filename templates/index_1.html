@@ -505,8 +505,8 @@
             <nav class="main-nav">
                 <a href="#" class="nav-link active">Accueil</a> 
                 <a href="{% url 'Catevis' %}" class="nav-link">Établissements</a>
-                <a href="{% url 'visitep' %}" class="nav-link">Publications</a> 
-                <a href="#" class="nav-link">Contact</a> 
+                <a href="{% url 'visitep' %}" class="nav-link">Publications</a>  
+                <a href="{% url 'contact' %}" class="nav-link">Contact</a>  
             </nav>
             
             <div class="user-actions">
@@ -644,7 +644,7 @@
                     <ul class="footer-links">
                         <li><a href="{% url 'Catevis' %}">Établissements</a></li>
                         <li><a href="{% url 'visitep' %}">Publications</a></li>
-                        <li><a href="#">Contact</a></li>
+                        <li><a href="{% url 'contact' %}">Contact</a></li>
                     </ul>
                 </div>
 
@@ -680,9 +680,9 @@
             </div>
 
             <div class="copyright">
-                <p>&copy; 2024 Aryo-Tour. Tous droits réservés. | "L'Eternel est ici" - Ezéchiel 48:35</p>
+                <p>&copy; 2024 LucieVisit. Tous droits réservés. | "L'Eternel est ici" - Ezéchiel 48:35</p>
             </div>
-        </div>
+        </div> 
     </footer>
 
     <!-- Scripts --> 

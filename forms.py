@@ -25,7 +25,6 @@ class registrationForm_Et(forms.ModelForm):
             raise forms.ValidationError("Les mots de passe ne correspondent pas.")
 
 
- 
 class loginForm_Et(forms.Form):
     username = forms.CharField(label=" nom utilisateur ",max_length=150, widget=forms.TextInput(attrs={'class':'form-control'}))
     pwd = forms.CharField(label=" mot de pass ",max_length=16,widget=forms.PasswordInput(attrs={'class':'form-control'}))
@@ -52,7 +51,41 @@ class registrationForm_Us(forms.ModelForm):
             raise forms.ValidationError("Les mots de passe ne correspondent pas.")
         
         
-
 class loginForm_Us(forms.Form):
     username = forms.CharField(label=" nom utilisateur ",max_length=150, widget=forms.TextInput(attrs={'class':'form-control'}))
     pwd = forms.CharField(label=" mot de pass ",max_length=16,widget=forms.PasswordInput(attrs={'class':'form-control'}))
+
+
+
+class ContactForm(forms.Form):
+    full_name = forms.CharField(
+        max_length=100,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Votre nom complet',
+        })
+    )
+    
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'votre@email.com',
+        })
+    )
+    
+    subject = forms.CharField(
+        max_length=200,
+        widget=forms.TextInput(attrs={
+            'class': 'form-control',
+            'placeholder': 'Sujet de votre message',
+        })
+    )
+    
+    message = forms.CharField(
+        widget=forms.Textarea(attrs={
+            'class': 'form-control',
+            'rows': 5,
+            'placeholder': 'Votre message ici...',
+        })
+    )
+
