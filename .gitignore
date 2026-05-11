@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# Django
+*.log
+*.pyc
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+
+# Fichiers compilés Python
+*.pyc
+__pycache__/
+
+# Migrations (optionnel, à garder parfois)
+# migrations/
+# !migrations/__init__.py
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Documents Office
+*.docx
+*.doc
+~$*.docx
