@@ -1,0 +1,700 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Connexion Établissement - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    /* Variables CSS - Correspondant au design du tableau de bord */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    /* Conteneur principal */
+    .auth-container {
+        display: flex;
+        width: 100%;
+        max-width: 1200px;
+        min-height: 700px;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow);
+        overflow: hidden;
+    }
+
+    /* Section côté gauche (illustration) */
+    .auth-side {
+        flex: 1;
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        color: white;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .auth-side::before {
+        content: '';
+        position: absolute;
+        top: -50%;
+        right: -50%;
+        width: 100%;
+        height: 100%;
+        background: url('{% static "img/coiffure.jpg" %}') center/cover;
+        opacity: 0.1;
+    }
+
+    .auth-logo {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        margin-bottom: 3rem;
+    }
+
+    .auth-logo img {
+        width: 120px;
+        height: 120px;
+        margin-bottom: 1.5rem;
+        border-radius: 50%;
+        border: 4px solid rgba(255, 255, 255, 0.2);
+    }
+
+    .auth-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .auth-subtitle {
+        font-size: 1.1rem;
+        opacity: 0.9;
+    }
+
+    .auth-features {
+        position: relative;
+        z-index: 2;
+        margin-top: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-icon {
+        font-size: 1.5rem;
+        background: rgba(255, 255, 255, 0.2);
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .feature-text {
+        flex: 1;
+    }
+
+    .feature-title {
+        font-weight: 600;
+        margin-bottom: 0.25rem;
+    }
+
+    .feature-desc {
+        font-size: 0.9rem;
+        opacity: 0.8;
+    }
+
+    /* Section formulaire */
+    .auth-form-section {
+        flex: 1;
+        padding: 3rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    /* Onglets de navigation */
+    .auth-tabs {
+        display: flex;
+        gap: 1rem;
+        margin-bottom: 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        padding-bottom: 1rem;
+    }
+
+    .auth-tab {
+        background: none;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        color: var(--text-color);
+        cursor: pointer;
+        transition: var(--transition);
+        border-radius: 25px;
+        position: relative;
+    }
+
+    .auth-tab.active {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .auth-tab::after {
+        content: '';
+        position: absolute;
+        bottom: -1rem;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 0;
+        height: 3px;
+        background: var(--secondary-color);
+        transition: var(--transition);
+    }
+
+    .auth-tab.active::after {
+        width: 100%;
+    }
+
+    /* Formulaires */
+    .auth-form {
+        display: none;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .auth-form.active {
+        display: block;
+    }
+
+    .form-header {
+        margin-bottom: 2rem;
+        text-align: center;
+    }
+
+    .form-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .form-subtitle {
+        color: #666;
+        font-size: 0.95rem;
+    }
+
+    /* Messages d'alerte */
+    .alert-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .alert {
+        padding: 1rem;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 500;
+        animation: slideDown 0.3s ease;
+    }
+
+    .alert-danger {
+        background: linear-gradient(135deg, #ff6b6b, #ee5a52);
+        color: white;
+    }
+
+    .alert-success {
+        background: linear-gradient(135deg, #1dd1a1, #10ac84);
+        color: white;
+    }
+
+    /* Groupes de formulaire */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.9rem 1.2rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        transition: var(--transition);
+        background: var(--light-color);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+        background: white;
+    }
+
+    .select-control {
+        appearance: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%2347466D' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+        background-repeat: no-repeat;
+        background-position: right 1rem center;
+        background-size: 16px 12px;
+        padding-right: 2.5rem;
+    }
+
+    .textarea {
+        min-height: 100px;
+        resize: vertical;
+    }
+
+    /* Upload d'image */
+    .image-upload-container {
+        margin-bottom: 1.5rem;
+    }
+
+    .image-preview {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin: 0 auto 1rem;
+        display: block;
+        box-shadow: var(--shadow-light);
+    }
+
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+    }
+
+    .file-upload-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        border: none;
+        font-family: 'Poppins', sans-serif;
+        font-weight: 500;
+    }
+
+    .file-upload-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .file-upload input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    /* Boutons d'action */
+    .form-actions {
+        margin-top: 2rem;
+        text-align: center;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 1rem 2rem;
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* Lien de bascule */
+    .auth-switch {
+        text-align: center;
+        margin-top: 1.5rem;
+        color: #666;
+    }
+
+    .auth-link {
+        background: none;
+        border: none;
+        color: var(--primary-color);
+        font-weight: 500;
+        cursor: pointer;
+        text-decoration: underline;
+        transition: var(--transition);
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+    }
+
+    .auth-link:hover {
+        color: var(--secondary-color);
+    }
+
+    /* Footer */
+    .auth-footer {
+        text-align: center;
+        margin-top: 2rem;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    /* Responsive */
+    @media (max-width: 992px) {
+        .auth-container {
+            flex-direction: column;
+            max-width: 600px;
+        }
+
+        .auth-side {
+            padding: 2rem;
+            min-height: 300px;
+        }
+
+        .auth-form-section {
+            padding: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .auth-tabs {
+            flex-direction: column;
+        }
+
+        .auth-tab {
+            width: 100%;
+        }
+
+        .form-control {
+            padding: 0.8rem 1rem;
+        }
+
+        .submit-btn {
+            max-width: 100%;
+        }
+    }
+</style>
+
+<body>
+    <div class="auth-container">
+        <!-- Section côté gauche -->
+        <div class="auth-side">
+            <div class="auth-logo">
+                <img src="{% static 'img/home_blue.png' %}" alt="Aryo-Tour">
+                <h1 class="auth-title">Aryo-Tour</h1>
+                <p class="auth-subtitle">Votre établissement, notre plateforme</p>
+            </div>
+
+            <div class="auth-features">
+                <div class="feature-item">
+                    <div class="feature-icon">🚀</div>
+                    <div class="feature-text">
+                        <h4 class="feature-title">Développez votre visibilité</h4>
+                        <p class="feature-desc">Atteignez des milliers de clients potentiels</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">📈</div>
+                    <div class="feature-text">
+                        <h4 class="feature-title">Gérez facilement</h4>
+                        <p class="feature-desc">Services, activités, menus en un seul endroit</p>
+                    </div>
+                </div>
+
+                <div class="feature-item">
+                    <div class="feature-icon">💼</div>
+                    <div class="feature-text">
+                        <h4 class="feature-title">Boostez votre business</h4>
+                        <p class="feature-desc">Augmentez vos réservations et revenus</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section formulaire -->
+        <div class="auth-form-section">
+            <!-- Onglets -->
+            <div class="auth-tabs">
+                <button class="auth-tab active" onclick="showForm('login')">Connexion</button>
+                <button class="auth-tab" onclick="showForm('register')">Inscription</button>
+            </div>
+
+            <!-- Messages d'alerte -->
+            <div class="alert-container">
+                {% if messages %}
+                    {% for message in messages %}
+                        <div class="alert alert-danger">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+
+            <!-- Formulaire de Connexion -->
+            <form id="login-form" class="auth-form active" action="{% url 'auth_view' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-header">
+                    <h2 class="form-title">Connexion à mon établissement</h2>
+                    <p class="form-subtitle">Accédez à votre tableau de bord de gestion</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Nom d'utilisateur</label>
+                    {{ login_form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd" class="form-label">Mot de passe</label>
+                    {{ login_form.pwd }}
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn" name="login_Et">
+                        <span>🔑</span> Se connecter
+                    </button>
+                </div>
+
+                <div class="auth-switch">
+                    <p>Pas encore inscrit ? 
+                        <button type="button" class="auth-link" onclick="showForm('register')">Créer un compte</button>
+                    </p>
+                </div>
+            </form>
+
+            <!-- Formulaire d'Inscription -->
+            <form id="register-form" class="auth-form" action="{% url 'auth_view' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-header">
+                    <h2 class="form-title">Inscription de mon établissement</h2>
+                    <p class="form-subtitle">Rejoignez notre plateforme en quelques minutes</p>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_username" class="form-label">Nom de l'établissement</label>
+                    {{ reg_form.username }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_email" class="form-label">Email de l'établissement</label>
+                    {{ reg_form.email }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_address" class="form-label">Adresse</label>
+                    {{ reg_form.address }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_city" class="form-label">Ville</label>
+                    {{ reg_form.city }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_categorie" class="form-label">Catégorie</label>
+                    <select class="form-control select-control" name="Cate" id="id_categorie">
+                        {{ reg_form.Cate }}
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="id_description" class="form-label">Description</label>
+                    {{ reg_form.description }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd" class="form-label">Mot de passe</label>
+                    {{ reg_form.pwd }}
+                </div>
+
+                <div class="form-group">
+                    <label for="id_pwd_conf" class="form-label">Confirmer le mot de passe</label>
+                    {{ reg_form.pwd_conf }}
+                </div>
+
+                <div class="image-upload-container">
+                    <img id="image-preview" class="image-preview" src="" alt="Aperçu" style="display: none;">
+                    <div class="file-upload">
+                        <button type="button" class="file-upload-btn">
+                            <span>📷</span> Choisir une image de profil
+                        </button>
+                        <input type="file" id="image-input" name="image" accept="image/*" required>
+                    </div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="submit-btn" name="register_Et">
+                        <span>✍️</span> S'inscrire
+                    </button>
+                </div>
+
+                <div class="auth-switch">
+                    <p>Déjà inscrit ? 
+                        <button type="button" class="auth-link" onclick="showForm('login')">Se connecter</button>
+                    </p>
+                </div>
+            </form>
+
+            <div class="auth-footer">
+                <p>© 2024 Aryo-Tour. Tous droits réservés.</p>
+                <p>En créant un compte, vous acceptez nos conditions d'utilisation et politique de confidentialité.</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Gestion des onglets
+        function showForm(formType) {
+            // Mettre à jour les onglets actifs
+            document.querySelectorAll('.auth-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`.auth-tab[onclick="showForm('${formType}')"]`).classList.add('active');
+
+            // Afficher le formulaire correspondant
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('register-form').classList.remove('active');
+            document.getElementById(`${formType}-form`).classList.add('active');
+        }
+
+        // Prévisualisation de l'image
+        const imageInput = document.getElementById('image-input');
+        const imagePreview = document.getElementById('image-preview');
+
+        imageInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    imagePreview.src = event.target.result;
+                    imagePreview.style.display = 'block';
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        // Style des champs de formulaire Django
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ajouter des classes aux champs de formulaire Django
+            document.querySelectorAll('input, select, textarea').forEach(element => {
+                if (!element.classList.contains('form-control')) {
+                    element.classList.add('form-control');
+                }
+            });
+
+            // Ajouter la classe select-control aux select
+            document.querySelectorAll('select').forEach(select => {
+                select.classList.add('select-control');
+            });
+
+            // Ajouter la classe textarea aux textarea
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.classList.add('textarea');
+            });
+
+            // Gestion des messages d'alerte
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                setTimeout(() => {
+                    alert.style.opacity = '0';
+                    alert.style.transform = 'translateY(-10px)';
+                    setTimeout(() => alert.remove(), 300);
+                }, 5000);
+            });
+        });
+    </script>
+</body>
+</html>
+{% endblock %} 
+
+

@@ -1,0 +1,1653 @@
+
+#Creation de la table Compte Etablissement 
+class Etablissement(models.Model):
+    username = models.CharField(max_length=100)
+    pwd = models.CharField(max_length=16)
+    adresse = models.TextField()
+    description = models.TextField()
+    Email = models.EmailField()
+    city = models.CharField(max_length=100)
+    image = models.ImageField()
+    categorie = models.CharField(max_length=100, null=True, blank=True)
+    date_create=models.DateTimeField(auto_now_add=True)
+    date_update=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.username
+    
+class User(models.Model):
+    username = models.CharField(max_length=100)
+    pwd = models.CharField(max_length=16)
+    Email = models.EmailField()
+    city = models.CharField(max_length=100)
+    image = models.ImageField()
+    date_create=models.DateTimeField(auto_now_add=True)
+    date_update=models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return self.username
+
+
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+ <!--   <a href="{% url 'auth_view' %}"> <img src="{% static 'img/Home.png' %}" alt="" style="width: 50px; height: 50px;">  </a>
+    <a href="{% url 'auth_user' %}"> <img src="{% static 'img/user.png' %}" alt="" style="width: 50px; height: 50px;">  </a> 
+-->
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+<label for="id_username"> recuperer une image </label> <br> 
+                            <input type="file" id="image-input" name="image" accept="image/*">
+
+
+
+
+
+
+
+
+
+
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+Pour créer un script qui affiche une fenêtre JavaScript (comme une modale) avec 
+des données d'une table `Etablissement` lorsque l'utilisateur clique sur un bouton, 
+vous pouvez suivre ces étapes :
+
+### Étape 1 : Modèle
+
+Assurez-vous d'avoir un modèle `Etablissement` configuré. Voici un exemple de modèle :
+
+```python
+# models.py
+from django.db import models
+
+class Etablissement(models.Model):
+    nom = models.CharField(max_length=100)
+    adresse = models.CharField(max_length=255)
+    ville = models.CharField(max_length=100)
+    mail = models.EmailField()
+
+    def __str__(self):
+        return self.nom
+```
+
+### Étape 2 : Vues
+
+Créez une vue pour récupérer les détails d'un établissement en fonction de son ID :
+
+```python
+# views.py
+from django.shortcuts import render, get_object_or_404
+from .models import Etablissement
+from django.http import JsonResponse
+
+def get_etablissement_data(request, id):
+    etablissement = get_object_or_404(Etablissement, id=id)
+    data = {
+        'nom': etablissement.nom,
+        'adresse': etablissement.adresse,
+        'ville': etablissement.ville,
+        'mail': etablissement.mail,
+    }
+    return JsonResponse(data)
+```
+
+### Étape 3 : URL
+
+Ajoutez une URL pour accéder à la vue qui renvoie les données de l'établissement :
+
+```python
+# urls.py
+from django.urls import path
+from .views import get_etablissement_data
+
+urlpatterns = [
+    path('etablissement/<int:id>/', get_etablissement_data, name='get_etablissement_data'),
+]
+```
+
+### Étape 4 : Template
+
+Créez un template qui inclut les boutons pour afficher les modales et le script JavaScript :
+
+```html
+<!-- template.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Établissements</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>Liste des Établissements</h1>
+
+    <button class="info-button" data-id="1">Afficher Établissement 1</button>
+    <button class="info-button" data-id="2">Afficher Établissement 2</button>
+    <button class="info-button" data-id="3">Afficher Établissement 3</button>
+
+    <div id="modal" style="display:none; border:1px solid; padding:10px; background-color:#f9f9f9;">
+        <h2>Détails de l'Établissement</h2>
+        <p id="modal-content"></p>
+        <button id="close-modal">Fermer</button>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            $('.info-button').click(function() {
+                var id = $(this).data('id');
+                $.ajax({
+                    url: '/etablissement/' + id + '/',
+                    method: 'GET',
+                    success: function(data) {
+                        $('#modal-content').html(
+                            'Nom: ' + data.nom + '<br>' +
+                            'Adresse: ' + data.adresse + '<br>' +
+                            'Ville: ' + data.ville + '<br>' +
+                            'Email: ' + data.mail
+                        );
+                        $('#modal').show();
+                    }
+                });
+            });
+
+            $('#close-modal').click(function() {
+                $('#modal').hide();
+            });
+        });
+    </script>
+</body>
+</html>
+```
+
+### Étape 5 : Affichage du serveur Django
+
+Pour tester, assurez-vous que votre serveur Django est en marche :
+
+```bash
+python manage.py runserver
+```
+
+Allez à l'URL suivante dans votre navigateur : `http://localhost:8000/`.
+
+### Conclusion
+
+Avec ces étapes, vous aurez une page contenant des boutons qui, lorsqu'ils sont cliqués,
+ afficheront une modale avec les détails de l'établissement correspondant. 
+ Le script JavaScript utilise jQuery pour effectuer une requête AJAX et récupérer 
+ les données de l'établissement. Si vous avez d'autres questions ou besoin d'aide supplémentaire,
+  n'hésitez pas à demander !
+
+
+
+
+
+
+  -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+  -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+——-__________—————-____________———
+
+
+
+
+Pour filtrer par plusieurs catégories simultanément dans Django, 
+vous pouvez modifier votre logique de vue, votre modèle et votre interface utilisateur 
+pour permettre aux utilisateurs de sélectionner plusieurs catégories. Voici comment procéder.
+
+### Étape 1 : Modèle
+
+Assurez-vous que votre modèle `Etablissement` inclut une catégorie, 
+comme montré précédemment. Vous n'avez pas besoin de modifier le modèle 
+si vous avez déjà un champ de catégorie.
+
+### Étape 2 : Vues
+
+Modifiez votre vue pour permettre le filtrage par plusieurs catégories. 
+Vous pouvez le faire en utilisant le paramètre `GET` pour passer une liste de catégories.
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Etablissement
+
+def liste_etablissements(request):
+    query = request.GET.get('search', '')
+    categories = request.GET.getlist('categorie')  # Récupérer les catégories sélectionnées
+    etablissements = Etablissement.objects.all()
+
+    # Filtrer par catégories si elles sont sélectionnées
+    if categories:
+        etablissements = etablissements.filter(categorie__in=categories)
+
+    # Filtrer par recherche si un terme de recherche est fourni
+    if query:
+        etablissements = etablissements.filter(nom__icontains=query)
+
+    return render(request, 'etablissements/liste.html', {
+        'etablissements': etablissements,
+        'search_query': query,
+        'categories': categories,
+    })
+```
+
+### Étape 3 : URL
+
+Modifiez votre URL pour pointer vers la nouvelle vue sans spécifier de catégorie dans l'URL :
+
+```python
+# urls.py
+from django.urls import path
+from .views import liste_etablissements
+
+urlpatterns = [
+    path('etablissements/', liste_etablissements, name='liste_etablissements'),
+]
+```
+
+### Étape 4 : Template d'accueil
+
+Modifiez la page d'accueil pour inclure des cases à cocher pour les catégories :
+
+```html
+<!-- accueil.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+</head>
+<body>
+    <h1>Bienvenue sur notre site</h1>
+    <form action="{% url 'liste_etablissements' %}" method="GET">
+        <h2>Sélectionnez les catégories :</h2>
+        <label>
+            <input type="checkbox" name="categorie" value="resto"> Resto
+        </label>
+        <label>
+            <input type="checkbox" name="categorie" value="bar"> Bar ou Lounge
+        </label>
+        <button type="submit">Afficher les établissements</button>
+    </form>
+</body>
+</html>
+```
+
+### Étape 5 : Template de résultats
+
+Modifiez le template pour afficher les établissements et inclure une barre de recherche :
+
+```html
+<!-- liste.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Établissements</title>
+</head>
+<body>
+    <h1>Établissements</h1>
+
+    <form method="GET">
+        <input type="text" name="search" placeholder="Rechercher un établissement..." value="{{ search_query }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <h2>Résultats :</h2>
+    <ul>
+        {% for etablissement in etablissements %}
+            <li>
+                <h2>{{ etablissement.nom }}</h2>
+                <p>{{ etablissement.adresse }}, {{ etablissement.ville }}</p>
+                <p>Email : {{ etablissement.mail }}</p>
+            </li>
+        {% empty %}
+            <li>Aucun établissement trouvé.</li>
+        {% endfor %}
+    </ul>
+</body>
+</html>
+```
+
+### Étape 6 : Affichage du serveur Django
+
+Pour tester, assurez-vous que votre serveur Django est en marche :
+
+```bash
+python manage.py runserver
+```
+
+Allez à l'URL suivante dans votre navigateur : `http://localhost:8000/`.
+
+### Conclusion
+
+Avec ces étapes, vous aurez une page d'accueil où les utilisateurs 
+peuvent sélectionner plusieurs catégories d'établissements à filtrer. 
+La page de résultats affichera les établissements qui correspondent aux catégories
+ sélectionnées et à tout terme de recherche fourni. Si vous avez d'autres questions
+  ou besoin d'aide supplémentaire, n'hésitez pas à demander !
+
+
+
+
+
+
+
+  -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+  -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+————-___________——————-_______
+
+
+Pour que la recherche s'effectue uniquement sur une catégorie présélectionnée (déterminée par un clic sur un lien dans la page précédente), vous devez modifier votre logique de vue et votre modèle. Voici comment procéder :
+
+### Étape 1 : Modèle
+
+Assurez-vous que votre modèle `Etablissement` inclut une catégorie. Voici un exemple de modèle :
+
+```python
+# models.py
+from django.db import models
+
+class Etablissement(models.Model):
+    nom = models.CharField(max_length=100)
+    adresse = models.CharField(max_length=255)
+    ville = models.CharField(max_length=100)
+    mail = models.EmailField()
+    categorie = models.CharField(max_length=50)  # Exemple de champ pour la catégorie
+
+    def __str__(self):
+        return self.nom
+```
+
+### Étape 2 : Vues
+
+Modifiez votre vue pour accepter un type de catégorie et filtrer les établissements en conséquence :
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Etablissement
+
+def liste_etablissements(request, categorie):
+    query = request.GET.get('search', '')
+    etablissements = Etablissement.objects.filter(categorie=categorie)  # Filtrer par catégorie
+
+    if query:
+        etablissements = etablissements.filter(nom__icontains=query)
+
+    return render(request, 'etablissements/liste.html', {
+        'etablissements': etablissements,
+        'search_query': query,
+        'categorie': categorie,
+    })
+```
+
+### Étape 3 : URL
+
+Ajoutez une URL qui inclut la catégorie :
+
+```python
+# urls.py
+from django.urls import path
+from .views import liste_etablissements
+
+urlpatterns = [
+    path('etablissements/<str:categorie>/', liste_etablissements, name='liste_etablissements'),
+]
+```
+
+### Étape 4 : Template d'accueil
+
+Créez une page d'accueil avec des liens vers les catégories :
+
+```html
+<!-- accueil.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+</head>
+<body>
+    <h1>Bienvenue sur notre site</h1>
+    <nav>
+        <a href="{% url 'liste_etablissements' 'resto' %}">Resto</a>
+        <a href="{% url 'liste_etablissements' 'bar' %}">Bar ou Lounge</a>
+    </nav>
+</body>
+</html>
+```
+
+### Étape 5 : Template de résultats
+
+Modifiez le template pour afficher les établissements et inclure une barre de recherche :
+
+```html
+<!-- liste.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ categorie|capfirst }}s</title>
+</head>
+<body>
+    <h1>{{ categorie|capfirst }}s</h1>
+
+    <form method="GET">
+        <input type="text" name="search" placeholder="Rechercher un établissement..." value="{{ search_query }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <ul>
+        {% for etablissement in etablissements %}
+            <li>
+                <h2>{{ etablissement.nom }}</h2>
+                <p>{{ etablissement.adresse }}, {{ etablissement.ville }}</p>
+                <p>Email : {{ etablissement.mail }}</p>
+            </li>
+        {% empty %}
+            <li>Aucun établissement trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <nav>
+        <a href="{% url 'liste_etablissements' 'resto' %}">Resto</a>
+        <a href="{% url 'liste_etablissements' 'bar' %}">Bar ou Lounge</a>
+    </nav>
+</body>
+</html>
+```
+
+### Étape 6 : Ajout de données
+
+Assurez-vous que vous avez des données dans votre table `Etablissement` 
+avec des catégories appropriées. Vous pouvez utiliser l'interface d'administration 
+de Django ou un script pour ajouter des établissements.
+
+### Étape 7 : Affichage du serveur Django
+
+Pour tester, assurez-vous que votre serveur Django est en marche :
+
+```bash
+python manage.py runserver
+```
+
+Allez à l'URL suivante dans votre navigateur : `http://localhost:8000/`.
+
+### Conclusion
+
+Avec ces étapes, vous aurez une page d'accueil où les utilisateurs peuvent cliquer 
+sur un lien pour afficher les établissements d'une catégorie spécifique. 
+La page de résultats inclura une barre de recherche qui filtre les établissements
+ par nom uniquement dans la catégorie choisie. Si vous avez d'autres questions ou 
+ besoin d'aide supplémentaire, n'hésitez pas à demander !
+
+
+
+
+
+ -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+ -_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+
+——-__________————-__________———-
+
+Pour réaliser cette tâche dans un projet Django, vous pouvez suivre ces étapes. 
+Nous allons créer des vues, des modèles, des URL, et des templates pour gérer l'affichage 
+des établissements selon le type choisi et inclure une barre de recherche.
+
+### Étape 1 : Modèle
+
+Assurez-vous d'avoir un modèle pour les établissements. Voici un exemple de modèle `Etablissement` :
+
+```python
+# models.py
+from django.db import models
+
+class Etablissement(models.Model):
+    TYPE_CHOICES = [
+        ('resto', 'Resto'),
+        ('bar', 'Bar ou Lounge'),
+    ]
+
+    nom = models.CharField(max_length=100)
+    adresse = models.CharField(max_length=255)
+    ville = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='etablissements/')
+    type_etablissement = models.CharField(max_length=10, choices=TYPE_CHOICES)
+
+    def __str__(self):
+        return self.nom
+```
+
+### Étape 2 : Vues
+
+Créez une vue pour afficher les établissements selon le type sélectionné et gérer la recherche :
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Etablissement
+
+def liste_etablissements(request, type_etablissement):
+    query = request.GET.get('search', '')
+    etablissements = Etablissement.objects.filter(type_etablissement=type_etablissement)
+
+    if query:
+        etablissements = etablissements.filter(nom__icontains=query)
+
+    return render(request, 'etablissements/liste.html', {
+        'etablissements': etablissements,
+        'type_etablissement': type_etablissement,
+        'search_query': query,
+    })
+```
+
+### Étape 3 : URL
+
+Ajoutez une URL pour accéder à la vue :
+
+```python
+# urls.py
+from django.urls import path
+from .views import liste_etablissements
+
+urlpatterns = [
+    path('etablissements/<str:type_etablissement>/', liste_etablissements, name='liste_etablissements'),
+]
+```
+
+### Étape 4 : Template
+
+Créez un template pour afficher la liste des établissements et inclure une barre de recherche :
+
+```html
+<!-- liste.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ type_etablissement|capfirst }}s</title>
+</head>
+<body>
+    <h1>{{ type_etablissement|capfirst }}s</h1>
+
+    <form method="GET">
+        <input type="text" name="search" placeholder="Rechercher..." value="{{ search_query }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <ul>
+        {% for etablissement in etablissements %}
+            <li>
+                <h2>{{ etablissement.nom }}</h2>
+                <p>{{ etablissement.adresse }}, {{ etablissement.ville }}</p>
+                <img src="{{ etablissement.image.url }}" alt="{{ etablissement.nom }}">
+            </li>
+        {% empty %}
+            <li>Aucun établissement trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <a href="{% url 'liste_etablissements' 'resto' %}">Resto</a>
+    <a href="{% url 'liste_etablissements' 'bar' %}">Bar ou Lounge</a>
+</body>
+</html>
+```
+
+### Étape 5 : Ajout de données
+
+Assurez-vous d'avoir des données dans votre table `Etablissement`. Vous pouvez utiliser l'interface d'administration de Django ou un script pour ajouter des établissements.
+
+### Conclusion
+
+Avec ces étapes, vous aurez une page où l'utilisateur peut cliquer 
+sur un lien pour afficher les établissements de type "resto" ou "bar". Une barre de 
+recherche permettra également de filtrer les établissements par nom. Assurez-vous
+ que votre serveur Django est en marche (`python manage.py runserver`) et 
+ testez les fonctionnalités dans votre navigateur. Si vous avez des questions ou 
+ besoin d'aide supplémentaire, n'hésitez pas à demander !
+
+
+
+
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+
+Pour réaliser cette tâche dans Django, nous allons créer une page d'accueil avec des liens vers les catégories d'établissements, une page de résultats qui affiche les établissements selon le type choisi, et une barre de recherche pour filtrer les résultats. Voici comment procéder étape par étape.
+
+### Étape 1 : Modèle
+
+Assurez-vous d'avoir un modèle pour les établissements. Voici un exemple de modèle `Etablissement` :
+
+```python
+# models.py
+from django.db import models
+
+class Etablissement(models.Model):
+    TYPE_CHOICES = [
+        ('resto', 'Resto'),
+        ('bar', 'Bar ou Lounge'),
+    ]
+
+    nom = models.CharField(max_length=100)
+    adresse = models.CharField(max_length=255)
+    ville = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='etablissements/')
+    type_etablissement = models.CharField(max_length=10, choices=TYPE_CHOICES)
+
+    def __str__(self):
+        return self.nom
+```
+
+### Étape 2 : Vues
+
+Créez une vue pour afficher les établissements selon le type sélectionné et gérer la recherche :
+
+```python
+# views.py
+from django.shortcuts import render
+from .models import Etablissement
+
+def accueil(request):
+    return render(request, 'accueil.html')
+
+def liste_etablissements(request, type_etablissement):
+    query = request.GET.get('search', '')
+    etablissements = Etablissement.objects.filter(type_etablissement=type_etablissement)
+
+    if query:
+        etablissements = etablissements.filter(nom__icontains=query)
+
+    return render(request, 'result.html', {
+        'etablissements': etablissements,
+        'type_etablissement': type_etablissement,
+        'search_query': query,
+    })
+```
+
+### Étape 3 : URL
+
+Ajoutez des URL pour accéder aux vues :
+
+```python
+# urls.py
+from django.urls import path
+from .views import accueil, liste_etablissements
+
+urlpatterns = [
+    path('', accueil, name='accueil'),
+    path('etablissements/<str:type_etablissement>/', liste_etablissements, name='liste_etablissements'),
+]
+```
+
+### Étape 4 : Templates
+
+#### 1. Template d'accueil (`accueil.html`)
+
+Créez un template pour la page d'accueil avec les liens :
+
+```html
+<!-- accueil.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil</title>
+</head>
+<body>
+    <h1>Bienvenue sur notre site</h1>
+    <nav>
+        <a href="{% url 'liste_etablissements' 'resto' %}">Resto</a>
+        <a href="{% url 'liste_etablissements' 'bar' %}">Bar ou Lounge</a>
+    </nav>
+</body>
+</html>
+```
+
+#### 2. Template de résultats (`result.html`)
+
+Créez un template pour afficher les établissements et inclure une barre de recherche :
+
+```html
+<!-- result.html -->
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ type_etablissement|capfirst }}s</title>
+</head>
+<body>
+    <h1>{{ type_etablissement|capfirst }}s</h1>
+
+    <form method="GET">
+        <input type="text" name="search" placeholder="Rechercher un établissement..." value="{{ search_query }}">
+        <button type="submit">Rechercher</button>
+    </form>
+
+    <ul>
+        {% for etablissement in etablissements %}
+            <li>
+                <h2>{{ etablissement.nom }}</h2>
+                <p>{{ etablissement.adresse }}, {{ etablissement.ville }}</p>
+                <img src="{{ etablissement.image.url }}" alt="{{ etablissement.nom }}" style="max-width: 200px;">
+            </li>
+        {% empty %}
+            <li>Aucun établissement trouvé.</li>
+        {% endfor %}
+    </ul>
+
+    <nav>
+        <a href="{% url 'liste_etablissements' 'resto' %}">Resto</a>
+        <a href="{% url 'liste_etablissements' 'bar' %}">Bar ou Lounge</a>
+    </nav>
+</body>
+</html>
+```
+
+### Étape 5 : Ajout de données
+
+Assurez-vous d'avoir des données dans votre table `Etablissement`. Vous pouvez utiliser l'interface d'administration de Django ou un script pour ajouter des établissements.
+
+### Conclusion
+
+Avec ces étapes, vous aurez une page d'accueil où l'utilisateur peut cliquer 
+sur un lien pour afficher les établissements de type "resto" ou "bar". La page de résultats 
+inclura une barre de recherche pour filtrer les établissements par nom. Assurez-vous que votre 
+serveur Django est en marche (`python manage.py runserver`) et testez les fonctionnalités dans 
+votre navigateur. Si vous avez d'autres questions ou besoin d'aide supplémentaire, n'hésitez pas à demander !
+
+
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+
+
+- [ ] Ajouter d’autres colonnes dans ma table 
+
+
+Pour mettre à jour votre table `models` avec de nouveaux champs tels qu'un champ pour l'image et un champ catégorie, vous pouvez suivre ces étapes :
+
+### 1. Mise à jour de la table `models`
+
+Si vous utilisez une base de données SQL, vous pouvez exécuter une commande `ALTER TABLE`. Voici un exemple :
+
+```sql
+ALTER TABLE models
+ADD COLUMN image VARCHAR(255),
+ADD COLUMN category ENUM('cat1', 'cat2', 'cat3', 'cat4');
+```
+
+### 2. Déclaration dans les formulaires
+
+Si vous utilisez un framework comme Django ou Flask, vous pouvez créer un formulaire qui inclut les nouveaux champs. Voici un exemple en utilisant Django :
+
+```python
+from django import forms
+
+class ModelForm(forms.ModelForm):
+    class Meta:
+        model = Models
+        fields = ['image', 'category']
+
+    category = forms.ChoiceField(choices=[
+        ('cat1', 'Catégorie 1'),
+        ('cat2', 'Catégorie 2'),
+        ('cat3', 'Catégorie 3'),
+        ('cat4', 'Catégorie 4'),
+    ])
+```
+
+### 3. Script JavaScript pour afficher l'image sélectionnée
+
+Voici un script JavaScript que vous pouvez utiliser pour afficher l'image sélectionnée dans votre formulaire avant l'envoi :
+
+```html
+<input type="file" id="imageUpload" accept="image/*">
+<img id="preview" src="" alt="Aperçu de l'image" style="display:none; max-width: 300px; margin-top: 10px;">
+
+<script>
+    document.getElementById('imageUpload').addEventListener('change', function(event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const preview = document.getElementById('preview');
+                preview.src = e.target.result;
+                preview.style.display = 'block';
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+```
+
+### Résumé
+
+- **Mise à jour de la base de données :** Ajout des colonnes `image` et `category`.
+- **Formulaire :** Utilisation d'un formulaire pour gérer les nouveaux champs.
+- **JavaScript :** Affichage de l'image sélectionnée avant l'envoi.
+
+N'hésitez pas à ajuster ces exemples en fonction de votre architecture et de vos besoins spécifiques !
+
+
+
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+-_-_-_-_-_-_-__-_-_-_-_-_-_-__-_-_-_-_-_-__-_-_-_-_-__--_-_-_-_-_-_-_-_-_-_-_-_-_-
+
+
+
+- [ ] ANIMATION 
+
+
+Voici un exemple de code HTML et JavaScript pour créer une animation de défilement d'images. Ce code affiche 6 images qui défilent horizontalement.
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Animation de Défilement d'Images</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .carousel {
+            overflow: hidden;
+            width: 80%;
+            border: 1px solid #ccc;
+            position: relative;
+        }
+        .images {
+            display: flex;
+            animation: slide 12s infinite;
+        }
+        .images img {
+            width: 100%;
+            flex-shrink: 0;
+        }
+        @keyframes slide {
+            0% { transform: translateX(0); }
+            16.67% { transform: translateX(0); }
+            20% { transform: translateX(-100%); }
+            36.67% { transform: translateX(-100%); }
+            40% { transform: translateX(-200%); }
+            56.67% { transform: translateX(-200%); }
+            60% { transform: translateX(-300%); }
+            76.67% { transform: translateX(-300%); }
+            80% { transform: translateX(-400%); }
+            96.67% { transform: translateX(-400%); }
+            100% { transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="carousel">
+        <div class="images">
+            <img src="image1.jpg" alt="Image 1">
+            <img src="image2.jpg" alt="Image 2">
+            <img src="image3.jpg" alt="Image 3">
+            <img src="image4.jpg" alt="Image 4">
+            <img src="image5.jpg" alt="Image 5">
+            <img src="image6.jpg" alt="Image 6">
+        </div>
+    </div>
+
+    <script>
+        // Vous pouvez ajouter des fonctionnalités supplémentaires ici si nécessaire
+    </script>
+</body>
+</html>
+```
+
+### Explications :
+- **HTML** : La structure de base contient un conteneur pour le carrousel et un autre pour les images.
+- **CSS** : Le style gère l'affichage et l'animation des images.
+- **Animation** : Utilise `@keyframes` pour faire défiler les images à intervalles réguliers.
+
+Assurez-vous de remplacer les chemins des images (`image1.jpg`, `image2.jpg`, etc.) par les chemins réels de vos images.
+
+
+
+
+
+- [ ] ANIMATION VIDÉO 
+
+
+
+Voici un exemple de code HTML et CSS pour créer une animation de lecture continue de quatre vidéos, qui se succèdent automatiquement. Chaque vidéo jouera l'une après l'autre en boucle.
+
+### Code HTML et CSS
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lecture Continue de Vidéos</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        video {
+            width: 80%;
+            border: 1px solid #ccc;
+            display: none; /* Masquer toutes les vidéos par défaut */
+        }
+    </style>
+</head>
+<body>
+    <video id="video1" autoplay muted>
+        <source src="video1.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+    <video id="video2">
+        <source src="video2.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+    <video id="video3">
+        <source src="video3.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+    <video id="video4">
+        <source src="video4.mp4" type="video/mp4">
+        Votre navigateur ne supporte pas la vidéo.
+    </video>
+
+    <script>
+        const videos = [
+            document.getElementById('video1'),
+            document.getElementById('video2'),
+            document.getElementById('video3'),
+            document.getElementById('video4')
+        ];
+
+        let currentVideoIndex = 0;
+
+        function playNextVideo() {
+            videos.forEach((video, index) => {
+                video.style.display = 'none'; // Masquer toutes les vidéos
+            });
+
+            const currentVideo = videos[currentVideoIndex];
+            currentVideo.style.display = 'block'; // Afficher la vidéo actuelle
+            currentVideo.play(); // Démarrer la vidéo actuelle
+
+            currentVideo.onended = () => {
+                currentVideoIndex = (currentVideoIndex + 1) % videos.length; // Passer à la vidéo suivante
+                playNextVideo(); // Jouer la vidéo suivante
+            };
+        }
+
+        playNextVideo(); // Démarrer la lecture de la première vidéo
+    </script>
+</body>
+</html>
+```
+
+### Explications :
+
+- **HTML** : Quatre éléments `<video>` sont définis, chacun avec un attribut `autoplay` pour démarrer automatiquement et `muted` pour être muet. Remplacez `video1.mp4`, `video2.mp4`, etc., par le chemin de vos fichiers vidéo.
+- **CSS** : Les vidéos sont masquées par défaut, et seule la vidéo en cours de lecture est affichée.
+- **JavaScript** : Une fonction `playNextVideo()` est utilisée pour gérer la lecture des vidéos en boucle. Lorsqu'une vidéo se termine, la fonction passe à la vidéo suivante et l'affiche.
+
+### Remarque :
+Assurez-vous que toutes les vidéos sont dans des formats compatibles avec les navigateurs que vous ciblez.
+
+
+————________————________————-
+
+
+- [ ]  FORMULAIRE 2 in 1 
+
+
+Voici un exemple de code pour créer une page Django contenant deux formulaires : un pour la connexion et un pour l'inscription, avec les champs spécifiés. Le JavaScript gère l'affichage des formulaires en fonction des clics de l'utilisateur.
+
+### Modèles Django
+
+Dans `models.py`, vous pouvez utiliser le modèle utilisateur par défaut de Django. Pour l'inscription, vous pouvez également ajouter des champs supplémentaires si nécessaire.
+
+### Formulaires Django
+
+Créez des formulaires dans `forms.py` pour l'inscription et la connexion :
+
+```python
+from django import forms
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
+class RegistrationForm(UserCreationForm):
+    address = forms.CharField(max_length=255)
+    email = forms.EmailField(required=True)
+    city = forms.CharField(max_length=100)
+    description = forms.CharField(widget=forms.Textarea)
+
+    class Meta:
+        model = User
+        fields = ['username', 'address', 'email', 'city', 'password1', 'password2', 'description']
+
+class LoginForm(forms.Form):
+    username = forms.CharField(max_length=150)
+    password = forms.CharField(widget=forms.PasswordInput)
+```
+
+### Vues Django
+
+Dans `views.py`, créez une vue pour gérer les deux formulaires :
+
+```python
+from django.shortcuts import render, redirect
+from django.contrib.auth import authenticate, login
+from .forms import RegistrationForm, LoginForm
+
+def auth_view(request):
+    if request.method == 'POST':
+        if 'register' in request.POST:
+            reg_form = RegistrationForm(request.POST)
+            if reg_form.is_valid():
+                user = reg_form.save()
+                login(request, user)
+                return redirect('home')  # Redirection vers la page d'accueil
+        else:
+            login_form = LoginForm(request.POST)
+            if login_form.is_valid():
+                username = login_form.cleaned_data['username']
+                password = login_form.cleaned_data['password']
+                user = authenticate(request, username=username, password=password)
+                if user is not None:
+                    login(request, user)
+                    return redirect('home')  # Redirection vers la page d'accueil
+    else:
+        reg_form = RegistrationForm()
+        login_form = LoginForm()
+
+    return render(request, 'auth.html', {'reg_form': reg_form, 'login_form': login_form})
+```
+
+### Template HTML
+
+Dans votre template `auth.html`, intégrez les formulaires avec JavaScript :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connexion / Inscription</title>
+    <style>
+        /* Ajoutez ici vos styles */
+        #login-form, #register-form {
+            display: none;
+        }
+        #login-form.active, #register-form.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <h1>Connexion / Inscription</h1>
+    
+    <div id="login-form" class="active">
+        <h2>Connexion</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ login_form.as_p }}
+            <button type="submit">Se connecter</button>
+        </form>
+        <p>Pas encore inscrit ? <button onclick="showRegister()">Inscription</button></p>
+    </div>
+
+    <div id="register-form">
+        <h2>Inscription</h2>
+        <form method="post">
+            {% csrf_token %}
+            {{ reg_form.as_p }}
+            <button type="submit" name="register">S'inscrire</button>
+        </form>
+        <p>Déjà inscrit ? <button onclick="showLogin()">Connexion</button></p>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('login-form').classList.remove('active');
+            document.getElementById('register-form').classList.add('active');
+        }
+
+        function showLogin() {
+            document.getElementById('register-form').classList.remove('active');
+            document.getElementById('login-form').classList.add('active');
+        }
+    </script>
+</body>
+</html>
+```
+
+### Explications
+
+1. **Formulaires** : 
+   - `RegistrationForm` pour l'inscription, incluant les champs : nom, adresse, email, ville, description, et les champs de mot de passe.
+   - `LoginForm` pour la connexion, incluant le nom d'utilisateur et le mot de passe.
+
+2. **Vues** : 
+   - La vue `auth_view` gère l'affichage et le traitement des deux formulaires.
+
+3. **Template** : 
+   - Un template HTML avec JavaScript pour gérer l'affichage des formulaires selon les clics.
+
+### Routes
+
+Ajoutez la route correspondante dans votre fichier `urls.py` :
+
+```python
+from django.urls import path
+from .views import auth_view
+
+urlpatterns = [
+    path('auth/', auth_view, name='auth_view'),
+]
+```
+
+Avec ce code, vous aurez une page où les utilisateurs peuvent s'inscrire ou se connecter, en basculant entre les deux formulaires grâce à JavaScript. Assurez-vous de gérer la redirection vers la page d'accueil ou une autre page après une connexion ou une inscription réussie.
+
+
+
+____——-______———-______———-_____
+
+
+- [ ]  LANCER FORMULAIRE JS 
+
+
+Pour créer une fenêtre en JavaScript contenant un formulaire qui récupère des données sur une plateforme Django, nous allons suivre ces étapes :
+
+1. **Créer le formulaire dans Django**.
+2. **Créer une vue pour gérer les données du formulaire**.
+3. **Créer un template HTML avec JavaScript pour afficher le formulaire dans une fenêtre modale**.
+
+### Étape 1 : Créer le Formulaire dans Django
+
+Créez un formulaire dans `forms.py` :
+
+```python
+from django import forms
+
+class ContactForm(forms.Form):
+    name = forms.CharField(max_length=100, label='Nom')
+    email = forms.EmailField(label='Email')
+    phone_number = forms.CharField(max_length=15, label='Numéro de téléphone')
+```
+
+### Étape 2 : Créer la Vue pour Gérer les Données
+
+Dans `views.py`, créez une vue pour traiter le formulaire :
+
+```python
+from django.shortcuts import render
+from .forms import ContactForm
+
+def contact_view(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        if form.is_valid():
+            # Traitez les données ici (enregistrement, envoi d'email, etc.)
+            # Par exemple, vous pouvez les imprimer ou les sauvegarder
+            print(form.cleaned_data)
+            # Redirection ou message de succès
+    else:
+        form = ContactForm()
+
+    return render(request, 'contact.html', {'form': form})
+```
+
+### Étape 3 : Créer le Template HTML
+
+Dans votre template `contact.html`, créez le code HTML avec JavaScript pour afficher le formulaire dans une fenêtre modale :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulaire de Contact</title>
+    <style>
+        /* Styles pour la fenêtre modale */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Bienvenue sur notre site</h1>
+    <button id="openModal">Ouvrir le formulaire de contact</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+            <h2>Formulaire de Contact</h2>
+            <form method="post" id="contactForm">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <button type="submit">Envoyer</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Ouvrir la modale
+        document.getElementById('openModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Fermer la modale
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Fermer la modale si l'utilisateur clique en dehors de celle-ci
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) {
+                document.getElementById('myModal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+```
+
+### Étape 4 : Configurer les Routes
+
+Ajoutez la route correspondante dans votre fichier `urls.py` :
+
+```python
+from django.urls import path
+from .views import contact_view
+
+urlpatterns = [
+    path('contact/', contact_view, name='contact_view'),
+]
+```
+
+### Explications
+
+1. **Formulaire** : Le formulaire `ContactForm` contient les champs nom, email et numéro de téléphone.
+2. **Vue** : La vue `contact_view` gère l'affichage et le traitement du formulaire.
+3. **Template** : Le template utilise JavaScript pour ouvrir une fenêtre modale contenant le formulaire et inclut des styles CSS pour la modale.
+4. **Interactions JavaScript** : 
+   - Un bouton pour ouvrir la modale.
+   - Un `span` pour fermer la modale.
+   - Gestion de la fermeture de la modale en cliquant à l'extérieur d'elle.
+
+### Utilisation
+
+Lorsque vous accédez à la page définie par la route `/contact/`, vous verrez un bouton pour ouvrir le formulaire de contact. En cliquant sur ce bouton, une fenêtre modale s'affiche avec le formulaire que vous pouvez remplir et soumettre.
+
+
+
+_______———————__________——————
+
+
+- [ ]  Afficher les données d’une fenêtre 
+
+
+Pour afficher les données stockées dans une table au lieu d'un formulaire dans une fenêtre modale, vous pouvez suivre les étapes ci-dessous. Nous allons créer une vue pour récupérer les données depuis la base de données et les afficher dans une fenêtre modale lorsque l'utilisateur clique sur un bouton.
+
+### Étape 1 : Créer le Modèle
+
+Si vous n'avez pas encore de modèle, créez un modèle dans `models.py` pour stocker les données. Par exemple :
+
+```python
+from django.db import models
+
+class Contact(models.Model):
+    name = models.CharField(max_length=100)
+    email = models.EmailField()
+    phone_number = models.CharField(max_length=15)
+
+    def __str__(self):
+        return self.name
+```
+
+### Étape 2 : Créer la Vue pour Récupérer les Données
+
+Dans `views.py`, créez une vue pour récupérer les données de la table `Contact` :
+
+```python
+from django.shortcuts import render
+from .models import Contact
+
+def contact_list_view(request):
+    contacts = Contact.objects.all()  # Récupère tous les contacts
+    return render(request, 'contacts.html', {'contacts': contacts})
+```
+
+### Étape 3 : Créer le Template HTML
+
+Dans votre template `contacts.html`, utilisez JavaScript pour afficher les données dans une fenêtre modale :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Contacts</title>
+    <style>
+        /* Styles pour la fenêtre modale */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Liste des Contacts</h1>
+    <button id="openModal">Voir les contacts</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+            <h2>Contacts</h2>
+            <ul id="contactList">
+                {% for contact in contacts %}
+                    <li><strong>{{ contact.name }}</strong> - {{ contact.email }} - {{ contact.phone_number }}</li>
+                {% empty %}
+                    <li>Aucun contact trouvé.</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <script>
+        // Ouvrir la modale
+        document.getElementById('openModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Fermer la modale
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Fermer la modale si l'utilisateur clique en dehors de celle-ci
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) {
+                document.getElementById('myModal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+```
+
+### Étape 4 : Configurer les Routes
+
+Ajoutez la route correspondante dans votre fichier `urls.py` :
+
+```python
+from django.urls import path
+from .views import contact_list_view
+
+urlpatterns = [
+    path('contacts/', contact_list_view, name='contact_list_view'),
+]
+```
+
+### Explications
+
+1. **Modèle** : Un modèle `Contact` pour stocker les informations de contact (nom, email et numéro de téléphone).
+2. **Vue** : La vue `contact_list_view` récupère tous les contacts de la base de données et les passe au template.
+3. **Template** : Le template affiche un bouton pour ouvrir la fenêtre modale. Les contacts sont affichés dans une liste dans la modale.
+4. **Interactions JavaScript** : 
+   - Un bouton pour ouvrir la modale.
+   - Un `span` pour fermer la modale.
+   - Gestion de la fermeture de la modale en cliquant à l'extérieur d'elle.
+
+### Utilisation
+
+Lorsque vous accédez à la page définie par la route `/contacts/`, vous verrez un bouton pour afficher la liste des contacts. En cliquant sur ce bouton, une fenêtre modale s'affiche avec la liste des contacts récupérés depuis la base de données.
+
+
+______————-_________——————_______
+
+
+- [ ] Défi le Nb d’élément à afficher 
+
+
+Pour personnaliser le nombre d'éléments par page dans votre application Django, vous pouvez permettre à l'utilisateur de sélectionner un nombre d'éléments à afficher via un menu déroulant ou un champ de saisie. Voici comment procéder :
+
+### Étape 1 : Mettre à Jour la Vue pour Prendre en Compte le Nombre d'Éléments par Page
+
+Modifiez la vue `contact_list_view` dans `views.py` pour inclure la logique permettant de personnaliser le nombre d'éléments par page :
+
+```python
+from django.shortcuts import render
+from django.core.paginator import Paginator
+from .models import Contact
+
+def contact_list_view(request):
+    contacts = Contact.objects.all()  # Récupère tous les contacts
+
+    # Récupérer le nombre d'éléments par page depuis la requête, avec une valeur par défaut
+    items_per_page = request.GET.get('items_per_page', 5)
+    try:
+        items_per_page = int(items_per_page)  # Convertir en entier
+    except ValueError:
+        items_per_page = 5  # Valeur par défaut si la conversion échoue
+
+    paginator = Paginator(contacts, items_per_page)  # Utiliser le nombre d'éléments spécifié
+
+    page_number = request.GET.get('page')  # Récupère le numéro de page depuis l'URL
+    page_obj = paginator.get_page(page_number)  # Obtient la page correspondante
+
+    return render(request, 'contacts.html', {'page_obj': page_obj, 'items_per_page': items_per_page})
+```
+
+### Étape 2 : Mettre à Jour le Template HTML
+
+Modifiez le template `contacts.html` pour inclure un menu déroulant permettant de choisir le nombre d'éléments par page :
+
+```html
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Liste des Contacts</title>
+    <style>
+        /* Styles pour la fenêtre modale */
+        .modal {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4); 
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto; 
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%; 
+        }
+        .pagination {
+            margin-top: 20px;
+        }
+        .pagination a {
+            margin: 0 5px;
+            text-decoration: none;
+            color: blue;
+        }
+        .pagination span {
+            margin: 0 5px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Liste des Contacts</h1>
+    <button id="openModal">Voir les contacts</button>
+
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span id="closeModal" style="float:right; cursor:pointer;">&times;</span>
+            <h2>Contacts</h2>
+
+            <label for="itemsPerPage">Éléments par page:</label>
+            <select id="itemsPerPage" onchange="updateItemsPerPage()">
+                <option value="5" {% if items_per_page == 5 %}selected{% endif %}>5</option>
+                <option value="10" {% if items_per_page == 10 %}selected{% endif %}>10</option>
+                <option value="20" {% if items_per_page == 20 %}selected{% endif %}>20</option>
+            </select>
+
+            <ul id="contactList">
+                {% for contact in page_obj %}
+                    <li><strong>{{ contact.name }}</strong> - {{ contact.email }} - {{ contact.phone_number }}</li>
+                {% empty %}
+                    <li>Aucun contact trouvé.</li>
+                {% endfor %}
+            </ul>
+            <div class="pagination">
+                <span class="step-links">
+                    {% if page_obj.has_previous %}
+                        <a href="?page=1&items_per_page={{ items_per_page }}">&laquo; première</a>
+                        <a href="?page={{ page_obj.previous_page_number }}&items_per_page={{ items_per_page }}">précédente</a>
+                    {% endif %}
+
+                    <span page="{{ page_obj.number }}">Page {{ page_obj.number }} de {{ page_obj.paginator.num_pages }}</span>
+
+                    {% if page_obj.has_next %}
+                        <a href="?page={{ page_obj.next_page_number }}&items_per_page={{ items_per_page }}">suivante</a>
+                        <a href="?page={{ page_obj.paginator.num_pages }}&items_per_page={{ items_per_page }}">dernière &raquo;</a>
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function updateItemsPerPage() {
+            const itemsPerPage = document.getElementById('itemsPerPage').value;
+            window.location.href = "?page=1&items_per_page=" + itemsPerPage;  // Redirige vers la première page avec le nombre d'éléments sélectionné
+        }
+
+        // Ouvrir la modale
+        document.getElementById('openModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'block';
+        }
+
+        // Fermer la modale
+        document.getElementById('closeModal').onclick = function() {
+            document.getElementById('myModal').style.display = 'none';
+        }
+
+        // Fermer la modale si l'utilisateur clique en dehors de celle-ci
+        window.onclick = function(event) {
+            if (event.target == document.getElementById('myModal')) {
+                document.getElementById('myModal').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+```
+
+### Explications des Modifications
+
+1. **Vue** :
+   - Nous récupérons le nombre d'éléments par page depuis la requête. Si aucun nombre n'est spécifié, la valeur par défaut est 5.
+   - Nous utilisons `Paginator` avec le nombre d'éléments spécifié.
+
+2. **Template** :
+   - Nous ajoutons un menu déroulant pour sélectionner le nombre d'éléments à afficher par page.
+   - Nous incluons le nombre d'éléments sélectionné dans les liens de pagination pour s'assurer qu'il est pris en compte lors de la navigation.
+
+3. **JavaScript** :
+   - La fonction `updateItemsPerPage()` redirige l'utilisateur vers la première page avec le nouveau nombre d'éléments sélectionné.
+
+### Utilisation
+
+Lorsque vous accédez à la page définie par la route `/contacts/`, vous verrez un bouton pour afficher la liste des contacts. En utilisant le menu déroulant, vous pouvez sélectionner le nombre d'éléments à afficher par page. La liste sera mise à jour en conséquence lorsque vous changez cette valeur.
+
+
+
+
+
+
+
+

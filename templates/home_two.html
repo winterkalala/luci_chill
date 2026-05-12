@@ -1,0 +1,1250 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Mon Espace - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar - Profil Utilisateur */
+    .sidebar {
+        width: 350px;
+        background: white;
+        box-shadow: var(--shadow);
+        padding: 2.5rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .profile-section {
+        text-align: center;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        margin-bottom: 2rem;
+    }
+
+    .profile-img {
+        width: 150px;
+        height: 150px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .profile-img:hover {
+        transform: scale(1.05);
+    }
+
+    .user-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .user-email {
+        color: var(--primary-color);
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .user-location {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .edit-profile-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .edit-profile-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .user-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .stat-card {
+        background: var(--light-color);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        transition: var(--transition);
+    }
+
+    .stat-card:hover {
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-light);
+    }
+
+    .stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .stat-label {
+        font-size: 0.8rem;
+        color: var(--text-color);
+        font-weight: 500;
+    }
+
+    .social-links {
+        display: flex;
+        justify-content: center;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .social-link {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    /* Header */
+    .content-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .establishments-btn,
+    .logout-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .establishments-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .logout-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .establishments-btn:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Section Filtres */
+    .filters-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .filters-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .filters-grid {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        background: var(--light-color);
+        border: 2px solid var(--accent-color);
+        border-radius: 20px;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Publications Grid */
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+    }
+
+    .publication-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .publication-card:hover .publication-image {
+        transform: scale(1.05);
+    }
+
+    .publication-content {
+        padding: 1.5rem;
+    }
+
+    .publication-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .publication-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .publication-date {
+        font-size: 0.8rem;
+        color: #666;
+        background: var(--light-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+    }
+
+    .publication-description {
+        color: #666;
+        font-size: 0.95rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box; 
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .publication-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 0.5rem;
+    }
+
+    .action-btn {
+        background: none;
+        border: none;
+        padding: 0.5rem;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .share-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .like-btn:hover {
+        background: #ffeaea;
+        color: #ff6b6b;
+    }
+
+    .comment-btn:hover {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    .view-more-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+    }
+
+    .view-more-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 600px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Publication Detail Modal */
+    .publication-detail {
+        margin-bottom: 2rem;
+    }
+
+    .detail-image {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-content {
+        padding: 0 1rem;
+    }
+
+    .detail-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .detail-establishment {
+        font-weight: 600;
+        color: var(--primary-color);
+    }
+
+    .detail-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .detail-description {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 2rem;
+    }
+
+    .share-options {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .share-option {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.2rem;
+        background: var(--light-color);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        color: var(--text-color);
+    }
+
+    .share-option:hover {
+        background: var(--accent-color);
+        transform: translateY(-2px);
+    }
+
+    /* Edit Profile Modal */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .file-upload {
+        position: relative;
+        overflow: hidden;
+        display: inline-block;
+        width: 100%;
+    }
+
+    .file-upload-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: var(--transition);
+        border: none;
+        font-family: 'Poppins', sans-serif;
+        width: 100%;
+        justify-content: center;
+    }
+
+    .file-upload input[type="file"] {
+        position: absolute;
+        left: 0;
+        top: 0;
+        opacity: 0;
+        cursor: pointer;
+        width: 100%;
+        height: 100%;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .submit-btn,
+    .cancel-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        flex: 1;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+    }
+
+    .cancel-btn {
+        background: #f0f0f0;
+        color: var(--text-color);
+    }
+
+    .submit-btn:hover,
+    .cancel-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Footer */
+    .main-footer {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-top: 3rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+        padding-left: 5px;
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .main-container {
+            flex-direction: column;
+        }
+        
+        .sidebar {
+            width: 100%;
+            height: auto;
+            position: static;
+        }
+        
+        .profile-section {
+            display: flex;
+            align-items: center;
+            text-align: left;
+            gap: 2rem;
+        }
+        
+        .profile-img {
+            width: 100px;
+            height: 100px;
+            margin-bottom: 0;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 1rem;
+        }
+        
+        .content-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-bar {
+            max-width: 100%;
+        }
+        
+        .header-actions {
+            justify-content: center;
+        }
+        
+        .publications-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .profile-section {
+            flex-direction: column;
+            text-align: center;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .sidebar {
+            padding: 1.5rem;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+        
+        .modal-actions {
+            flex-direction: column;
+        }
+        
+        .share-options {
+            flex-direction: column;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Sidebar - Profil Utilisateur --> 
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="Esmeralda AZ" class="profile-img" id="userProfileImg">
+                <div>
+                    <h2 class="user-name" id="userName">Esmeralda AZ</h2>
+                    <div class="user-email">
+                        <span>✉️</span>
+                        <span id="userEmail">EsmeraldaAZ@gmail.com</span>
+                    </div>
+                    <div class="user-location">
+                        <span>📍</span>
+                        <span id="userLocation">Lubumbashi, RDC</span>
+                    </div>
+                </div>
+            </div>
+
+            <button class="edit-profile-btn" onclick="openEditProfileModal()">
+                <span>✏️</span> Modifier mon profil
+            </button>
+
+            <div class="user-stats">
+                <div class="stat-card">
+                    <div class="stat-number">12</div>
+                    <div class="stat-label">Publications likées</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">8</div>
+                    <div class="stat-label">Établissements visités</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">5</div>
+                    <div class="stat-label">Commentaires</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">3</div>
+                    <div class="stat-label">Réservations</div>
+                </div>
+            </div>
+
+            <div class="social-links">
+                <a href="#" class="social-link" aria-label="Facebook">
+                    <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                </a>
+                <a href="#" class="social-link" aria-label="WhatsApp">
+                    <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                </a>
+                <a href="#" class="social-link" aria-label="Twitter">
+                    <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                </a>
+                <a href="#" class="social-link" aria-label="Email">
+                    <img src="{% static 'img/mail.png' %}" alt="Email">
+                </a>
+            </div>
+
+            <div class="main-footer">
+                <div class="footer-content">
+                    <div class="footer-section">
+                        <h3>Navigation</h3>
+                        <ul class="footer-links">
+                            <li><a href="{% url 'accueil' %}">Accueil</a></li>
+                            <li><a href="{% url 'Cateus' %}">Établissements</a></li>
+                            <li><a href="#">Mes favoris</a></li>
+                            <li><a href="#">Historique</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-section">
+                        <h3>Support</h3>
+                        <ul class="footer-links">
+                            <li><a href="#">Aide & FAQ</a></li>
+                            <li><a href="#">Contact</a></li>
+                            <li><a href="#">Confidentialité</a></li>
+                            <li><a href="#">Conditions</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="copyright">
+                    <p>© 2024 Aryo-Tour. Mon espace personnel</p>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header avec recherche et actions -->
+            <header class="content-header">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Rechercher des publications...">
+                    <button class="search-btn">🔍 Rechercher</button>
+                </div>
+                
+                <div class="header-actions">
+                    <button class="establishments-btn" href="{% url 'Cateus' %}">
+                        <span>🏢</span> Établissements
+                    </button>
+                    <button class="logout-btn" href="{% url 'accueil' %}">
+                        <span>🚪</span> Déconnexion
+                    </button>
+                </div>
+            </header>
+
+            <!-- Section Filtres -->
+            <section class="filters-section">
+                <h3 class="filters-title">Filtrer par catégorie :</h3>
+                <div class="filters-grid">
+                    <button class="filter-btn active">Toutes</button>
+                    <button class="filter-btn">Restaurants</button>
+                    <button class="filter-btn">Hôtels</button>
+                    <button class="filter-btn">Événements</button>
+                    <button class="filter-btn">Promotions</button>
+                    <button class="filter-btn">Nouveautés</button>
+                </div>
+            </section>
+
+            <!-- Publications Grid -->
+            <section class="publications-grid" id="publicationsGrid">
+                <!-- Les publications seront injectées ici par JavaScript -->
+            </section>
+        </main>
+    </div>
+
+    <!-- Modal Détail Publication -->
+    <div id="publicationDetailModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">📰 Détails de la publication</h3>
+                <button class="close-modal" onclick="closeModal('publicationDetailModal')">×</button>
+            </div>
+            <div class="publication-detail">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="detail-image" id="detailImage">
+                <div class="detail-content">
+                    <div class="detail-meta">
+                        <span class="detail-establishment" id="detailEstablishment">BNK Boutique</span>
+                        <span class="detail-date" id="detailDate">01/01/2025</span>
+                    </div>
+                    <h4 id="detailTitle">Promotion exceptionnelle</h4>
+                    <p class="detail-description" id="detailDescription">
+                        Promotion de nos robes au prix de 9$ pour un achat de nombre de produit supérieur à 10.
+                        Profitez de cette offre exclusive limitée dans le temps. Des produits de qualité à prix imbattables.
+                    </p>
+                    
+                    <div class="share-options">
+                        <a href="#" class="share-option" onclick="shareOnWhatsApp()">
+                            <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp" style="width: 20px; height: 20px;">
+                            Partager sur WhatsApp
+                        </a>
+                        <a href="#" class="share-option" onclick="shareOnFacebook()">
+                            <img src="{% static 'img/facebook.png' %}" alt="Facebook" style="width: 20px; height: 20px;">
+                            Partager sur Facebook
+                        </a>
+                        <a href="#" class="share-option" onclick="shareByEmail()">
+                            <img src="{% static 'img/mail.png' %}" alt="Email" style="width: 20px; height: 20px;">
+                            Partager par Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button class="cancel-btn" onclick="closeModal('publicationDetailModal')">Fermer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Modifier Profil -->
+    <div id="editProfileModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">✏️ Modifier mon profil</h3>
+                <button class="close-modal" onclick="closeModal('editProfileModal')">×</button>
+            </div>
+            <form id="editProfileForm">
+                <div class="form-group">
+                    <label class="form-label">Photo de profil</label>
+                    <div class="file-upload">
+                        <button type="button" class="file-upload-btn">
+                            <span>📷</span> Changer la photo
+                        </button>
+                        <input type="file" accept="image/*" id="profileImageInput">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Nom complet</label>
+                    <input type="text" class="form-control" id="editUserName" value="Esmeralda AZ" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" id="editUserEmail" value="EsmeraldaAZ@gmail.com" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Ville</label>
+                    <input type="text" class="form-control" id="editUserLocation" value="Lubumbashi" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">À propos de moi</label>
+                    <textarea class="form-control" id="editUserBio" rows="4" placeholder="Décrivez-vous en quelques mots...">Passionnée par le tourisme local et les découvertes culturelles. J'aime explorer de nouveaux endroits et partager mes expériences.</textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="submit" class="submit-btn">Enregistrer les modifications</button>
+                    <button type="button" class="cancel-btn" onclick="closeModal('editProfileModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Données de démonstration
+        const publications = [
+            {
+                id: 1,
+                image: "{% static 'img/coiffure.jpg' %}",
+                establishment: "BNK Boutique",
+                title: "Promotion exceptionnelle",
+                description: "Promotion de nos robes au prix de 9$ pour un achat de nombre de produit supérieur à 10. Profitez de cette offre exclusive limitée dans le temps.",
+                date: "01/01/2025",
+                likes: 24,
+                comments: 8
+            },
+            {
+                id: 2,
+                image: "{% static 'img/restaurant.jpg' %}",
+                establishment: "Le Gourmet Royal",
+                title: "Nouveau menu d'hiver",
+                description: "Découvrez notre nouveau menu d'hiver avec des spécialités locales réinventées. Des plats chauds et réconfortants pour la saison froide.",
+                date: "28/11/2024",
+                likes: 42,
+                comments: 15
+            },
+            {
+                id: 3,
+                image: "{% static 'img/hotel.jpg' %}",
+                establishment: "Hôtel Paradise",
+                title: "Offre spéciale week-end",
+                description: "Profitez de -30% sur toutes nos chambres ce week-end. Petit-déjeuner inclus et accès gratuit au spa.",
+                date: "25/11/2024",
+                likes: 18,
+                comments: 5
+            },
+            {
+                id: 4,
+                image: "{% static 'img/park.jpg' %}",
+                establishment: "Parc National",
+                title: "Nouveau sentier de randonnée",
+                description: "Découvrez notre nouveau sentier de randonnée de 5km à travers la forêt. Parfait pour les amoureux de la nature.",
+                date: "20/11/2024",
+                likes: 56,
+                comments: 12
+            }
+        ];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPublications();
+            setupEventListeners();
+        });
+
+        // Charger les publications
+        function loadPublications() {
+            const grid = document.getElementById('publicationsGrid');
+            grid.innerHTML = '';
+
+            publications.forEach(pub => {
+                const card = document.createElement('div');
+                card.className = 'publication-card';
+                card.innerHTML = `
+                    <img src="${pub.image}" alt="${pub.establishment}" class="publication-image">
+                    <div class="publication-content">
+                        <div class="publication-header">
+                            <h4 class="publication-title">${pub.title}</h4>
+                            <span class="publication-date">${pub.date}</span>
+                        </div>
+                        <p class="publication-description">${pub.description}</p>
+                        <div class="publication-actions">
+                            <div class="action-buttons">
+                                <button class="action-btn share-btn" onclick="sharePublication(${pub.id})">
+                                    <img src="{% static 'img/whatsapp.png' %}" alt="Partager" style="width: 16px; height: 16px;">
+                                </button>
+                                <button class="action-btn like-btn" onclick="toggleLike(${pub.id})">
+                                    <span>❤️</span> ${pub.likes}
+                                </button>
+                                <button class="action-btn comment-btn" onclick="openComments(${pub.id})">
+                                    <span>💬</span> ${pub.comments}
+                                </button>
+                            </div>
+                            <button class="view-more-btn" onclick="viewPublicationDetail(${pub.id})">
+                                Voir plus
+                            </button>
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Voir les détails d'une publication
+        function viewPublicationDetail(id) {
+            const pub = publications.find(p => p.id === id);
+            if (pub) {
+                document.getElementById('detailImage').src = pub.image;
+                document.getElementById('detailEstablishment').textContent = pub.establishment;
+                document.getElementById('detailDate').textContent = pub.date;
+                document.getElementById('detailTitle').textContent = pub.title;
+                document.getElementById('detailDescription').textContent = pub.description;
+                
+                openModal('publicationDetailModal');
+            }
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Ouvrir le modal d'édition du profil
+        function openEditProfileModal() {
+            openModal('editProfileModal');
+        }
+
+        // Gestion du formulaire d'édition du profil
+        document.getElementById('editProfileForm')?.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const newName = document.getElementById('editUserName').value;
+            const newEmail = document.getElementById('editUserEmail').value;
+            const newLocation = document.getElementById('editUserLocation').value;
+            
+            document.getElementById('userName').textContent = newName;
+            document.getElementById('userEmail').textContent = newEmail;
+            document.getElementById('userLocation').textContent = newLocation;
+            
+            // Gestion de l'image
+            const fileInput = document.getElementById('profileImageInput');
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('userProfileImg').src = e.target.result;
+                };
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            
+            alert('Profil mis à jour avec succès !');
+            closeModal('editProfileModal');
+        });
+
+        // Fonctions de partage
+        function sharePublication(id) {
+            const pub = publications.find(p => p.id === id);
+            if (pub) {
+                const shareText = `Découvrez "${pub.title}" sur Aryo-Tour: ${pub.description.substring(0, 100)}...`;
+                viewPublicationDetail(id);
+            }
+        }
+
+        function shareOnWhatsApp() {
+            const text = encodeURIComponent(`Découvrez cette publication sur Aryo-Tour !`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        function shareByEmail() {
+            const subject = encodeURIComponent('Publication intéressante sur Aryo-Tour');
+            const body = encodeURIComponent(`Je voulais partager cette publication avec toi !\n\nTitre: ${document.getElementById('detailTitle').textContent}\n\nDescription: ${document.getElementById('detailDescription').textContent}`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // Fonctions d'interaction
+        function toggleLike(id) {
+            const pub = publications.find(p => p.id === id);
+            if (pub) {
+                pub.likes += pub.liked ? -1 : 1;
+                pub.liked = !pub.liked;
+                loadPublications();
+            }
+        }
+
+        function openComments(id) {
+            alert(`Commentaires de la publication ${id} - Fonctionnalité en développement`);
+        }
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+
+            // Filtres
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    // Ici, vous filtreriez les publications
+                    loadPublications();
+                });
+            });
+
+            // Recherche
+            document.querySelector('.search-btn').addEventListener('click', function() {
+                const query = document.querySelector('.search-input').value;
+                if (query) {
+                    alert(`Recherche pour: "${query}" - Fonctionnalité en développement`);
+                }
+            });
+
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    document.querySelector('.search-btn').click();
+                }
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

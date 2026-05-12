@@ -1,0 +1,1652 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Gestion Publications - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        display: flex;
+        min-height: 100vh;
+    }
+
+    /* Sidebar - Profil */
+    .sidebar {
+        width: 300px;
+        background: white;
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        position: sticky;
+        top: 0;
+        height: 100vh;
+        overflow-y: auto;
+    }
+
+    .profile-section {
+        text-align: center;
+        padding-bottom: 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        margin-bottom: 2rem;
+    }
+
+    .profile-img {
+        width: 120px;
+        height: 120px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 4px solid var(--accent-color);
+        margin-bottom: 1.5rem;
+        box-shadow: var(--shadow-light);
+    }
+
+    .establishment-name {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .establishment-location {
+        color: var(--primary-color);
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .establishment-description {
+        font-size: 0.9rem;
+        color: #666;
+        line-height: 1.5;
+        margin-bottom: 1.5rem;
+    }
+
+    .edit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .edit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .sidebar-links {
+        list-style: none;
+        margin-top: 2rem;
+    }
+
+    .sidebar-links li {
+        margin-bottom: 1rem;
+    }
+
+    .sidebar-links a {
+        color: var(--text-color);
+        text-decoration: none;
+        padding: 0.8rem 1rem;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: var(--transition);
+    }
+
+    .sidebar-links a:hover,
+    .sidebar-links a.active {
+        background-color: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .sidebar-links img {
+        width: 20px;
+        height: 20px;
+    }
+
+    /* Main Content */
+    .main-content {
+        flex: 1;
+        padding: 2rem;
+        overflow-y: auto;
+    }
+
+    /* Header */
+    .content-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .search-bar {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+        max-width: 500px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .header-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .dashboard-btn,
+    .logout-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .dashboard-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .logout-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .dashboard-btn:hover,
+    .logout-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Hero Banner */
+    .publication-hero {
+        background: linear-gradient(rgba(61, 132, 167, 0.9), rgba(70, 205, 207, 0.9));
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+        box-shadow: var(--shadow);
+    }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    /* Main Content Layout */
+    .content-layout {
+        display: grid;
+        grid-template-columns: 1fr 1.5fr;
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    @media (max-width: 1024px) {
+        .content-layout {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    /* Form Section */
+    .form-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        position: sticky;
+        top: 2rem;
+        height: fit-content;
+    }
+
+    .form-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.8rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    /* Publications List Section */
+    .publications-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .publications-count {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.4rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    /* Form Styles */
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        display: block;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .form-control {
+        width: 100%;
+        padding: 0.8rem 1rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+    }
+
+    .form-control:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .textarea {
+        min-height: 120px;
+        resize: vertical;
+    }
+
+    /* File Upload */
+    .file-upload-area {
+        border: 2px dashed var(--accent-color);
+        border-radius: 10px;
+        padding: 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        margin-bottom: 1rem;
+        position: relative;
+    }
+
+    .file-upload-area:hover {
+        border-color: var(--secondary-color);
+        background: rgba(70, 205, 207, 0.05);
+    }
+
+    .file-upload-area i {
+        font-size: 3rem;
+        color: var(--secondary-color);
+        margin-bottom: 1rem;
+    }
+
+    .file-upload-text {
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .file-upload-subtext {
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .file-upload-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .file-upload-btn:hover {
+        background: var(--secondary-color);
+        color: white;
+    }
+
+    .file-upload-area input[type="file"] {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        opacity: 0;
+        cursor: pointer;
+    }
+
+    .file-preview {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        margin-top: 1rem;
+    }
+
+    .preview-item {
+        position: relative;
+        width: 80px;
+        height: 80px;
+        border-radius: 8px;
+        overflow: hidden;
+    }
+
+    .preview-img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .remove-file {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background: rgba(0, 0, 0, 0.7);
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        font-size: 0.8rem;
+    }
+
+    /* Publication Type Selector */
+    .type-selector {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+    }
+
+    .type-btn {
+        flex: 1;
+        padding: 0.8rem;
+        border: 2px solid var(--accent-color);
+        background: white;
+        border-radius: 10px;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center; 
+        gap: 0.5rem;
+        min-width: 120px;
+    }
+
+    .type-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .type-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Form Actions */
+    .form-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .submit-btn,
+    .draft-btn {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .submit-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+    }
+
+    .draft-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .submit-btn:hover,
+    .draft-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Publications List */
+    .publications-list {
+        display: flex;
+        flex-direction: column;
+        gap: 1.5rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        border: 2px solid transparent;
+    }
+
+    .publication-card:hover {
+        transform: translateY(-5px);
+        box-shadow: var(--shadow);
+        border-color: var(--accent-color);
+    }
+
+    .publication-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 1.5rem;
+        border-bottom: 1px solid #f0f0f0;
+    }
+
+    .publication-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.2rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .publication-meta {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .publication-type {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .publication-date {
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .publication-status {
+        padding: 0.3rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .status-published {
+        background: #d4edda;
+        color: #155724;
+    }
+
+    .status-draft {
+        background: #fff3cd;
+        color: #856404;
+    }
+
+    .publication-content {
+        padding: 1.5rem;
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+    }
+
+    .publication-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .publication-stats {
+        display: flex;
+        gap: 1.5rem;
+        margin-bottom: 1rem;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .publication-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #f0f0f0;
+        background: #fafafa;
+    }
+
+    .action-btn {
+        flex: 1;
+        padding: 0.6rem;
+        border-radius: 8px;
+        border: none;
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .edit-btn-action:hover {
+        background: var(--accent-color);
+    }
+
+    .delete-btn-action:hover {
+        background: #ffeaea;
+        color: #dc3545;
+    }
+
+    .share-btn-action:hover {
+        background: #e3f2fd;
+        color: var(--primary-color);
+    }
+
+    /* No Publications Message */
+    .no-publications {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .no-publications i {
+        font-size: 3rem;
+        color: #ccc;
+        margin-bottom: 1rem;
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 2rem;
+    }
+
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .page-btn:hover,
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 500px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Success Message */
+    .success-message {
+        background: linear-gradient(135deg, #d4edda, #c3e6cb);
+        color: #155724;
+        padding: 1rem 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        animation: slideUp 0.3s ease;
+    }
+
+    /* Footer */
+    .main-footer {
+        text-align: center;
+        padding: 2rem;
+        color: var(--text-color);
+        font-size: 0.9rem;
+        border-top: 2px solid var(--accent-color);
+        margin-top: 3rem;
+    }
+
+    .footer-links {
+        display: flex;
+        justify-content: center;
+        gap: 2rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .footer-links a {
+        color: var(--primary-color);
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .main-content {
+            padding: 1rem;
+        }
+        
+        .content-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-bar {
+            max-width: 100%;
+        }
+        
+        .header-actions {
+            justify-content: center;
+        }
+        
+        .form-actions {
+            flex-direction: column;
+        }
+        
+        .type-selector {
+            flex-direction: column;
+        }
+        
+        .publication-actions {
+            flex-wrap: wrap;
+        }
+        
+        .action-btn {
+            min-width: calc(50% - 0.5rem);
+        }
+    }
+
+    @media (max-width: 576px) {
+        .publication-hero {
+            padding: 2rem 1rem;
+        }
+        
+        .hero-title {
+            font-size: 1.8rem;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Sidebar - Profil de l'établissement -->
+        <aside class="sidebar">
+            <div class="profile-section">
+                <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="profile-img">
+                <h2 class="establishment-name">BNK Boutique</h2>
+                <div class="establishment-location">
+                    <span>📍</span>
+                    <span>Lukula 10 Q/ Lubudi C/ Bandalungwa</span>
+                </div>
+                <p class="establishment-description">
+                    Vente de robe béninoise de qualité à prix de gros pour lancer votre propre entreprise. 
+                    Commandez de partout et bénéficiez de produits authentiques.
+                </p>
+                <button class="edit-btn">
+                    <span>✏️</span> Modifier le profil
+                </button>
+            </div>
+
+            <nav>
+                <ul class="sidebar-links">
+                    <li><a href="{% url 'homEt' %}">
+                        <i class="fas fa-tachometer-alt"></i> Tableau de bord
+                    </a></li>
+                    <li><a href="#" class="active">
+                        <i class="fas fa-newspaper"></i> Publications 
+                    </a></li>
+                    <li><a href="{% url 'homEt' %}">
+                        <i class="fas fa-concierge-bell"></i> Services
+                    </a></li>
+                    <li><a href="{% url 'homEt' %}">
+                        <i class="fas fa-calendar-alt"></i> Activités
+                    </a></li>
+                    <li><a href="{% url 'homEt' %}">
+                        <i class="fas fa-chart-bar"></i> Statistiques
+                    </a></li>
+                    <li><a href="#">
+                        <i class="fas fa-cog"></i> Paramètres 
+                    </a></li>
+                </ul>
+            </nav>
+
+            <div class="main-footer">
+                <div class="footer-links">
+                    <a href="#">À propos</a>
+                    <a href="#">Contact</a>
+                    <a href="#">Confidentialité</a>
+                    <a href="#">Conditions</a>
+                </div>
+                <p>© 2024 BNK Boutique. Tous droits réservés.</p>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Header avec recherche et actions -->
+            <header class="content-header">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Rechercher une publication...">
+                    <button class="search-btn">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+                
+                <div class="header-actions">
+                    <a href="{% url 'homEt' %}"><button class="dashboard-btn" > 
+                        <i class="fas fa-tachometer-alt"></i> Tableau de bord 
+                    </button></a>
+                    <a href="{% url 'accueil' %}"> <button class="logout-btn" > 
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </button></a> 
+                </div>
+            </header>
+
+            <!-- Hero Banner -->
+            <section class="publication-hero">
+                <h1 class="hero-title">Gestion des Publications</h1>
+                <p class="hero-subtitle">Créez et gérez vos publications pour informer vos clients</p>
+            </section>
+
+            <!-- Success Message (dynamique) -->
+            <div id="successMessage" class="success-message" style="display: none;">
+                <i class="fas fa-check-circle"></i>
+                <div>
+                    <strong id="successTitle">Publication créée avec succès !</strong>
+                    <p id="successText" style="margin-top: 0.3rem; font-size: 0.9rem;">
+                        Votre publication a été enregistrée et est maintenant visible par vos clients.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Main Content Layout -->
+            <div class="content-layout">
+                <!-- Formulaire de Publication -->
+                <section class="form-section">
+                    <h2 class="form-title">Créer une nouvelle publication</h2>
+                    
+                    <form id="publicationForm">
+                        <!-- Type de publication -->
+                        <div class="form-group">
+                            <label class="form-label">Type de publication</label>
+                            <div class="type-selector">
+                                <button type="button" class="type-btn active" data-type="promotion">
+                                    <i class="fas fa-percentage"></i> Promotion
+                                </button>
+                                <button type="button" class="type-btn" data-type="news">
+                                    <i class="fas fa-newspaper"></i> Actualité
+                                </button>
+                                <button type="button" class="type-btn" data-type="event">
+                                    <i class="fas fa-calendar"></i> Événement
+                                </button>
+                            </div>
+                            <input type="hidden" id="publicationType" name="type" value="promotion">
+                        </div>
+
+                        <!-- Titre -->
+                        <div class="form-group">
+                            <label class="form-label">Titre de la publication *</label>
+                            <input type="text" class="form-control" id="publicationTitle" 
+                                   placeholder="Ex: Promotion exceptionnelle -20%" required>
+                        </div>
+
+                        <!-- Description -->
+                        <div class="form-group">
+                            <label class="form-label">Description *</label>
+                            <textarea class="form-control textarea" id="publicationDescription" 
+                                      placeholder="Décrivez votre publication en détail..." 
+                                      rows="4" required></textarea>
+                        </div>
+
+                        <!-- Images -->
+                        <div class="form-group">
+                            <label class="form-label">Images</label>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <div class="file-upload-text">Glissez-déposez vos images ici</div>
+                                <div class="file-upload-subtext">ou cliquez pour sélectionner</div>
+                                <button type="button" class="file-upload-btn">
+                                    <i class="fas fa-folder-open"></i> Parcourir les fichiers
+                                </button>
+                                <input type="file" id="fileInput" accept="image/*" multiple>
+                            </div>
+                            <div class="file-preview" id="filePreview"></div>
+                        </div>
+
+                        <!-- Date de publication -->
+                        <div class="form-group">
+                            <label class="form-label">Date de publication</label>
+                            <input type="datetime-local" class="form-control" id="publicationDate">
+                            <small style="color: #666; font-size: 0.85rem; display: block; margin-top: 0.3rem;">
+                                Laissez vide pour publier immédiatement
+                            </small>
+                        </div>
+
+                        <!-- Actions du formulaire -->
+                        <div class="form-actions">
+                            <button type="submit" class="submit-btn">
+                                <i class="fas fa-paper-plane"></i> Publier maintenant
+                            </button>
+                            <button type="button" class="draft-btn" onclick="saveAsDraft()">
+                                <i class="fas fa-save"></i> Enregistrer comme brouillon
+                            </button>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Liste des Publications -->
+                <section class="publications-section">
+                    <div class="section-header">
+                        <h2 class="section-title">Vos Publications</h2>
+                        <div class="publications-count">
+                            <span id="publicationsCount">8</span> publications
+                        </div>
+                    </div>
+
+                    <!-- Filtres -->
+                    <div class="type-selector" style="margin-bottom: 1.5rem;">
+                        <button type="button" class="type-btn active" data-filter="all">
+                            Toutes
+                        </button>
+                        <button type="button" class="type-btn" data-filter="published">
+                            Publiées
+                        </button>
+                        <button type="button" class="type-btn" data-filter="draft">
+                            Brouillons
+                        </button>
+                    </div>
+
+                    <!-- Liste des publications -->
+                    <div class="publications-list" id="publicationsList">
+                        <!-- Les publications seront injectées ici par JavaScript -->
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination">
+                        <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+                        <button class="page-btn active">1</button>
+                        <button class="page-btn">2</button>
+                        <button class="page-btn">3</button>
+                        <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal de confirmation de suppression -->
+    <div id="deleteModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirmer la suppression</h3>
+                <button class="close-modal" onclick="closeModal('deleteModal')">×</button>
+            </div>
+            <div style="padding: 1rem 0;">
+                <p style="color: #666; margin-bottom: 1.5rem;">
+                    Êtes-vous sûr de vouloir supprimer cette publication ? Cette action est irréversible.
+                </p>
+                <div style="display: flex; gap: 1rem;">
+                    <button class="submit-btn" style="flex: 1;" onclick="confirmDelete()">
+                        <i class="fas fa-trash"></i> Supprimer
+                    </button>
+                    <button class="draft-btn" style="flex: 1;" onclick="closeModal('deleteModal')">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de prévisualisation -->
+    <div id="previewModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="previewTitle">Prévisualisation</h3>
+                <button class="close-modal" onclick="closeModal('previewModal')">×</button>
+            </div>
+            <div style="padding: 1rem 0;">
+                <img id="previewImage" src="" alt="" style="width: 100%; height: 200px; object-fit: cover; border-radius: 8px; margin-bottom: 1rem;">
+                <h4 style="color: var(--text-color); margin-bottom: 0.5rem;" id="previewTitleText"></h4>
+                <p style="color: #666; line-height: 1.6;" id="previewDescription"></p>
+                <div style="display: flex; gap: 0.5rem; margin-top: 1.5rem;">
+                    <span id="previewType" class="publication-type" style="margin-right: auto;"></span>
+                    <span id="previewDate" class="publication-date"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données de démonstration
+        const publications = [
+            {
+                id: 1,
+                title: "Promotion exceptionnelle -20%",
+                description: "Profitez de -20% sur toute notre collection de robes béninoises cet été. Des modèles uniques et authentiques à prix réduits pour une durée limitée.",
+                type: "promotion",
+                images: ["{% static 'img/coiffure.jpg' %}"],
+                date: "01/01/2025 10:30",
+                status: "published",
+                views: 124,
+                likes: 42,
+                comments: 8
+            },
+            {
+                id: 2,
+                title: "Nouvelle collection printemps",
+                description: "Découvrez notre nouvelle collection printemps-été 2025. Des tissus légers, des couleurs vibrantes et des designs modernes inspirés de la tradition.",
+                type: "news",
+                images: ["{% static 'img/restaurant.jpg' %}"],
+                date: "15/12/2024 14:00",
+                status: "published",
+                views: 89,
+                likes: 56,
+                comments: 15
+            },
+            {
+                id: 3,
+                title: "Atelier de couture traditionnelle",
+                description: "Participez à notre atelier de couture traditionnelle le 20 janvier. Apprenez les techniques ancestrales de confection de vêtements béninois.",
+                type: "event",
+                images: ["{% static 'img/hotel.jpg' %}"],
+                date: "10/12/2024 09:00",
+                status: "draft",
+                views: 0,
+                likes: 0,
+                comments: 0
+            },
+            {
+                id: 4,
+                title: "Offre spéciale pour les entrepreneurs",
+                description: "Pack spécial pour les entrepreneurs souhaitant lancer leur boutique en ligne. Inclut conseils personnalisés et tarifs préférentiels.",
+                type: "promotion",
+                images: ["{% static 'img/spa.jpg' %}"],
+                date: "05/12/2024 16:45",
+                status: "published",
+                views: 67,
+                likes: 24,
+                comments: 5
+            }
+        ];
+
+        // Variables globales
+        let currentFilter = 'all';
+        let publicationToDelete = null;
+        let uploadedFiles = [];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadPublications();
+            setupEventListeners();
+            updatePublicationsCount();
+        });
+
+        // Charger les publications
+        function loadPublications() {
+            const list = document.getElementById('publicationsList');
+            list.innerHTML = '';
+
+            const filteredPublications = publications.filter(pub => {
+                if (currentFilter === 'all') return true;
+                if (currentFilter === 'published') return pub.status === 'published';
+                if (currentFilter === 'draft') return pub.status === 'draft';
+                return true;
+            });
+
+            if (filteredPublications.length === 0) {
+                list.innerHTML = `
+                    <div class="no-publications">
+                        <i class="fas fa-newspaper"></i>
+                        <h3>Aucune publication trouvée</h3>
+                        <p>Commencez par créer votre première publication !</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredPublications.forEach(pub => {
+                const card = document.createElement('div');
+                card.className = 'publication-card';
+                card.innerHTML = `
+                    <div class="publication-header">
+                        <div>
+                            <h3 class="publication-title">${pub.title}</h3>
+                            <div class="publication-meta">
+                                <span class="publication-type">${getTypeLabel(pub.type)}</span>
+                                <span class="publication-date">${formatDate(pub.date)}</span>
+                            </div>
+                        </div>
+                        <span class="publication-status ${pub.status === 'published' ? 'status-published' : 'status-draft'}">
+                            ${pub.status === 'published' ? 'Publié' : 'Brouillon'}
+                        </span>
+                    </div>
+                    
+                    <div class="publication-content">
+                        ${pub.images[0] ? `<img src="${pub.images[0]}" alt="${pub.title}" class="publication-image">` : ''}
+                        <p class="publication-description">${pub.description}</p>
+                        
+                        ${pub.status === 'published' ? `
+                            <div class="publication-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i>
+                                    <span>${pub.views} vues</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i>
+                                    <span>${pub.likes} j'aime</span>
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-comment"></i>
+                                    <span>${pub.comments} commentaires</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                    </div>
+                    
+                    <div class="publication-actions">
+                        <button class="action-btn edit-btn-action" onclick="editPublication(${pub.id})">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button class="action-btn delete-btn-action" onclick="openDeleteModal(${pub.id})">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                        ${pub.status === 'published' ? `
+                            <button class="action-btn share-btn-action" onclick="sharePublication(${pub.id})">
+                                <i class="fas fa-share-alt"></i> Partager
+                            </button>
+                        ` : `
+                            <button class="action-btn submit-btn" onclick="publishDraft(${pub.id})" style="background: var(--secondary-color); color: white; border: none;">
+                                <i class="fas fa-paper-plane"></i> Publier
+                            </button>
+                        `}
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // Obtenir le label du type
+        function getTypeLabel(type) {
+            const types = {
+                'promotion': 'Promotion',
+                'news': 'Actualité',
+                'event': 'Événement'
+            };
+            return types[type] || type;
+        }
+
+        // Formater la date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('fr-FR', {
+                day: '2-digit',
+                month: '2-digit',
+                year: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        // Mettre à jour le compteur de publications
+        function updatePublicationsCount() {
+            const count = publications.length;
+            document.getElementById('publicationsCount').textContent = count;
+        }
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Sélection du type de publication
+            document.querySelectorAll('.type-btn[data-type]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.type-btn[data-type]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('publicationType').value = this.dataset.type;
+                });
+            });
+
+            // Filtres
+            document.querySelectorAll('.type-btn[data-filter]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.type-btn[data-filter]').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    loadPublications();
+                });
+            });
+
+            // Upload de fichiers
+            const fileInput = document.getElementById('fileInput');
+            const fileUploadArea = document.getElementById('fileUploadArea');
+
+            fileUploadArea.addEventListener('click', () => fileInput.click());
+            fileUploadArea.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = 'var(--secondary-color)';
+                fileUploadArea.style.background = 'rgba(70, 205, 207, 0.1)';
+            });
+            fileUploadArea.addEventListener('dragleave', () => {
+                fileUploadArea.style.borderColor = '';
+                fileUploadArea.style.background = '';
+            });
+            fileUploadArea.addEventListener('drop', (e) => {
+                e.preventDefault();
+                fileUploadArea.style.borderColor = '';
+                fileUploadArea.style.background = '';
+                handleFiles(e.dataTransfer.files);
+            });
+
+            fileInput.addEventListener('change', (e) => {
+                handleFiles(e.target.files);
+            });
+
+            // Formulaire de publication
+            document.getElementById('publicationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                createPublication('published');
+            });
+
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        }
+
+        // Gérer les fichiers uploadés
+        function handleFiles(files) {
+            for (let file of files) {
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        uploadedFiles.push({
+                            name: file.name,
+                            url: e.target.result
+                        });
+                        updateFilePreview();
+                    };
+                    reader.readAsDataURL(file);
+                }
+            }
+        }
+
+        // Mettre à jour la prévisualisation des fichiers
+        function updateFilePreview() {
+            const preview = document.getElementById('filePreview');
+            preview.innerHTML = '';
+
+            uploadedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'preview-item';
+                item.innerHTML = `
+                    <img src="${file.url}" alt="${file.name}" class="preview-img">
+                    <button class="remove-file" onclick="removeFile(${index})">×</button>
+                `;
+                preview.appendChild(item);
+            });
+        }
+
+        // Supprimer un fichier
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFilePreview();
+        }
+
+        // Créer une publication
+        function createPublication(status) {
+            const title = document.getElementById('publicationTitle').value;
+            const description = document.getElementById('publicationDescription').value;
+            const type = document.getElementById('publicationType').value;
+            const date = document.getElementById('publicationDate').value || new Date().toISOString().slice(0, 16);
+
+            // Validation
+            if (!title || !description) {
+                showMessage('error', 'Veuillez remplir tous les champs obligatoires.');
+                return;
+            }
+
+            // Créer la nouvelle publication
+            const newPublication = {
+                id: publications.length + 1,
+                title: title,
+                description: description,
+                type: type,
+                images: uploadedFiles.map(file => file.url),
+                date: date,
+                status: status,
+                views: 0,
+                likes: 0,
+                comments: 0
+            };
+
+            publications.unshift(newPublication);
+            uploadedFiles = [];
+
+            // Réinitialiser le formulaire
+            document.getElementById('publicationForm').reset();
+            document.getElementById('filePreview').innerHTML = '';
+            document.getElementById('publicationType').value = 'promotion';
+            document.querySelectorAll('.type-btn[data-type]').forEach((btn, index) => {
+                btn.classList.toggle('active', index === 0);
+            });
+
+            // Afficher le message de succès
+            showMessage('success', 
+                status === 'published' 
+                    ? 'Publication créée avec succès !' 
+                    : 'Brouillon enregistré avec succès !',
+                status === 'published' 
+                    ? 'Votre publication a été enregistrée et est maintenant visible par vos clients.' 
+                    : 'Votre brouillon a été enregistré. Vous pourrez le publier plus tard.'
+            );
+
+            // Recharger les publications
+            loadPublications();
+            updatePublicationsCount();
+        }
+
+        // Enregistrer comme brouillon
+        function saveAsDraft() {
+            createPublication('draft');
+        }
+
+        // Publier un brouillon
+        function publishDraft(id) {
+            const publication = publications.find(p => p.id === id);
+            if (publication) {
+                publication.status = 'published';
+                publication.date = new Date().toISOString().slice(0, 16);
+                
+                showMessage('success', 
+                    'Publication mise en ligne !',
+                    'Votre brouillon a été publié et est maintenant visible par vos clients.'
+                );
+                
+                loadPublications();
+            }
+        }
+
+        // Modifier une publication
+        function editPublication(id) {
+            const publication = publications.find(p => p.id === id);
+            if (publication) {
+                // Remplir le formulaire avec les données de la publication
+                document.getElementById('publicationTitle').value = publication.title;
+                document.getElementById('publicationDescription').value = publication.description;
+                document.getElementById('publicationType').value = publication.type;
+                document.getElementById('publicationDate').value = publication.date;
+                
+                // Mettre à jour les boutons de type
+                document.querySelectorAll('.type-btn[data-type]').forEach(btn => {
+                    btn.classList.toggle('active', btn.dataset.type === publication.type);
+                });
+                
+                // Scroll vers le formulaire
+                document.querySelector('.form-section').scrollIntoView({ behavior: 'smooth' });
+                
+                showMessage('info', 
+                    'Édition en cours',
+                    `Vous modifiez la publication "${publication.title}".`
+                );
+            }
+        }
+
+        // Ouvrir le modal de suppression
+        function openDeleteModal(id) {
+            publicationToDelete = id;
+            openModal('deleteModal');
+        }
+
+        // Confirmer la suppression
+        function confirmDelete() {
+            if (publicationToDelete) {
+                const index = publications.findIndex(p => p.id === publicationToDelete);
+                if (index !== -1) {
+                    const publicationTitle = publications[index].title;
+                    publications.splice(index, 1);
+                    
+                    showMessage('success', 
+                        'Publication supprimée',
+                        `"${publicationTitle}" a été supprimé avec succès.`
+                    );
+                    
+                    loadPublications();
+                    updatePublicationsCount();
+                }
+                closeModal('deleteModal');
+                publicationToDelete = null;
+            }
+        }
+
+        // Partager une publication
+        function sharePublication(id) {
+            const publication = publications.find(p => p.id === id);
+            if (publication) {
+                const text = encodeURIComponent(`Découvrez "${publication.title}" sur BNK Boutique !`);
+                const url = encodeURIComponent(window.location.href);
+                
+                // Exemple pour WhatsApp
+                window.open(`https://wa.me/?text=${text}%20${url}`, '_blank');
+            }
+        }
+
+        // Afficher un message
+        function showMessage(type, title, text) {
+            const message = document.getElementById('successMessage');
+            const titleElement = document.getElementById('successTitle');
+            const textElement = document.getElementById('successText');
+            
+            // Configurer le message selon le type
+            if (type === 'success') {
+                message.style.background = 'linear-gradient(135deg, #d4edda, #c3e6cb)';
+                message.style.color = '#155724';
+            } else if (type === 'error') {
+                message.style.background = 'linear-gradient(135deg, #f8d7da, #f5c6cb)';
+                message.style.color = '#721c24';
+            } else if (type === 'info') {
+                message.style.background = 'linear-gradient(135deg, #d1ecf1, #bee5eb)';
+                message.style.color = '#0c5460';
+            }
+            
+            titleElement.textContent = title;
+            textElement.textContent = text;
+            message.style.display = 'flex';
+            
+            // Masquer après 5 secondes
+            setTimeout(() => {
+                message.style.display = 'none';
+            }, 5000);
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Rechercher des publications
+        function searchPublications() {
+            const query = document.querySelector('.search-input').value.toLowerCase();
+            // Implémenter la logique de recherche ici
+            console.log('Recherche:', query);
+        }
+    </script>
+</body>
+</html>
+{% endblock %}

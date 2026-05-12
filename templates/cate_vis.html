@@ -1,0 +1,1662 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html> 
+<html lang="fr"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Découvrez les Établissements - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head> 
+
+<style>
+    /* Variables CSS */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+        --card-radius: 12px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f5f7fa 0%, #e4e8f0 100%);
+        min-height: 100vh;
+    }
+
+    .main-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 2rem;
+    }
+
+    /* Header */
+    .main-header {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 1.5rem;
+    }
+
+    .search-section {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+        max-width: 600px;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+        font-size: 1rem;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    .auth-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .auth-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        text-decoration: none;
+        font-size: 1rem;
+    }
+
+    .home-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .login-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .home-btn:hover,
+    .login-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Hero Banner */
+    .hero-banner {
+        background: linear-gradient(rgba(61, 132, 167, 0.9), rgba(70, 205, 207, 0.9));
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+        box-shadow: var(--shadow);
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-banner::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: url('{% static "img/pattern.png" %}') repeat;
+        opacity: 0.1;
+    }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        position: relative;
+        z-index: 1;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 1;
+        line-height: 1.8;
+    }
+
+    /* Section Filtres */
+    .filters-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 1.5rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filters-title {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .clear-filters-btn {
+        background: none;
+        border: 2px solid var(--accent-color);
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .clear-filters-btn:hover {
+        background: var(--accent-color);
+    }
+
+    .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .filter-card {
+        background: var(--light-color);
+        border-radius: 10px;
+        padding: 1rem;
+        text-align: center;
+        cursor: pointer;
+        transition: var(--transition);
+        border: 2px solid transparent;
+    }
+
+    .filter-card:hover,
+    .filter-card.active {
+        border-color: var(--secondary-color);
+        background: white;
+        transform: translateY(-3px);
+        box-shadow: var(--shadow-light);
+    }
+
+    .filter-icon {
+        font-size: 2rem;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .filter-name {
+        font-weight: 500;
+        color: var(--text-color);
+    }
+
+    .filter-count {
+        font-size: 0.8rem;
+        color: #666;
+        margin-top: 0.3rem;
+    }
+
+    /* Établissements Grid */
+    .establishments-section {
+        margin-bottom: 3rem;
+    }
+
+    .section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .section-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        position: relative;
+        padding-bottom: 0.5rem;
+    }
+
+    .section-title::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 60px;
+        height: 3px;
+        background: linear-gradient(90deg, var(--secondary-color), var(--accent-color));
+    }
+
+    .view-all-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .view-all-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    .establishments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .establishment-card {
+        background: white;
+        border-radius: var(--card-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        position: relative;
+    }
+
+    .establishment-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .establishment-badge {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        z-index: 2;
+    }
+
+    .establishment-image {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .establishment-card:hover .establishment-image {
+        transform: scale(1.05);
+    }
+
+    .establishment-content {
+        padding: 1.5rem;
+    }
+
+    .establishment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 1rem;
+    }
+
+    .establishment-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .establishment-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: var(--light-color);
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+    }
+
+    .rating-star {
+        color: #FFD700;
+        font-size: 0.9rem;
+    }
+
+    .rating-value {
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .establishment-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        font-size: 0.9rem;
+        margin-bottom: 1rem;
+    }
+
+    .establishment-description {
+        color: #666;
+        font-size: 0.9rem;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        line-clamp: 3;
+        box-orient: vertical;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .establishment-features {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .feature-tag {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.3rem 0.6rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+    }
+
+    .establishment-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .view-details-btn {
+        background: var(--primary-color);
+        color: white;
+        padding: 0.6rem 1.5rem;
+        border-radius: 20px;
+        text-decoration: none;
+        font-weight: 500;
+        transition: var(--transition);
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+        justify-content: center;
+    }
+
+    .view-details-btn:hover {
+        background: var(--secondary-color);
+        transform: translateY(-2px);
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 2rem;
+        padding-bottom: 1rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Establishment Detail Modal */
+    .establishment-detail {
+        margin-bottom: 2rem;
+    }
+
+    .detail-gallery {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .main-image {
+        width: 100%;
+        height: 300px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .side-images {
+        display: grid;
+        grid-template-rows: repeat(2, 1fr);
+        gap: 1rem;
+    }
+
+    .side-image {
+        width: 100%;
+        height: 145px;
+        object-fit: cover;
+        border-radius: 10px;
+    }
+
+    .detail-info {
+        padding: 0 1rem;
+    }
+
+    .detail-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1rem;
+    }
+
+    .detail-rating {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .detail-rating .rating-star {
+        color: #FFD700;
+        font-size: 1.2rem;
+    }
+
+    .detail-category {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+
+    .detail-location {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #666;
+        margin-bottom: 1.5rem;
+        font-size: 1rem;
+    }
+
+    .detail-description {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 2rem;
+        font-size: 0.95rem;
+    }
+
+    .detail-features {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .feature-icon {
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+    }
+
+    .contact-info {
+        background: var(--light-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-bottom: 2rem;
+    }
+
+    .contact-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .contact-details {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1rem;
+    }
+
+    .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .contact-btn,
+    .directions-btn,
+    .login-prompt-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex: 1;
+    }
+
+    .contact-btn {
+        background: var(--primary-color);
+        color: white;
+    }
+
+    .directions-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .login-prompt-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+    }
+
+    .contact-btn:hover,
+    .directions-btn:hover,
+    .login-prompt-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Login Prompt Modal */
+    .login-prompt {
+        text-align: center;
+        padding: 2rem;
+    }
+
+    .login-icon {
+        font-size: 4rem;
+        color: var(--secondary-color);
+        margin-bottom: 1.5rem;
+    }
+
+    .login-title {
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .login-message {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+        font-size: 1rem;
+    }
+
+    .login-benefits {
+        text-align: left;
+        margin-bottom: 2rem;
+        padding-left: 1rem;
+    }
+
+    .login-benefit {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .benefit-icon {
+        color: var(--secondary-color);
+        font-size: 1.2rem;
+    }
+
+    /* Footer */
+    .main-footer {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        box-shadow: var(--shadow-light);
+        margin-top: 4rem;
+    }
+
+    .footer-content {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--accent-color);
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: #666;
+        text-decoration: none;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-links a:hover {
+        color: var(--secondary-color);
+        padding-left: 5px;
+    }
+
+    .social-links-footer {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-link-footer {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 40px;
+        height: 40px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        transition: var(--transition);
+    }
+
+    .social-link-footer:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .social-link-footer img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid #e0e0e0;
+        color: #666;
+        font-size: 0.9rem;
+    }
+
+    /* Newsletter */
+    .newsletter {
+        background: var(--light-color);
+        padding: 1.5rem;
+        border-radius: 10px;
+        margin-top: 1.5rem;
+    }
+
+    .newsletter-title {
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: var(--text-color);
+    }
+
+    .newsletter-form {
+        display: flex;
+        gap: 0.5rem; 
+    }
+
+    .newsletter-input {
+        flex: 1;
+        padding: 0.8rem 1rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 10px;
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .newsletter-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: 500;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .establishments-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+        
+        .detail-gallery {
+            grid-template-columns: 1fr;
+        }
+        
+        .side-images {
+            grid-template-columns: repeat(2, 1fr);
+            grid-template-rows: auto;
+        }
+    }
+
+    @media (max-width: 768px) {
+        .main-container {
+            padding: 1rem;
+        }
+        
+        .main-header {
+            flex-direction: column;
+            align-items: stretch;
+        }
+        
+        .search-section {
+            max-width: 100%;
+        }
+        
+        .auth-actions {
+            justify-content: center;
+        }
+        
+        .establishments-grid {
+            grid-template-columns: 1fr;
+        }
+        
+        .modal-actions {
+            flex-direction: column;
+        }
+        
+        .hero-title {
+            font-size: 2rem;
+        }
+        
+        .filters-grid {
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+        }
+    }
+
+    @media (max-width: 576px) {
+        .hero-banner {
+            padding: 2rem 1rem;
+        }
+        
+        .modal {
+            padding: 1.5rem;
+        }
+        
+        .footer-content {
+            grid-template-columns: 1fr;
+        }
+        
+        .newsletter-form {
+            flex-direction: column;
+        }
+        
+        .establishment-actions {
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .view-details-btn {
+            width: 100%;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Pagination */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+        margin-top: 3rem;
+    }
+
+    .page-btn {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .page-btn:hover,
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Statistics */
+    .stats-section {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        gap: 2rem;
+        margin: 3rem 0;
+    }
+
+    .stat-card {
+        text-align: center;
+        padding: 2rem;
+        background: white;
+        border-radius: var(--border-radius);
+        box-shadow: var(--shadow-light);
+        flex: 1;
+        min-width: 200px;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+        color: var(--text-color);
+        font-weight: 500;
+    }
+</style>
+
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <header class="main-header">
+            <div class="search-section">
+                <input type="text" class="search-input" placeholder="Rechercher un établissement, une catégorie...">
+                <button class="search-btn" onclick="searchEstablishments()">
+                    <i class="fas fa-search"></i> Rechercher
+                </button>
+            </div>
+            
+            <div class="auth-actions">
+                <a href="{% url 'accueil' %}" class="auth-btn home-btn"> 
+                    <i class="fas fa-home"></i> Accueil
+                </a>
+                <a href="{% url 'auth_user' %}" class="auth-btn login-btn">
+                    <i class="fas fa-user"></i> Connexion
+                </a>
+            </div>
+        </header>
+
+        <!-- Hero Banner -->
+        <section class="hero-banner">
+            <h1 class="hero-title">Découvrez les Meilleurs Établissements</h1>
+            <p class="hero-subtitle">
+                Explorez notre sélection d'établissements soigneusement choisis. Restaurants, hôtels, boutiques, 
+                spas et bien plus encore. Trouvez l'endroit parfait pour vos moments de détente et de découverte.
+            </p>
+        </section>
+
+        <!-- Statistics -->
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number">150+</div>
+                <div class="stat-label">Établissements</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">25+</div>
+                <div class="stat-label">Catégories</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4.8★</div>
+                <div class="stat-label">Note moyenne</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10K+</div>
+                <div class="stat-label">Visiteurs satisfaits</div>
+            </div>
+        </section>
+
+        <!-- Section Filtres -->
+        <section class="filters-section">
+            <div class="filters-header">
+                <h2 class="filters-title">Parcourir par Catégorie</h2>
+                <button class="clear-filters-btn" onclick="clearFilters()">
+                    <i class="fas fa-times"></i> Effacer les filtres
+                </button>
+            </div>
+            
+            <div class="filters-grid" id="filtersGrid">
+                <!-- Les filtres seront injectés ici par JavaScript -->
+            </div>
+        </section>
+
+        <!-- Établissements Grid -->
+        <section class="establishments-section">
+            <div class="section-header">
+                <h2 class="section-title">Établissements Recommandés</h2>
+                <button class="view-all-btn" onclick="viewAllEstablishments()">
+                    <i class="fas fa-list"></i> Voir tout
+                </button>
+            </div>
+            
+            <div class="establishments-grid" id="establishmentsGrid">
+                <!-- Les établissements seront injectés ici par JavaScript -->
+            </div>
+        </section>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button class="page-btn"><i class="fas fa-chevron-left"></i></button>
+            <button class="page-btn active">1</button>
+            <button class="page-btn">2</button>
+            <button class="page-btn">3</button>
+            <button class="page-btn">4</button>
+            <button class="page-btn"><i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Modal Détail Établissement  -->
+    <div id="establishmentDetailModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title" id="detailEstablishmentName">BNK Boutique</h3>
+                <button class="close-modal" onclick="closeModal('establishmentDetailModal')">×</button>
+            </div>
+            <div class="establishment-detail">
+                <div class="detail-gallery">
+                    <img src="{% static 'img/coiffure.jpg' %}" alt="BNK Boutique" class="main-image" id="detailMainImage">
+                    <div class="side-images">
+                        <img src="{% static 'img/restaurant.jpg' %}" alt="Intérieur" class="side-image">
+                        <img src="{% static 'img/hotel.jpg' %}" alt="Produits" class="side-image">
+                    </div>
+                </div>
+                
+                <div class="detail-info">
+                    <div class="detail-meta">
+                        <div class="detail-rating">
+                            <span class="rating-star">★★★★★</span>
+                            <span class="rating-value">4.8</span>
+                            <span class="review-count">(124 avis)</span>
+                        </div>
+                        <span class="detail-category" id="detailCategory">Boutique</span>
+                    </div>
+                    
+                    <div class="detail-location">
+                        <i class="fas fa-map-marker-alt"></i>
+                        <span id="detailLocation">Lukula 10 Q/ Lubudi C/ Bandalungwa, Lubumbashi</span>
+                    </div>
+                    
+                    <p class="detail-description" id="detailDescription">
+                        BNK Boutique est un établissement de vente de robe béninoise de qualité à un prix de gros 
+                        pour vous permettre de lancer votre entreprise. Nous proposons une large gamme de produits 
+                        authentiques, allant des tenues traditionnelles aux créations modernes inspirées de la culture 
+                        béninoise. Notre mission est de rendre accessible la mode africaine de qualité.
+                    </p>
+                    
+                    <div class="detail-features">
+                        <div class="feature-item">
+                            <i class="fas fa-clock feature-icon"></i>
+                            <span>Ouvert 7j/7 - 9h à 20h</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-truck feature-icon"></i>
+                            <span>Livraison gratuite</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-credit-card feature-icon"></i>
+                            <span>Paiement en ligne</span>
+                        </div>
+                        <div class="feature-item">
+                            <i class="fas fa-wheelchair feature-icon"></i>
+                            <span>Accessible PMR</span>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-info">
+                        <h4 class="contact-title">Contact et Informations</h4>
+                        <div class="contact-details">
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>+243 81 234 5678</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>contact@bnkboutique.cd</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-globe"></i>
+                                <span>www.bnkboutique.cd</span>
+                            </div>
+                            <div class="contact-item">
+                                <i class="fas fa-wifi"></i>
+                                <span>Wi-Fi gratuit</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="contact-btn" onclick="contactEstablishment()">
+                    <i class="fas fa-phone"></i> Contacter
+                </button>
+                <button class="directions-btn" onclick="getDirections()">
+                    <i class="fas fa-directions"></i> Itinéraire
+                </button>
+                <button class="login-prompt-btn" onclick="openLoginPrompt()">
+                    <i class="fas fa-star"></i> Ajouter aux favoris
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Connexion Requise -->
+    <div id="loginPromptModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Connexion Requise</h3>
+                <button class="close-modal" onclick="closeModal('loginPromptModal')">×</button>
+            </div>
+            <div class="login-prompt">
+                <div class="login-icon">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <h4 class="login-title">Connectez-vous pour profiter de toutes les fonctionnalités</h4>
+                <p class="login-message">
+                    Cette fonctionnalité est réservée aux membres connectés. 
+                    Créez un compte gratuitement ou connectez-vous pour :
+                </p>
+                
+                <div class="login-benefits">
+                    <div class="login-benefit">
+                        <i class="fas fa-heart benefit-icon"></i>
+                        <span>Ajouter des établissements à vos favoris</span>
+                    </div>
+                    <div class="login-benefit">
+                        <i class="fas fa-comment benefit-icon"></i>
+                        <span>Laisser des avis et commentaires</span>
+                    </div>
+                    <div class="login-benefit">
+                        <i class="fas fa-bell benefit-icon"></i>
+                        <span>Recevoir des notifications personnalisées</span>
+                    </div>
+                    <div class="login-benefit">
+                        <i class="fas fa-calendar-check benefit-icon"></i>
+                        <span>Effectuer des réservations en ligne</span>
+                    </div>
+                </div>
+                
+                <div class="modal-actions">
+                    <button class="login-prompt-btn" onclick="redirectToLogin()">
+                        <i class="fas fa-sign-in-alt"></i> Se connecter
+                    </button>
+                    <button class="contact-btn" onclick="closeModal('loginPromptModal')">
+                        <i class="fas fa-times"></i> Continuer sans compte
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'auth_view' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="#"><i class="fas fa-building"></i> Établissements</a></li>
+                    <li><a href="#"><i class="fas fa-newspaper"></i> Publications</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Aide & FAQ</a></li>
+                    <li><a href="#"><i class="fas fa-envelope"></i> Contact</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Confidentialité</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Conditions</a></li>
+                </ul>
+            </div>
+            
+            <div class="footer-section">
+                <h3>Contactez-nous</h3>
+                <div class="social-links-footer">
+                    <a href="#" class="social-link-footer" aria-label="Facebook">
+                        <img src="{% static 'img/facebook.png' %}" alt="Facebook">
+                    </a>
+                    <a href="#" class="social-link-footer" aria-label="WhatsApp">
+                        <img src="{% static 'img/whatsapp.png' %}" alt="WhatsApp">
+                    </a>
+                    <a href="#" class="social-link-footer" aria-label="Twitter">
+                        <img src="{% static 'img/Xtwitter.png' %}" alt="Twitter">
+                    </a>
+                    <a href="#" class="social-link-footer" aria-label="Email">
+                        <img src="{% static 'img/mail.png' %}" alt="Email">
+                    </a>
+                </div>
+                
+                <div class="newsletter">
+                    <h4 class="newsletter-title">Newsletter</h4>
+                    <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">
+                        Recevez les dernières nouveautés et promotions
+                    </p>
+                    <div class="newsletter-form">
+                        <input type="email" class="newsletter-input" placeholder="Votre email">
+                        <button class="newsletter-btn">S'abonner</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="copyright">
+            <p>© 2024 Aryo-Tour. Tous droits réservés. | "L'Eternel est ici" - Ezéchiel 48:35</p>
+        </div>
+    </footer>
+
+    <!-- Partie JS dans l'affichage des donnnées  --> 
+    <script>
+        // Données de démonstration
+        const categories = [
+            { id: 1, name: "Restaurants", icon: "fa-utensils", count: 42 },
+            { id: 2, name: "Hôtels", icon: "fa-hotel", count: 28 },
+            { id: 3, name: "Boutiques", icon: "fa-shopping-bag", count: 35 },
+            { id: 4, name: "Spas", icon: "fa-spa", count: 15 },
+            { id: 5, name: "Parcs", icon: "fa-tree", count: 22 },
+            { id: 6, name: "Musées", icon: "fa-landmark", count: 18 },
+            { id: 7, name: "Bars", icon: "fa-glass-cheers", count: 24 },
+            { id: 8, name: "Événements", icon: "fa-calendar-alt", count: 31 }
+        ];
+
+        const establishments = [
+            {
+                id: 1,
+                name: "BNK Boutique",
+                category: "Boutique",
+                image: "{% static 'img/coiffure.jpg' %}",
+                rating: 4.8,
+                reviews: 124,
+                location: "Lukula 10 Q/ Lubudi C/ Bandalungwa, Lubumbashi",
+                description: "Établissement de vente de robe béninoise de qualité à prix de gros pour lancer votre entreprise. Produits authentiques et durables.",
+                features: ["Livraison gratuite", "Prix de gros", "Qualité garantie", "Conseils professionnels"]
+            },
+            {
+                id: 2,
+                name: "Le Gourmet Royal",
+                category: "Restaurant",
+                image: "{% static 'img/restaurant.jpg' %}",
+                rating: 4.6,
+                reviews: 89,
+                location: "Avenue Lumumba 123, Lubumbashi",
+                description: "Restaurant gastronomique spécialisé dans la cuisine congolaise moderne avec une touche d'innovation.",
+                features: ["Cuisine locale", "Terrasse", "Réservation en ligne", "Menu végétarien"]
+            },
+            {
+                id: 3,
+                name: "Hôtel Paradise",
+                category: "Hôtel",
+                image: "{% static 'img/hotel.jpg' %}",
+                rating: 4.9,
+                reviews: 256,
+                location: "Boulevard du 30 Juin, Lubumbashi",
+                description: "Hôtel 4 étoiles avec spa, piscine et restaurant gastronomique. Confort et luxe au cœur de la ville.",
+                features: ["Spa", "Piscine", "Wi-Fi gratuit", "Petit-déjeuner inclus"]
+            },
+            {
+                id: 4,
+                name: "Spa Zenitude",
+                category: "Spa",
+                image: "{% static 'img/spa.jpg' %}",
+                rating: 4.7,
+                reviews: 67,
+                location: "Quartier résidentiel, Lubumbashi",
+                description: "Centre de bien-être offrant massages, soins du visage et thérapies naturelles pour une relaxation totale.",
+                features: ["Massages", "Soins visage", "Thérapies", "Pack couple"]
+            },
+            {
+                id: 5,
+                name: "Parc National Upemba",
+                category: "Parc",
+                image: "{% static 'img/park.jpg' %}",
+                rating: 4.9,
+                reviews: 312,
+                location: "Haut-Katanga",
+                description: "Parc national abritant une biodiversité unique et des paysages à couper le souffle. Idéal pour les amoureux de la nature.",
+                features: ["Randonnée", "Observation animaux", "Camping", "Guides"]
+            },
+            {
+                id: 6,
+                name: "Musée National",
+                category: "Musée",
+                image: "{% static 'img/museum.jpg' %}",
+                rating: 4.5,
+                reviews: 45,
+                location: "Centre-ville, Lubumbashi",
+                description: "Musée présentant l'histoire et la culture de la République Démocratique du Congo à travers des collections uniques.",
+                features: ["Visites guidées", "Ateliers", "Boutique", "Audio-guide"]
+            }
+        ];
+
+        // Variables globales
+        let activeCategory = null;
+        let currentEstablishments = [...establishments];
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            loadCategories();
+            loadEstablishments();
+            setupEventListeners();
+        });
+
+        // Charger les catégories
+        function loadCategories() {
+            const grid = document.getElementById('filtersGrid');
+            grid.innerHTML = '';
+
+            categories.forEach(cat => {
+                const card = document.createElement('div');
+                card.className = 'filter-card';
+                card.innerHTML = `
+                    <div class="filter-icon">
+                        <i class="fas ${cat.icon}"></i>
+                    </div>
+                    <div class="filter-name">${cat.name}</div>
+                    <div class="filter-count">${cat.count} établissements</div>
+                `;
+                card.addEventListener('click', () => filterByCategory(cat.id));
+                grid.appendChild(card);
+            });
+
+            // Ajouter "Tous" comme première catégorie
+            const allCard = document.createElement('div');
+            allCard.className = 'filter-card active';
+            allCard.innerHTML = `
+                <div class="filter-icon">
+                    <i class="fas fa-star"></i>
+                </div>
+                <div class="filter-name">Tous</div>
+                <div class="filter-count">${establishments.length} établissements</div>
+            `;
+            allCard.addEventListener('click', () => filterByCategory(null));
+            grid.prepend(allCard);
+        }
+
+        // Charger les établissements
+        function loadEstablishments() {
+            const grid = document.getElementById('establishmentsGrid');
+            grid.innerHTML = '';
+
+            currentEstablishments.forEach(est => {
+                const card = document.createElement('div');
+                card.className = 'establishment-card';
+                card.innerHTML = `
+                    <span class="establishment-badge">${est.category}</span>
+                    <img src="${est.image}" alt="${est.name}" class="establishment-image">
+                    <div class="establishment-content">
+                        <div class="establishment-header">
+                            <h4 class="establishment-title">${est.name}</h4>
+                            <div class="establishment-rating">
+                                <span class="rating-star">${getStars(est.rating)}</span>
+                                <span class="rating-value">${est.rating}</span>
+                            </div>
+                        </div>
+                        <div class="establishment-location">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <span>${est.location}</span>
+                        </div>
+                        <p class="establishment-description">${est.description}</p>
+                        <div class="establishment-features">
+                            ${est.features.map(feature => `<span class="feature-tag">${feature}</span>`).join('')}
+                        </div>
+                        <div class="establishment-actions">
+                            <a href="{% url 'Voisiteur' %}">
+                                <button class="view-details-btn" onclick=""> 
+                                    <i class="fas fa-eye"></i> Voir plus de détails
+                                </button>
+                            </a>
+                            
+                        </div>
+                    </div>
+                `;
+                grid.appendChild(card); 
+            });
+        }
+
+        // Obtenir les étoiles pour la note
+        function getStars(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            
+            return '★'.repeat(fullStars) + (halfStar ? '½' : '') + '☆'.repeat(emptyStars);
+        }
+
+        // Filtrer par catégorie
+        function filterByCategory(categoryId) {
+            activeCategory = categoryId;
+            
+            // Mettre à jour les cartes de catégorie
+            document.querySelectorAll('.filter-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            
+            // Activer la bonne carte
+            const categoryCards = document.querySelectorAll('.filter-card');
+            if (categoryId === null) {
+                categoryCards[0].classList.add('active');
+            } else {
+                categoryCards[categoryId].classList.add('active');
+            }
+            
+            // Filtrer les établissements
+            if (categoryId === null) {
+                currentEstablishments = [...establishments];
+            } else {
+                const category = categories.find(c => c.id === categoryId);
+                currentEstablishments = establishments.filter(est => est.category === category.name);
+            }
+            
+            loadEstablishments();
+        }
+
+        // Effacer les filtres
+        function clearFilters() {
+            filterByCategory(null);
+        }
+
+        // Voir tous les établissements
+        function viewAllEstablishments() {
+            filterByCategory(null);
+            document.querySelector('.establishments-section').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Voir les détails d'un établissement
+        function viewEstablishmentDetail(id) {
+            const est = establishments.find(e => e.id === id);
+            if (est) {
+                document.getElementById('detailEstablishmentName').textContent = est.name;
+                document.getElementById('detailMainImage').src = est.image;
+                document.getElementById('detailCategory').textContent = est.category;
+                document.getElementById('detailLocation').textContent = est.location;
+                document.getElementById('detailDescription').textContent = est.description;
+                
+                openModal('establishmentDetailModal');
+            }
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hiden'; 
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Ouvrir le prompt de connexion
+        function openLoginPrompt() {
+            closeModal('establishmentDetailModal');
+            openModal('loginPromptModal');
+        }
+
+        // Rediriger vers la page de connexion
+        function redirectToLogin() {
+            window.location.href = "{% url 'auth_user' %}";
+        }
+
+        // Rechercher des établissements
+        function searchEstablishments() {
+            const query = document.querySelector('.search-input').value.toLowerCase();
+            if (query.trim() === '') {
+                currentEstablishments = activeCategory === null ? 
+                    [...establishments] : 
+                    establishments.filter(est => est.category === categories.find(c => c.id === activeCategory).name);
+            } else {
+                currentEstablishments = establishments.filter(est => 
+                    est.name.toLowerCase().includes(query) ||
+                    est.description.toLowerCase().includes(query) ||
+                    est.category.toLowerCase().includes(query) ||
+                    est.location.toLowerCase().includes(query) ||
+                    est.features.some(f => f.toLowerCase().includes(query))
+                );
+            }
+            loadEstablishments();
+            
+            // Afficher un message si aucun résultat
+            if (currentEstablishments.length === 0 && query.trim() !== '') {
+                const grid = document.getElementById('establishmentsGrid');
+                grid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 3rem;">
+                        <i class="fas fa-search" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3 style="color: var(--text-color); margin-bottom: 0.5rem;">Aucun résultat trouvé</h3>
+                        <p style="color: #666;">Essayez avec d'autres mots-clés ou explorez nos catégories.</p>
+                        <button onclick="clearFilters()" style="margin-top: 1rem;" class="view-details-btn">
+                            <i class="fas fa-times"></i> Effacer la recherche
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Fonctions d'interaction
+        function contactEstablishment() {
+            alert('Fonction de contact - À implémenter');
+        }
+
+        function getDirections() {
+            alert('Fonction itinéraire - À implémenter');
+        }
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+
+            // Recherche par entrée
+            document.querySelector('.search-input').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchEstablishments();
+                }
+            });
+
+            // Newsletter
+            document.querySelector('.newsletter-btn').addEventListener('click', function() {
+                const email = document.querySelector('.newsletter-input').value;
+                if (email && validateEmail(email)) {
+                    alert(`Merci pour votre inscription à notre newsletter ! Un email de confirmation a été envoyé à ${email}`);
+                    document.querySelector('.newsletter-input').value = '';
+                } else {
+                    alert('Veuillez entrer une adresse email valide.');
+                }
+            });
+
+            // Pagination
+            document.querySelectorAll('.page-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (!this.querySelector('i')) {
+                        document.querySelectorAll('.page-btn').forEach(b => b.classList.remove('active'));
+                        this.classList.add('active');
+                        // Ici, vous changeriez de page
+                    }
+                });
+            });
+        }
+
+        // Validation d'email
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return re.test(email);
+        }
+    </script>
+    
+    
+</body>
+</html>
+{% endblock %}

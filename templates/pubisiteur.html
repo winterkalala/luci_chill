@@ -1,0 +1,1779 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Toutes les Publications - Aryo-Tour{% endblock %}</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+
+<style>
+    /* Variables CSS - Même design que le formulaire */
+    :root {
+        --primary-color: #3D84A7;
+        --secondary-color: #46CDCF;
+        --accent-color: #ABEDD8;
+        --text-color: #47466D;
+        --light-color: #F8F9FA;
+        --dark-color: #2C3E50;
+        --shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.08);
+        --transition: all 0.3s ease;
+        --border-radius: 15px;
+    }
+
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        line-height: 1.6;
+        color: var(--text-color);
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        min-height: 100vh;
+    }
+
+    /* Header Navigation */
+    .visitor-header {
+        background: white;
+        box-shadow: var(--shadow-light);
+        padding: 1rem 2rem;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+    }
+
+    .header-container {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .logo-section {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        text-decoration: none;
+        color: var(--text-color);
+    }
+
+    .logo-icon {
+        font-size: 2rem;
+        color: var(--primary-color);
+    } 
+
+    .logo-text {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .logo-subtext {
+        font-size: 0.9rem;
+        color: var(--secondary-color);
+        margin-top: -5px;
+    }
+
+    /* Search Bar */
+    .search-section {
+        flex: 1;
+        max-width: 600px;
+    }
+
+    .search-container {
+        display: flex;
+        gap: 1rem;
+        flex: 1;
+    }
+
+    .search-input {
+        flex: 1;
+        padding: 0.8rem 1.5rem;
+        border: 2px solid var(--accent-color);
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        transition: var(--transition);
+        font-size: 1rem;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border-color: var(--secondary-color);
+        box-shadow: 0 0 0 3px rgba(70, 205, 207, 0.2);
+    }
+
+    .search-btn {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border: none;
+        padding: 0.8rem 2rem;
+        border-radius: 25px;
+        cursor: pointer;
+        transition: var(--transition);
+        font-weight: 500;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1rem;
+    }
+
+    .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(70, 205, 207, 0.3);
+    }
+
+    /* User Actions */
+    .user-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+    }
+
+    .login-btn,
+    .register-btn {
+        padding: 0.8rem 1.5rem;
+        border-radius: 25px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        border: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.95rem;
+        text-decoration: none;
+    }
+
+    .login-btn {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    .register-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+    }
+
+    .login-btn:hover,
+    .register-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: var(--shadow-light);
+    }
+
+    /* Hero Section */
+    .hero-section {
+        background: linear-gradient(rgba(61, 132, 167, 0.9), rgba(70, 205, 207, 0.9)),
+                    url('{% static "img/plage.JPG" %}');
+        background-size: cover;
+        background-position: center;
+        padding: 5rem 2rem;
+        text-align: center;
+        color: white;
+        margin-bottom: 3rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .hero-content {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+        z-index: 2;
+    }
+
+    .hero-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .hero-subtitle {
+        font-size: 1.3rem;
+        opacity: 0.95;
+        max-width: 600px;
+        margin: 0 auto;
+        line-height: 1.6;
+        margin-bottom: 2rem;
+    }
+
+    .hero-stats {
+        display: flex;
+        justify-content: center;
+        gap: 3rem;
+        flex-wrap: wrap;
+        margin-top: 2rem;
+    }
+
+    .hero-stat {
+        text-align: center;
+    }
+
+    .stat-number {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+    }
+
+    .stat-label {
+        font-size: 1rem;
+        opacity: 0.9;
+    }
+
+    /* Main Content */
+    .main-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 0 2rem 3rem;
+    }
+
+    /* Filters Section */
+    .filters-section {
+        background: white;
+        border-radius: var(--border-radius);
+        padding: 2rem;
+        box-shadow: var(--shadow-light);
+        margin-bottom: 2rem;
+        position: sticky;
+        top: 80px;
+        z-index: 90;
+    }
+
+    .filters-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .filters-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .total-publications {
+        background: var(--accent-color);
+        color: var(--text-color);
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 500;
+        font-size: 0.9rem;
+    }
+
+    .filters-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.8rem;
+    }
+
+    .filter-btn {
+        padding: 0.6rem 1.2rem;
+        background: white;
+        border: 2px solid var(--accent-color);
+        border-radius: 20px;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .filter-btn:hover,
+    .filter-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    /* Publications Grid */
+    .publications-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 2rem;
+        margin-bottom: 3rem;
+    }
+
+    .publication-card {
+        background: white;
+        border-radius: var(--border-radius);
+        overflow: hidden;
+        box-shadow: var(--shadow-light);
+        transition: var(--transition);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .publication-card:hover {
+        transform: translateY(-10px);
+        box-shadow: var(--shadow);
+    }
+
+    .publication-image-container {
+        position: relative;
+        height: 220px;
+        overflow: hidden;
+    }
+
+    .publication-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: var(--transition);
+    }
+
+    .publication-card:hover .publication-image {
+        transform: scale(1.05);
+    }
+
+    .publication-type-badge {
+        position: absolute;
+        top: 1rem;
+        right: 1rem;
+        background: rgba(255, 255, 255, 0.95);
+        color: var(--text-color);
+        padding: 0.4rem 0.8rem;
+        border-radius: 12px;
+        font-size: 0.8rem;
+        font-weight: 500;
+        backdrop-filter: blur(5px);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .publication-content {
+        padding: 1.5rem;
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .publication-header {
+        margin-bottom: 1rem;
+    }
+
+    .publication-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.8rem;
+        line-height: 1.4;
+    }
+
+    .establishment-info {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .establishment-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 2px solid var(--accent-color);
+    }
+
+    .establishment-details {
+        flex: 1;
+    }
+
+    .establishment-name {
+        font-weight: 500;
+        color: var(--text-color);
+        font-size: 0.95rem;
+    }
+
+    .establishment-location {
+        font-size: 0.85rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .publication-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 1.5rem;
+        flex: 1;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        line-clamp: 3;
+        box-orient: vertical;
+        overflow: hidden;
+    }
+
+    .publication-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: auto;
+        padding-top: 1rem;
+        border-top: 1px solid #f0f0f0;
+    }
+
+    .publication-date {
+        color: #666;
+        font-size: 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .publication-stats {
+        display: flex;
+        gap: 1rem;
+        color: #666;
+        font-size: 0.85rem;
+    }
+
+    .stat-item {
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .view-btn {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        border: none;
+        padding: 0.6rem 1.2rem;
+        border-radius: 20px;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+        margin-top: 1rem;
+        align-self: flex-start;
+    }
+
+    .view-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(61, 132, 167, 0.3);
+    }
+
+    /* Pagination */
+    .pagination-section {
+        display: flex;
+        justify-content: center;
+        margin-top: 3rem;
+    }
+
+    .pagination {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+
+    .page-btn {
+        min-width: 45px;
+        height: 45px;
+        border-radius: 50%;
+        border: 2px solid var(--accent-color);
+        background: white;
+        color: var(--text-color);
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.95rem;
+    }
+
+    .page-btn:hover,
+    .page-btn.active {
+        background: linear-gradient(135deg, var(--secondary-color), var(--accent-color));
+        color: white;
+        border-color: var(--secondary-color);
+    }
+
+    .page-btn.prev,
+    .page-btn.next {
+        padding: 0 1.5rem;
+        border-radius: 25px;
+        min-width: auto;
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.7);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        align-items: center;
+        justify-content: center;
+        padding: 1rem;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .modal-overlay.active {
+        display: flex;
+    }
+
+    .modal {
+        background: white;
+        border-radius: var(--border-radius);
+        max-width: 800px;
+        width: 100%;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: var(--shadow);
+        animation: slideUp 0.3s ease;
+    }
+
+    .modal-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.5rem 2rem;
+        border-bottom: 2px solid var(--accent-color);
+        position: sticky;
+        top: 0;
+        background: white;
+        z-index: 1;
+    }
+
+    .modal-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+    }
+
+    .close-modal {
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        color: #666;
+        cursor: pointer;
+        transition: var(--transition);
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .close-modal:hover {
+        background: var(--accent-color);
+        color: var(--text-color);
+    }
+
+    /* Publication Detail Modal */
+    .publication-detail {
+        padding: 2rem;
+    }
+
+    .detail-image {
+        width: 100%;
+        max-height: 400px;
+        object-fit: cover;
+        border-radius: 10px;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-meta {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 1.5rem;
+        flex-wrap: wrap;
+        gap: 1rem;
+    }
+
+    .detail-establishment {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .detail-establishment-img {
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 3px solid var(--accent-color);
+    }
+
+    .establishment-text h4 {
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .establishment-text p {
+        color: #666;
+        font-size: 0.9rem;
+        display: flex;
+        align-items: center;
+        gap: 0.3rem;
+    }
+
+    .detail-date {
+        color: #666;
+        font-size: 0.9rem;
+        background: var(--light-color);
+        padding: 0.5rem 1rem;
+        border-radius: 15px;
+    }
+
+    .detail-content h2 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.8rem;
+        font-weight: 600;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .detail-description {
+        line-height: 1.8;
+        color: #444;
+        margin-bottom: 2rem;
+        font-size: 1.05rem;
+    }
+
+    .detail-stats {
+        display: flex;
+        gap: 2rem;
+        margin-bottom: 2rem;
+        padding: 1.5rem;
+        background: var(--light-color);
+        border-radius: 10px;
+    }
+
+    .detail-stat {
+        text-align: center;
+        flex: 1;
+    }
+
+    .detail-stat-number {
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--secondary-color);
+        margin-bottom: 0.3rem;
+    }
+
+    .detail-stat-label {
+        font-size: 0.9rem;
+        color: #666;
+    }
+
+    .share-section {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #e0e0e0;
+    }
+
+    .share-title {
+        font-weight: 500;
+        color: var(--text-color);
+        margin-bottom: 1rem;
+    }
+
+    .share-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .share-btn {
+        flex: 1;
+        min-width: 150px;
+        padding: 0.8rem 1.5rem;
+        border-radius: 10px;
+        border: none;
+        font-weight: 500;
+        cursor: pointer;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+        text-decoration: none;
+        color: white;
+        font-size: 0.9rem;
+    }
+
+    .share-whatsapp {
+        background: #25D366;
+    }
+
+    .share-facebook {
+        background: #1877F2;
+    }
+
+    .share-twitter {
+        background: #1DA1F2;
+    }
+
+    .share-email {
+        background: var(--primary-color);
+    }
+
+    .share-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Newsletter Section */
+    .newsletter-section {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        border-radius: var(--border-radius);
+        padding: 3rem 2rem;
+        text-align: center;
+        color: white;
+        margin-top: 4rem;
+        box-shadow: var(--shadow);
+    }
+
+    .newsletter-title {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .newsletter-text {
+        font-size: 1.1rem;
+        opacity: 0.9;
+        max-width: 600px;
+        margin: 0 auto 2rem;
+        line-height: 1.6;
+    }
+
+    .newsletter-form {
+        max-width: 500px;
+        margin: 0 auto;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .newsletter-input {
+        flex: 1;
+        padding: 0.9rem 1.5rem;
+        border: none;
+        border-radius: 25px;
+        font-family: 'Poppins', sans-serif;
+        font-size: 1rem;
+        outline: none;
+    }
+
+    .newsletter-btn {
+        background: white;
+        color: var(--primary-color);
+        border: none;
+        padding: 0.9rem 2rem;
+        border-radius: 25px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: var(--transition);
+    }
+
+    .newsletter-btn:hover {
+        background: var(--accent-color);
+        transform: translateY(-2px);
+    }
+
+    /* Footer */
+    .main-footer {
+        background: var(--dark-color);
+        color: white;
+        padding: 3rem 2rem 1rem;
+        margin-top: 4rem;
+    }
+
+    .footer-content {
+        max-width: 1400px;
+        margin: 0 auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 3rem;
+        margin-bottom: 2rem;
+    }
+
+    .footer-section h3 {
+        font-family: 'Montserrat', sans-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        color: white;
+    }
+
+    .footer-links {
+        list-style: none;
+    }
+
+    .footer-links li {
+        margin-bottom: 0.8rem;
+    }
+
+    .footer-links a {
+        color: #bbb;
+        text-decoration: none;
+        transition: var(--transition);
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .footer-links a:hover {
+        color: var(--accent-color);
+        padding-left: 5px;
+    }
+
+    .social-links {
+        display: flex;
+        gap: 1rem;
+        margin-top: 1.5rem;
+    }
+
+    .social-link {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        text-decoration: none;
+        transition: var(--transition);
+    }
+
+    .social-link:hover {
+        background: var(--secondary-color);
+        transform: translateY(-3px);
+    }
+
+    .copyright {
+        text-align: center;
+        padding-top: 2rem;
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        color: #bbb;
+        font-size: 0.9rem;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+        .header-container {
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .search-section {
+            max-width: 100%;
+            width: 100%;
+        }
+
+        .publications-grid {
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        }
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 2.2rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .main-content {
+            padding: 0 1rem 2rem;
+        }
+
+        .filters-section {
+            padding: 1.5rem;
+            top: 70px;
+        }
+
+        .publications-grid {
+            grid-template-columns: 1fr;
+        }
+
+        .modal {
+            margin: 1rem;
+        }
+
+        .newsletter-form {
+            flex-direction: column;
+        }
+
+        .hero-stats {
+            gap: 2rem;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+        }
+    }
+
+    @media (max-width: 576px) {
+        .visitor-header {
+            padding: 1rem;
+        }
+
+        .hero-section {
+            padding: 3rem 1rem;
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+        }
+
+        .filters-grid {
+            justify-content: center;
+        }
+
+        .detail-meta {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        .share-buttons {
+            flex-direction: column;
+        }
+
+        .share-btn {
+            min-width: 100%;
+        }
+    }
+
+    /* Animations */
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+        }
+        to {
+            opacity: 1;
+        }
+    }
+
+    @keyframes slideUp {
+        from {
+            transform: translateY(50px);
+            opacity: 0;
+        }
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    }
+
+    /* Loading Animation */
+    .loading {
+        text-align: center;
+        padding: 3rem;
+        color: #666;
+    }
+
+    .loading-spinner {
+        width: 50px;
+        height: 50px;
+        border: 3px solid var(--accent-color);
+        border-top: 3px solid var(--secondary-color);
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<body>
+    <!-- Header Navigation -->
+    <header class="visitor-header">
+        <div class="header-container">
+            <!-- Logo -->
+            <a href="{% url 'accueil' %}" class="logo-section">
+                <i class="fas fa-globe-africa logo-icon"></i> 
+                <div>
+                    <div class="logo-text">LucieVisit</div>
+                    <div class="logo-subtext">Découvrez localement</div>
+                </div> 
+            </a>
+
+            <!-- Search Bar -->
+            <div class="search-section">
+                <div class="search-container">
+                    <input type="text" class="search-input" placeholder="Rechercher des publications..." id="searchInput">
+                    <button class="search-btn" onclick="searchPublications()">
+                        <i class="fas fa-search"></i> Rechercher
+                    </button>
+                </div>
+            </div>
+
+            <!-- User Actions -->
+            <div class="user-actions">
+                <a href="{% url 'auth_user' %}" class="login-btn">
+                    <i class="fas fa-sign-in-alt"></i> Connexion
+                </a>
+                <a href="{% url 'auth_user' %}" class="register-btn">
+                    <i class="fas fa-user-plus"></i> Inscription
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="hero-content">
+            <h1 class="hero-title">Découvrez les dernières publications</h1>
+            <p class="hero-subtitle">
+                Explorez les promotions, actualités et événements des meilleurs établissements locaux. 
+                Restez informé des offres exclusives près de chez vous.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="stat-number" id="totalPublications">128</div>
+                    <div class="stat-label">Publications actives</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-number" id="totalEstablishments">45</div>
+                    <div class="stat-label">Établissements</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="stat-number" id="activePromotions">76</div>
+                    <div class="stat-label">Promotions en cours</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Filters Section -->
+        <section class="filters-section">
+            <div class="filters-header">
+                <h2 class="filters-title">Publications récentes</h2>
+                <div class="total-publications">
+                    <span id="filteredCount">128</span> publications
+                </div>
+            </div>
+            <div class="filters-grid">
+                <button class="filter-btn active" data-filter="all">
+                    <i class="fas fa-layer-group"></i> Toutes
+                </button>
+                <button class="filter-btn" data-filter="promotion">
+                    <i class="fas fa-percentage"></i> Promotions
+                </button>
+                <button class="filter-btn" data-filter="news">
+                    <i class="fas fa-newspaper"></i> Actualités
+                </button>
+                <button class="filter-btn" data-filter="event">
+                    <i class="fas fa-calendar"></i> Événements
+                </button>
+                <button class="filter-btn" data-filter="popular">
+                    <i class="fas fa-fire"></i> Populaires
+                </button>
+                <button class="filter-btn" data-filter="recent">
+                    <i class="fas fa-clock"></i> Récentes
+                </button>
+            </div>
+        </section>
+
+        <!-- Publications Grid -->
+        <div class="publications-grid" id="publicationsGrid">
+            <!-- Les publications seront injectées ici par JavaScript -->
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination-section">
+            <div class="pagination">
+                <button class="page-btn prev" onclick="changePage(-1)">
+                    <i class="fas fa-chevron-left"></i> Précédent
+                </button>
+                <button class="page-btn active">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">3</button>
+                <button class="page-btn">4</button>
+                <button class="page-btn">5</button>
+                <button class="page-btn next" onclick="changePage(1)">
+                    Suivant <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Newsletter Section -->
+        <section class="newsletter-section">
+            <h2 class="newsletter-title">Ne manquez aucune publication</h2>
+            <p class="newsletter-text">
+                Inscrivez-vous à notre newsletter pour recevoir les dernières publications 
+                et promotions directement dans votre boîte mail.
+            </p>
+            <form class="newsletter-form" id="newsletterForm">
+                <input type="email" class="newsletter-input" placeholder="Votre adresse email" required>
+                <button type="submit" class="newsletter-btn">
+                    <i class="fas fa-paper-plane"></i> S'inscrire
+                </button>
+            </form>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3>Aryo-Tour</h3>
+                <p style="color: #bbb; line-height: 1.6; margin-bottom: 1.5rem;">
+                    Votre plateforme pour découvrir les meilleurs établissements locaux 
+                    et rester informé des dernières actualités et promotions.
+                </p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Instagram">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin-in"></i>
+                    </a>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h3>Navigation</h3>
+                <ul class="footer-links">
+                    <li><a href="{% url 'accueil' %}"><i class="fas fa-home"></i> Accueil</a></li>
+                    <li><a href="{% url 'Cateus' %}"><i class="fas fa-building"></i> Établissements</a></li>
+                    <li><a href="{% url 'visitep' %}"><i class="fas fa-newspaper"></i> Publications</a></li>
+                    <li><a href="#"><i class="fas fa-calendar-alt"></i> Événements</a></li>
+                    <li><a href="#"><i class="fas fa-star"></i> Favoris</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Catégories</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-utensils"></i> Restaurants</a></li>
+                    <li><a href="#"><i class="fas fa-hotel"></i> Hôtels</a></li>
+                    <li><a href="#"><i class="fas fa-spa"></i> Spas & Bien-être</a></li>
+                    <li><a href="#"><i class="fas fa-shopping-bag"></i> Boutiques</a></li>
+                    <li><a href="#"><i class="fas fa-theater-masks"></i> Divertissement</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h3>Support</h3>
+                <ul class="footer-links">
+                    <li><a href="#"><i class="fas fa-question-circle"></i> Aide & FAQ</a></li>
+                    <li><a href="{% url 'contact' %}"><i class="fas fa-phone"></i> Contact</a></li>
+                    <li><a href="#"><i class="fas fa-shield-alt"></i> Confidentialité</a></li>
+                    <li><a href="#"><i class="fas fa-file-contract"></i> Conditions</a></li>
+                    <li><a href="#"><i class="fas fa-info-circle"></i> À propos</a></li>
+                </ul> 
+            </div>
+        </div>
+
+        <div class="copyright">
+            <p>© 2024 Lucie-Tour. Tous droits réservés. | Conçu pour découvrir localement</p>
+        </div> 
+    </footer>
+
+    <!-- Publication Detail Modal -->
+    <div id="publicationDetailModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Détails de la publication</h3>
+                <button class="close-modal" onclick="closeModal('publicationDetailModal')">×</button>
+            </div>
+            <div class="publication-detail">
+                <img src="" alt="" class="detail-image" id="detailImage">
+                
+                <div class="detail-meta">
+                    <div class="detail-establishment">
+                        <img src="" alt="" class="detail-establishment-img" id="detailEstablishmentImg">
+                        <div class="establishment-text">
+                            <h4 id="detailEstablishmentName"></h4>
+                            <p id="detailEstablishmentLocation">
+                                <i class="fas fa-map-marker-alt"></i>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="detail-date" id="detailDate"></div>
+                </div>
+
+                <div class="detail-content">
+                    <h2 id="detailTitle"></h2>
+                    <p class="detail-description" id="detailDescription"></p>
+                </div>
+
+                <div class="detail-stats">
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailViews">0</div>
+                        <div class="detail-stat-label">Vues</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailLikes">0</div>
+                        <div class="detail-stat-label">J'aime</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailComments">0</div>
+                        <div class="detail-stat-label">Commentaires</div>
+                    </div>
+                    <div class="detail-stat">
+                        <div class="detail-stat-number" id="detailShares">0</div>
+                        <div class="detail-stat-label">Partages</div>
+                    </div>
+                </div>
+
+                <div class="share-section">
+                    <h4 class="share-title">Partager cette publication :</h4>
+                    <div class="share-buttons">
+                        <a href="#" class="share-btn share-whatsapp" onclick="shareOnWhatsApp()">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </a>
+                        <a href="#" class="share-btn share-facebook" onclick="shareOnFacebook()">
+                            <i class="fab fa-facebook-f"></i> Facebook
+                        </a>
+                        <a href="#" class="share-btn share-twitter" onclick="shareOnTwitter()">
+                            <i class="fab fa-twitter"></i> Twitter
+                        </a>
+                        <a href="#" class="share-btn share-email" onclick="shareByEmail()">
+                            <i class="fas fa-envelope"></i> Email
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Données de démonstration
+        const publications = [
+            {
+                id: 1,
+                title: "Promotion exceptionnelle -20% sur toute la collection",
+                description: "Profitez de -20% sur toute notre collection de robes béninoises cet été. Des modèles uniques et authentiques à prix réduits pour une durée limitée. Offre valable jusqu'au 31 décembre. Venez découvrir nos nouvelles créations inspirées des traditions africaines.",
+                type: "promotion",
+                images: ["{% static 'img/coiffure.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa",
+                    category: "Mode & Textile"
+                },
+                date: "2024-12-01 10:30",
+                stats: {
+                    views: 1245,
+                    likes: 342,
+                    comments: 28,
+                    shares: 45
+                },
+                tags: ["mode", "promotion", "été"]
+            },
+            {
+                id: 2,
+                title: "Nouvelle collection printemps-été 2025",
+                description: "Découvrez notre nouvelle collection printemps-été 2025. Des tissus légers, des couleurs vibrantes et des designs modernes inspirés de la tradition africaine. Une sélection unique pour toutes les occasions.",
+                type: "news",
+                images: ["{% static 'img/restaurant.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa",
+                    category: "Mode & Textile"
+                },
+                date: "2024-11-28 14:00",
+                stats: {
+                    views: 892,
+                    likes: 156,
+                    comments: 15,
+                    shares: 22
+                },
+                tags: ["nouveauté", "collection", "mode"]
+            },
+            {
+                id: 3,
+                title: "Atelier de couture traditionnelle",
+                description: "Participez à notre atelier de couture traditionnelle le 20 janvier. Apprenez les techniques ancestrales de confection de vêtements béninois avec nos artisans expérimentés.",
+                type: "event",
+                images: ["{% static 'img/hotel.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa",
+                    category: "Mode & Textile"
+                },
+                date: "2024-12-20 09:00",
+                stats: {
+                    views: 456,
+                    likes: 78,
+                    comments: 12,
+                    shares: 15
+                },
+                tags: ["atelier", "apprentissage", "tradition"]
+            },
+            {
+                id: 4,
+                title: "Offre spéciale pour les entrepreneurs",
+                description: "Pack spécial pour les entrepreneurs souhaitant lancer leur boutique en ligne. Inclut conseils personnalisés et tarifs préférentiels pour les commandes en gros.",
+                type: "promotion",
+                images: ["{% static 'img/spa.jpg' %}"],
+                establishment: {
+                    name: "BNK Boutique",
+                    avatar: "{% static 'img/coiffure.jpg' %}",
+                    location: "Lukula 10 Q/ Lubudi C/ Bandalungwa",
+                    category: "Mode & Textile"
+                },
+                date: "2024-11-25 16:45",
+                stats: {
+                    views: 678,
+                    likes: 124,
+                    comments: 5,
+                    shares: 18
+                },
+                tags: ["entrepreneurs", "business", "pack"]
+            },
+            {
+                id: 5,
+                title: "Soirée défilé de mode exclusive",
+                description: "Venez assister à notre soirée défilé de mode exclusive le 15 décembre. Présentation de notre collection capsule en collaboration avec des designers locaux.",
+                type: "event",
+                images: ["{% static 'img/plage.JPG' %}"],
+                establishment: {
+                    name: "Le Gourmet Royal",
+                    avatar: "{% static 'img/restaurant.jpg' %}",
+                    location: "Centre-ville, Avenue des Arts",
+                    category: "Restaurant"
+                },
+                date: "2024-12-15 19:00",
+                stats: {
+                    views: 1234,
+                    likes: 289,
+                    comments: 42,
+                    shares: 67
+                },
+                tags: ["défilé", "soirée", "mode"]
+            },
+            {
+                id: 6,
+                title: "Menu d'hiver - Saveurs authentiques",
+                description: "Découvrez notre nouveau menu d'hiver avec des spécialités locales réinventées. Des plats chauds et réconfortants pour la saison froide.",
+                type: "news",
+                images: ["{% static 'img/park.jpg' %}"],
+                establishment: {
+                    name: "Le Gourmet Royal",
+                    avatar: "{% static 'img/restaurant.jpg' %}",
+                    location: "Centre-ville, Avenue des Arts",
+                    category: "Restaurant"
+                },
+                date: "2024-11-20 11:00",
+                stats: {
+                    views: 987,
+                    likes: 234,
+                    comments: 18,
+                    shares: 29
+                },
+                tags: ["restaurant", "menu", "saison"]
+            }
+        ];
+
+        // Variables globales
+        let currentFilter = 'all';
+        let currentPage = 1;
+        const publicationsPerPage = 6;
+        let searchQuery = '';
+
+        // Initialisation
+        document.addEventListener('DOMContentLoaded', function() {
+            updateStats();
+            loadPublications();
+            setupEventListeners();
+        });
+
+        // Mettre à jour les statistiques
+        function updateStats() {
+            document.getElementById('totalPublications').textContent = publications.length;
+            document.getElementById('filteredCount').textContent = publications.length;
+            
+            // Compter les établissements uniques
+            const establishments = new Set(publications.map(p => p.establishment.name));
+            document.getElementById('totalEstablishments').textContent = establishments.size;
+            
+            // Compter les promotions
+            const promotions = publications.filter(p => p.type === 'promotion').length;
+            document.getElementById('activePromotions').textContent = promotions;
+        }
+
+        // Charger les publications
+        function loadPublications() {
+            const grid = document.getElementById('publicationsGrid');
+            
+            // Filtrer les publications
+            let filteredPublications = filterPublications();
+            
+            // Pagination
+            const startIndex = (currentPage - 1) * publicationsPerPage;
+            const endIndex = startIndex + publicationsPerPage;
+            const paginatedPublications = filteredPublications.slice(startIndex, endIndex);
+            
+            if (paginatedPublications.length === 0) {
+                grid.innerHTML = `
+                    <div class="loading" style="grid-column: 1 / -1;">
+                        <i class="fas fa-newspaper" style="font-size: 3rem; color: #ccc; margin-bottom: 1rem;"></i>
+                        <h3>Aucune publication trouvée</h3>
+                        <p>Essayez de modifier vos filtres ou votre recherche.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = '';
+            
+            paginatedPublications.forEach(pub => {
+                const card = document.createElement('div');
+                card.className = 'publication-card';
+                card.innerHTML = `
+                    <div class="publication-image-container">
+                        <img src="${pub.images[0]}" alt="${pub.title}" class="publication-image">
+                        <div class="publication-type-badge">
+                            ${getTypeIcon(pub.type)} ${getTypeLabel(pub.type)}
+                        </div>
+                    </div>
+                    
+                    <div class="publication-content">
+                        <div class="publication-header">
+                            <h3 class="publication-title">${pub.title}</h3>
+                            <div class="establishment-info">
+                                <img src="${pub.establishment.avatar}" alt="${pub.establishment.name}" class="establishment-avatar">
+                                <div class="establishment-details">
+                                    <div class="establishment-name">${pub.establishment.name}</div>
+                                    <div class="establishment-location">
+                                        <i class="fas fa-map-marker-alt"></i> ${pub.establishment.location}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <p class="publication-description">${pub.description}</p>
+                        
+                        <div class="publication-meta">
+                            <div class="publication-date">
+                                <i class="fas fa-clock"></i> ${formatDate(pub.date)}
+                            </div>
+                            <div class="publication-stats">
+                                <div class="stat-item">
+                                    <i class="fas fa-eye"></i> ${formatNumber(pub.stats.views)}
+                                </div>
+                                <div class="stat-item">
+                                    <i class="fas fa-heart"></i> ${formatNumber(pub.stats.likes)}
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button class="view-btn" onclick="viewPublicationDetail(${pub.id})">
+                            <i class="fas fa-external-link-alt"></i> Voir les détails
+                        </button>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+            
+            updatePagination(filteredPublications.length);
+        }
+
+        // Filtrer les publications
+        function filterPublications() {
+            let filtered = [...publications];
+            
+            // Filtre par type
+            if (currentFilter !== 'all') {
+                if (currentFilter === 'popular') {
+                    filtered.sort((a, b) => b.stats.views - a.stats.views);
+                } else if (currentFilter === 'recent') {
+                    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+                } else {
+                    filtered = filtered.filter(p => p.type === currentFilter);
+                }
+            }
+            
+            // Recherche par texte
+            if (searchQuery) {
+                const query = searchQuery.toLowerCase();
+                filtered = filtered.filter(p => 
+                    p.title.toLowerCase().includes(query) ||
+                    p.description.toLowerCase().includes(query) ||
+                    p.establishment.name.toLowerCase().includes(query) ||
+                    p.tags.some(tag => tag.toLowerCase().includes(query))
+                );
+            }
+            
+            document.getElementById('filteredCount').textContent = filtered.length;
+            return filtered;
+        }
+
+        // Obtenir l'icône du type
+        function getTypeIcon(type) {
+            const icons = {
+                'promotion': '<i class="fas fa-percentage"></i>',
+                'news': '<i class="fas fa-newspaper"></i>',
+                'event': '<i class="fas fa-calendar"></i>'
+            };
+            return icons[type] || '<i class="fas fa-file-alt"></i>';
+        }
+
+        // Obtenir le label du type
+        function getTypeLabel(type) {
+            const labels = {
+                'promotion': 'Promotion',
+                'news': 'Actualité',
+                'event': 'Événement'
+            };
+            return labels[type] || type;
+        }
+
+        // Formater la date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            
+            if (days === 0) {
+                return "Aujourd'hui";
+            } else if (days === 1) {
+                return "Hier";
+            } else if (days < 7) {
+                return `Il y a ${days} jours`;
+            } else {
+                return date.toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric'
+                });
+            }
+        }
+
+        // Formater les nombres
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num.toString();
+        }
+
+        // Mettre à jour la pagination
+        function updatePagination(totalPublications) {
+            const totalPages = Math.ceil(totalPublications / publicationsPerPage);
+            const pagination = document.querySelector('.pagination');
+            
+            // Garder seulement les boutons prev/next
+            const prevBtn = pagination.querySelector('.prev');
+            const nextBtn = pagination.querySelector('.next');
+            pagination.innerHTML = '';
+            
+            // Ajouter le bouton précédent
+            pagination.appendChild(prevBtn);
+            
+            // Ajouter les numéros de page
+            for (let i = 1; i <= totalPages; i++) {
+                const pageBtn = document.createElement('button');
+                pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+                pageBtn.textContent = i;
+                pageBtn.onclick = () => {
+                    currentPage = i;
+                    loadPublications();
+                    window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 100, behavior: 'smooth' });
+                };
+                pagination.appendChild(pageBtn);
+            }
+            
+            // Ajouter le bouton suivant
+            pagination.appendChild(nextBtn);
+            
+            // Désactiver les boutons si nécessaire
+            prevBtn.disabled = currentPage === 1;
+            nextBtn.disabled = currentPage === totalPages;
+        }
+
+        // Changer de page
+        function changePage(direction) {
+            const totalPublications = filterPublications().length;
+            const totalPages = Math.ceil(totalPublications / publicationsPerPage);
+            
+            currentPage += direction;
+            
+            if (currentPage < 1) currentPage = 1;
+            if (currentPage > totalPages) currentPage = totalPages;
+            
+            loadPublications();
+            window.scrollTo({ top: document.querySelector('.filters-section').offsetTop - 100, behavior: 'smooth' });
+        }
+
+        // Voir les détails d'une publication
+        function viewPublicationDetail(id) {
+            const pub = publications.find(p => p.id === id);
+            if (pub) {
+                // Mettre à jour les données du modal
+                document.getElementById('detailImage').src = pub.images[0];
+                document.getElementById('detailEstablishmentImg').src = pub.establishment.avatar;
+                document.getElementById('detailEstablishmentName').textContent = pub.establishment.name;
+                document.getElementById('detailEstablishmentLocation').innerHTML = 
+                    `<i class="fas fa-map-marker-alt"></i> ${pub.establishment.location}`;
+                document.getElementById('detailDate').textContent = new Date(pub.date).toLocaleDateString('fr-FR', {
+                    day: '2-digit',
+                    month: '2-digit',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+                document.getElementById('detailTitle').textContent = pub.title;
+                document.getElementById('detailDescription').textContent = pub.description;
+                document.getElementById('detailViews').textContent = formatNumber(pub.stats.views);
+                document.getElementById('detailLikes').textContent = formatNumber(pub.stats.likes);
+                document.getElementById('detailComments').textContent = formatNumber(pub.stats.comments);
+                document.getElementById('detailShares').textContent = formatNumber(pub.stats.shares);
+                
+                // Ouvrir le modal
+                openModal('publicationDetailModal');
+                
+                // Incrémenter les vues (simulation)
+                pub.stats.views++;
+            }
+        }
+
+        // Rechercher des publications
+        function searchPublications() {
+            searchQuery = document.getElementById('searchInput').value.trim();
+            currentPage = 1;
+            loadPublications();
+        }
+
+        // Partager sur WhatsApp
+        function shareOnWhatsApp() {
+            const pub = getCurrentPublication();
+            const text = encodeURIComponent(`Découvrez "${pub.title}" sur Aryo-Tour !`);
+            window.open(`https://wa.me/?text=${text}`, '_blank');
+        }
+
+        // Partager sur Facebook
+        function shareOnFacebook() {
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://www.facebook.com/sharer/sharer.php?u=${url}`, '_blank');
+        }
+
+        // Partager sur Twitter
+        function shareOnTwitter() {
+            const pub = getCurrentPublication();
+            const text = encodeURIComponent(`Découvrez "${pub.title}" sur Aryo-Tour`);
+            const url = encodeURIComponent(window.location.href);
+            window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
+        }
+
+        // Partager par email
+        function shareByEmail() {
+            const pub = getCurrentPublication();
+            const subject = encodeURIComponent(`Publication intéressante : ${pub.title}`);
+            const body = encodeURIComponent(`Je voulais partager cette publication avec toi !\n\n${pub.title}\n\n${pub.description.substring(0, 200)}...\n\nVoir plus sur Aryo-Tour`);
+            window.location.href = `mailto:?subject=${subject}&body=${body}`;
+        }
+
+        // Obtenir la publication actuellement affichée
+        function getCurrentPublication() {
+            const title = document.getElementById('detailTitle').textContent;
+            return publications.find(p => p.title === title) || publications[0];
+        }
+
+        // Ouvrir/fermer les modals
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            document.body.style.overflow = 'auto';
+        }
+
+        // Configuration des écouteurs d'événements
+        function setupEventListeners() {
+            // Filtres
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentFilter = this.dataset.filter;
+                    currentPage = 1;
+                    loadPublications();
+                });
+            });
+
+            // Recherche avec Entrée
+            document.getElementById('searchInput').addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    searchPublications();
+                }
+            });
+
+            // Newsletter
+            document.getElementById('newsletterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = this.querySelector('input[type="email"]').value;
+                
+                // Simulation d'envoi
+                alert(`Merci ! Vous êtes maintenant inscrit à notre newsletter avec l'adresse : ${email}`);
+                this.reset();
+            });
+
+            // Fermer les modals en cliquant à l'extérieur
+            document.querySelectorAll('.modal-overlay').forEach(modal => {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.classList.remove('active');
+                        document.body.style.overflow = 'auto';
+                    }
+                });
+            });
+        }
+    </script>
+</body>
+</html>
+{% endblock %}
+
